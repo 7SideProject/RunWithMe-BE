@@ -1,6 +1,6 @@
-package com.runwithme.runwithme.domain.user.repository.error;
+package com.runwithme.runwithme.global.error;
 
-import com.runwithme.runwithme.domain.user.repository.error.exception.BusinessException;
+import com.runwithme.runwithme.global.error.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

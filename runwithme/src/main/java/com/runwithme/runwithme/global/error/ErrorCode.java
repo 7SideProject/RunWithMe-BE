@@ -1,4 +1,4 @@
-package com.runwithme.runwithme.domain.user.repository.error;
+package com.runwithme.runwithme.global.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

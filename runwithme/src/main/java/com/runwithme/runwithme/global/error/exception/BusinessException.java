@@ -1,6 +1,6 @@
-package com.runwithme.runwithme.domain.user.repository.error.exception;
+package com.runwithme.runwithme.global.error.exception;
 
-import com.runwithme.runwithme.domain.user.repository.error.ErrorCode;
+import com.runwithme.runwithme.global.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
