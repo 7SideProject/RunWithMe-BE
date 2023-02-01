@@ -15,7 +15,7 @@ cp $PROJECT_ROOT/build/libs/*.jar $JAR_FILE
 
 # jar 파일 실행 (도커로)
 echo "[INFO]:[$TIME_NOW] > $JAR_FILE 빌드 수행" >> $DEPLOY_LOG
-docker build -t mungmnb777/runwithme .
+docker build -t mungmnb777/runwithme $PROJECT_ROOT
 
 # 컨테이너 실행
 echo "[INFO]:[$TIME_NOW] > $JAR_FILE 도커 컨테이너 실행" >> $DEPLOY_LOG
