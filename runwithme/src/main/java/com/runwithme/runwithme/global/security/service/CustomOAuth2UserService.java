@@ -1,7 +1,6 @@
 package com.runwithme.runwithme.global.security.service;
 
 import com.runwithme.runwithme.global.security.provider.ProviderType;
-import com.runwithme.runwithme.global.security.provider.ProviderUser;
 import com.runwithme.runwithme.global.security.provider.ProviderUserFactory;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -13,10 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private ProviderUser providerUser(OAuth2UserRequest userRequest, OAuth2User user) {
-        String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
-
-        return ProviderUserFactory.build(ProviderType.valueOf(registrationId), user.getAttributes());
+    private String parseRegistrationId(OAuth2UserRequest userRequest) {
+        return userRequest.getClientRegistration().getRegistrationId().toUpperCase();
     }
 
     @Override
@@ -25,6 +22,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
-        return providerUser(userRequest, oAuth2User);
+        ProviderType providerType = ProviderType.valueOf(parseRegistrationId(userRequest));
+
+        return ProviderUserFactory.build(providerType, oAuth2User.getAttributes());
     }
 }
