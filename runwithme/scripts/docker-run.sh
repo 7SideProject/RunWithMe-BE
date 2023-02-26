@@ -19,4 +19,4 @@ docker build -t mungmnb777/runwithme $PROJECT_ROOT
 
 # 컨테이너 실행
 echo "[INFO]:[$TIME_NOW] > $JAR_FILE 도커 컨테이너 실행" >> $DEPLOY_LOG
-docker run -d -p 8080:8080 --name be-server mungmnb777/runwithme
+docker run -d -p 80:8080 --name be-server mungmnb777/runwithme
