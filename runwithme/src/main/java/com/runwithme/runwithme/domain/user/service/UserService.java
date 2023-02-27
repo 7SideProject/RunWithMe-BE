@@ -1,4 +1,4 @@
-package com.runwithme.runwithme.domain.user.repository.service;
+package com.runwithme.runwithme.domain.user.service;
 
 public class UserService {
 }
