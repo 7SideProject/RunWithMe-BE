@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.global.security.config;
 
+import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
 import com.runwithme.runwithme.global.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import com.runwithme.runwithme.global.security.repository.CustomAuthorizationRequestRepository;
@@ -7,11 +8,14 @@ import com.runwithme.runwithme.global.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -46,7 +50,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable();
         http.cors().configurationSource(corsConfigurationSource());
+
+        http.formLogin().disable();
+        http.httpBasic().disable();
+
         http.oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(authorizationEndpointConfig ->
                         authorizationEndpointConfig.baseUri("/oauth2/authorization")
@@ -54,12 +63,20 @@ public class SecurityConfig {
                 .userInfoEndpoint(
                         userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(customOAuth2UserService)
-                ).successHandler(oAuth2AuthenticationSuccessHandler()));
+                )
+                .successHandler(oAuth2AuthenticationSuccessHandler()));
+
+        http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+
         http.authorizeHttpRequests()
                 .requestMatchers(PERMIT_ALL_SWAGGER).permitAll()
                 .requestMatchers(PERMIT_ALL_ACTUATOR).permitAll()
                 .anyRequest().authenticated();
+
+        http.addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         return http.build();
     }
 
@@ -71,6 +88,11 @@ public class SecurityConfig {
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(authTokenFactory);
+    }
+
+    @Bean
+    public TokenAuthorizationFilter tokenAuthorizationFilter() {
+        return new TokenAuthorizationFilter(authTokenFactory);
     }
 
     @Bean

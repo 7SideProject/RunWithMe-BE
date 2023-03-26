@@ -33,7 +33,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         User user = details.getUser();
 
-        AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getNickname(), new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY));
+        AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRole(), new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY));
 
         HeaderUtils.setAccessToken(response, accessToken.getToken());
 
