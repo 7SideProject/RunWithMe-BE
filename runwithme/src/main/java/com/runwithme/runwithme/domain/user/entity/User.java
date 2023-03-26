@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.user.entity;
 
+import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,5 +44,11 @@ public class User {
         this.height = height;
         this.weight = weight;
         this.point = point;
+    }
+
+    public void setProfile(UserProfileDto dto) {
+        this.nickname = dto.nickname();
+        this.height = dto.height();
+        this.weight = dto.weight();
     }
 }
