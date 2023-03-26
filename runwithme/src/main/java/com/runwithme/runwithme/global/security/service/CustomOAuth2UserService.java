@@ -49,6 +49,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private User create(OAuth2User oAuth2User) {
         User user = User.builder()
+                .role("ROLE_USER")
                 .email(oAuth2User.getName())
                 .point(0)
                 .build();

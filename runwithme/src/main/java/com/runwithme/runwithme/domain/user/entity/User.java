@@ -15,7 +15,9 @@ public class User {
     @Column(name = "user_seq")
     private Long seq;
 
-    // TODO : User Role 구현
+    @Column(name = "user_role",
+            nullable = false)
+    private String role;
 
     @Column(name = "user_email",
             nullable = false,
@@ -36,8 +38,9 @@ public class User {
     private int point;
 
     @Builder
-    public User(Long seq, String email, String nickname, int height, int weight, int point) {
+    public User(Long seq, String role, String email, String nickname, int height, int weight, int point) {
         this.seq = seq;
+        this.role = role;
         this.email = email;
         this.nickname = nickname;
         this.height = height;
