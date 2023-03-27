@@ -25,7 +25,7 @@ public class UserController {
             UserProfileViewDto userProfileViewDto = userService.setUserProfile(userSeq, dto);
             log.info("Set profile user {}", userSeq);
             return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userProfileViewDto), HttpStatus.OK);
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL), HttpStatus.BAD_REQUEST);
         }
