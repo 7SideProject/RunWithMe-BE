@@ -47,13 +47,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return new PrincipalDetails(user, loginUser.getAttributes());
     }
 
-    private User create(OAuth2User oAuth2User) {
-        User user = User.builder()
-                .role("ROLE_USER")
-                .email(oAuth2User.getName())
-                .point(0)
-                .build();
-
-        return userRepository.saveAndFlush(user);
+    private User create(OAuth2User user) {
+        return userRepository.save(User.create(user));
     }
 }
