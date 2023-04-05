@@ -5,7 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.StringUtils;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Entity
 @Getter
@@ -53,5 +58,18 @@ public class User {
         this.nickname = dto.nickname();
         this.height = dto.height();
         this.weight = dto.weight();
+        this.role = "ROLE_USER";
+    }
+
+    public boolean isTempUser() {
+        return StringUtils.equals(role, "ROLE_TEMP_USER");
+    }
+
+    public static User create(OAuth2User oAuth2User) {
+        return User.builder()
+                .role("ROLE_TEMP_USER")
+                .email(oAuth2User.getName())
+                .point(0)
+                .build();
     }
 }
