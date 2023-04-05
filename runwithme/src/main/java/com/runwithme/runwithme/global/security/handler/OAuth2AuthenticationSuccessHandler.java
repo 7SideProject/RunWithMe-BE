@@ -1,6 +1,5 @@
 package com.runwithme.runwithme.global.security.handler;
 
-import com.runwithme.runwithme.domain.user.entity.Role;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.global.security.jwt.AuthToken;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
@@ -52,7 +51,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         User user = getUser(authentication);
 
-        builder.queryParam("status", user.isTempUser() ? Role.TEMP_USER.getStatus() : Role.USER.getStatus());
+        builder.queryParam("status", user.getRoleStatus());
         builder.queryParam("token", createToken(authentication));
 
         return builder.build().toString();
@@ -61,7 +60,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private String createToken(Authentication authentication) {
         User user = getUser(authentication);
 
-        AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRole(), new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY));
+        AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRoleValue(), new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY));
 
         return accessToken.getToken();
     }
