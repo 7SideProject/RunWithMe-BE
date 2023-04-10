@@ -1,11 +1,12 @@
 package com.runwithme.runwithme.domain.user.entity;
 
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Entity
 @Getter
@@ -18,7 +19,8 @@ public class User {
 
     @Column(name = "user_role",
             nullable = false)
-    private String role;
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
     @Column(name = "user_email",
             nullable = false,
@@ -39,7 +41,7 @@ public class User {
     private int point;
 
     @Builder
-    public User(Long seq, String role, String email, String nickname, int height, int weight, int point) {
+    public User(Long seq, Role role, String email, String nickname, int height, int weight, int point) {
         this.seq = seq;
         this.role = role;
         this.email = email;
@@ -49,9 +51,31 @@ public class User {
         this.point = point;
     }
 
+    public String getRoleValue() {
+        return role.getValue();
+    }
+
+    public int getRoleStatus() {
+        return role.getStatus();
+    }
+
+
     public void setProfile(UserProfileDto dto) {
         this.nickname = dto.nickname();
         this.height = dto.height();
         this.weight = dto.weight();
+        this.role = Role.USER;
+    }
+
+    public boolean isTempUser() {
+        return role == Role.TEMP_USER;
+    }
+
+    public static User create(OAuth2User oAuth2User) {
+        return User.builder()
+                .role(Role.TEMP_USER)
+                .email(oAuth2User.getName())
+                .point(0)
+                .build();
     }
 }

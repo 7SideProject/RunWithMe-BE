@@ -5,7 +5,6 @@ import com.runwithme.runwithme.global.security.jwt.AuthToken;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import com.runwithme.runwithme.global.security.model.PrincipalDetails;
 import com.runwithme.runwithme.global.utils.CookieUtils;
-import com.runwithme.runwithme.global.utils.HeaderUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,9 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,16 +30,42 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AuthTokenFactory authTokenFactory;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        PrincipalDetails details = (PrincipalDetails) authentication.getPrincipal();
+        getRedirectStrategy().sendRedirect(request, response, determineTargetUrl(request, response, authentication));
+    }
 
-        User user = details.getUser();
+    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI)
+                .map(Cookie::getValue);
 
-        AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRole(), new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY));
+        if(redirectUri.isEmpty()) {
+            throw new IllegalArgumentException("We need to contain redirect URI");
+        }
 
-        HeaderUtils.setAccessToken(response, accessToken.getToken());
+        String targetUri = redirectUri.orElse(getDefaultTargetUrl());
 
-        Cookie redirectUri = CookieUtils.getCookie(request, REDIRECT_URI).orElseThrow(IllegalArgumentException::new);
+        return uriBuild(authentication, targetUri);
+    }
 
-        response.sendRedirect(redirectUri.getValue());
+    private String uriBuild(Authentication authentication, String targetUri) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(targetUri);
+
+        User user = getUser(authentication);
+
+        builder.queryParam("status", user.getRoleStatus());
+        builder.queryParam("token", createToken(authentication));
+
+        return builder.build().toString();
+    }
+
+    private String createToken(Authentication authentication) {
+        User user = getUser(authentication);
+
+        AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRoleValue(), new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY));
+
+        return accessToken.getToken();
+    }
+
+    private User getUser(Authentication authentication) {
+        return ((PrincipalDetails) authentication.getPrincipal()).getUser();
     }
 }
