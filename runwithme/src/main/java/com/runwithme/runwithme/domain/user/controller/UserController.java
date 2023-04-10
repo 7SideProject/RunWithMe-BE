@@ -5,6 +5,7 @@ import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.service.UserService;
 import com.runwithme.runwithme.global.result.ResultCode;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(summary = "프로필 설정", description = "유저 프로필을 설정하는 API입니다.")
     @PutMapping("/{userSeq}/profile")
     public ResponseEntity<ResultResponseDto> setUserProfile(@PathVariable Long userSeq, @RequestBody UserProfileDto dto) {
         try {

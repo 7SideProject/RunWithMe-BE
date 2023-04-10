@@ -1,27 +1,24 @@
 package com.runwithme.runwithme.global.result;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
-@ApiModel(description = "결과 응답 데이터")
+@Schema(name = "결과 응답 데이터")
 @Getter
-@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResultResponseDto {
 
-    @ApiModelProperty(value = "Http 상태 코드")
-    private int status;
-    @ApiModelProperty(value = "Business 상태 코드")
+    @Schema
     private String code;
-    @ApiModelProperty(value = "응답 메세지")
+    @Schema
     private String message;
-    @ApiModelProperty(value = "응답 데이터")
+    @Schema
     private Object data;
 
     public ResultResponseDto(ResultCode resultCode, Object data) {
-        this.status = resultCode.getStatus();
         this.code = resultCode.getCode();
         this.message = resultCode.getMessage();
         this.data = data;
