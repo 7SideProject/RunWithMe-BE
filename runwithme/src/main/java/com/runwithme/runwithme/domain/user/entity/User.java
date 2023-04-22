@@ -1,6 +1,8 @@
 package com.runwithme.runwithme.domain.user.entity;
 
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
+import com.runwithme.runwithme.global.entity.BaseEntity;
+import com.runwithme.runwithme.global.entity.Image;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,11 +13,15 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "user_seq")
     private Long seq;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_seq")
+    private Image image;
 
     @Column(name = "user_role",
             nullable = false)
