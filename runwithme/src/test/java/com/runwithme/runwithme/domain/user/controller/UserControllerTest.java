@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.user.controller;
 
+import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.service.UserService;
@@ -35,6 +36,69 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @Nested
+    @DisplayName("[회원가입] 사용자는 이메일을 이용하여 회원가입할 수 있습니다.")
+    class Join {
+
+        UserCreateDto given;
+        UserProfileViewDto result;
+
+        @BeforeEach
+        void beforeEach() {
+            given = new UserCreateDto("mungmnb777@gmail.com", "asd12345", "명범", 173, 60);
+            result = UserProfileViewDto.builder()
+                    .seq(1L)
+                    .email("mungmnb777@gmail.com")
+                    .height(173)
+                    .weight(60)
+                    .nickname("명범")
+                    .point(0)
+                    .build();
+        }
+
+        @Test
+        @WithMockUser(roles = "USER")
+        @DisplayName("[성공 케이스]")
+        void success() throws Exception {
+            // given
+            BDDMockito.given(userService.join(any(UserCreateDto.class))).willReturn(result);
+
+            // when
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post("/user/join")
+                    .content(JacksonUtils.convertToJson(given))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(SecurityMockMvcRequestPostProcessors.csrf()));
+
+            // then
+            actions.andExpect(jsonPath("$.data.seq").value(1L));
+            actions.andExpect(jsonPath("$.data.email").value("mungmnb777@gmail.com"));
+            actions.andExpect(jsonPath("$.data.height").value(173));
+            actions.andExpect(jsonPath("$.data.weight").value(60));
+            actions.andExpect(jsonPath("$.data.nickname").value("명범"));
+            actions.andExpect(jsonPath("$.data.point").value(0));
+            actions.andExpect(jsonPath("$.code").value("U002"));
+            actions.andExpect(status().isCreated());
+        }
+
+        @Test
+        @WithMockUser(roles = "USER")
+        @DisplayName("[실패 케이스 1] 해당 이메일을 가진 유저가 이미 있는 경우")
+        void failure() throws Exception {
+            // given
+            BDDMockito.given(userService.join(any(UserCreateDto.class))).willThrow(IllegalArgumentException.class);
+
+            // when
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post("/user/join")
+                    .content(JacksonUtils.convertToJson(given))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(SecurityMockMvcRequestPostProcessors.csrf()));
+
+            // then
+            actions.andExpect(jsonPath("$.code").value("U101"));
+            actions.andExpect(status().isBadRequest());
+        }
+    }
 
     @Nested
     @DisplayName("[프로필 수정] 사용자는 유저 프로필(닉네임, 키, 몸무게)를 수정할 수 있습니다.")
