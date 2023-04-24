@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.user.controller;
 
+import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.service.UserService;
@@ -24,6 +25,18 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping("/join")
+    public ResponseEntity<ResultResponseDto> join(@RequestBody UserCreateDto dto) {
+        try {
+            UserProfileViewDto response = userService.join(dto);
+            log.info("Join user {}", response.seq());
+            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, response), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PutMapping(value = "/{userSeq}/profile", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "프로필 설정", description = "유저 프로필을 설정하는 API입니다.")

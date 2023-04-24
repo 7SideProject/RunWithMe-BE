@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
@@ -44,6 +46,11 @@ public class SecurityConfig {
         "/management/**"
     };
 
+    private final String[] PERMIT_ALL_USER = {
+            "/user/login",
+            "/user/join"
+    };
+
     private final AuthTokenFactory authTokenFactory;
 
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -71,6 +78,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests()
                 .requestMatchers(PERMIT_ALL_SWAGGER).permitAll()
                 .requestMatchers(PERMIT_ALL_ACTUATOR).permitAll()
+                .requestMatchers(PERMIT_ALL_USER).permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -78,6 +86,11 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean

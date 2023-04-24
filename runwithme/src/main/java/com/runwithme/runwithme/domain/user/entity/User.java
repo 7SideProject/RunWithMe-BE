@@ -4,10 +4,7 @@ import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.global.entity.BaseEntity;
 import com.runwithme.runwithme.global.entity.Image;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Entity
@@ -33,6 +30,11 @@ public class User extends BaseEntity {
             unique = true)
     private String email;
 
+    @Column(name = "user_password",
+            nullable = false,
+            unique = true)
+    private String password;
+
     @Column(name = "user_nickname")
     private String nickname;
 
@@ -47,10 +49,12 @@ public class User extends BaseEntity {
     private int point;
 
     @Builder
-    public User(Long seq, Role role, String email, String nickname, int height, int weight, int point) {
+    public User(Long seq, Image image, Role role, String email, String nickname, String password,  int height, int weight, int point) {
         this.seq = seq;
+        this.image = image;
         this.role = role;
         this.email = email;
+        this.password = password;
         this.nickname = nickname;
         this.height = height;
         this.weight = weight;
