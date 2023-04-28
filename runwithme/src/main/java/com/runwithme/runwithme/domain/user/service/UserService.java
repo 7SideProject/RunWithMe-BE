@@ -25,6 +25,10 @@ public class UserService {
         return UserConverter.toViewDto(userRepository.save(joinUser));
     }
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(IllegalArgumentException::new);
+    }
+
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
         User findUser = userRepository.findById(userSeq).orElseThrow(() -> new IllegalArgumentException("Not found user by invalid user sequence."));
 

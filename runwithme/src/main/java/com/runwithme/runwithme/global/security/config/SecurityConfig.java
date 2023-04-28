@@ -1,14 +1,20 @@
 package com.runwithme.runwithme.global.security.config;
 
+import com.runwithme.runwithme.domain.user.service.UserService;
+import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
 import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
 import com.runwithme.runwithme.global.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
+import com.runwithme.runwithme.global.security.properties.JwtProperties;
+import com.runwithme.runwithme.global.security.provider.CustomAuthenticationProvider;
 import com.runwithme.runwithme.global.security.repository.CustomAuthorizationRequestRepository;
 import com.runwithme.runwithme.global.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -53,12 +59,18 @@ public class SecurityConfig {
 
     private final AuthTokenFactory authTokenFactory;
 
+    private final JwtProperties properties;
+
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http.csrf().disable();
+
         http.cors().configurationSource(corsConfigurationSource());
+
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.formLogin().disable();
         http.httpBasic().disable();
@@ -81,6 +93,7 @@ public class SecurityConfig {
                 .requestMatchers(PERMIT_ALL_USER).permitAll()
                 .anyRequest().authenticated();
 
+        http.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -100,12 +113,32 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-        return new OAuth2AuthenticationSuccessHandler(authTokenFactory);
+        return new OAuth2AuthenticationSuccessHandler(authTokenFactory, properties);
+    }
+
+    @Bean
+    public CustomAuthenticationFilter customAuthenticationFilter() {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authTokenFactory, properties);
+
+        customAuthenticationFilter.setFilterProcessesUrl("/user/login");
+        customAuthenticationFilter.setAuthenticationManager(authenticationManager());
+
+        return customAuthenticationFilter;
+    }
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        return new CustomAuthenticationProvider(passwordEncoder());
     }
 
     @Bean
     public TokenAuthorizationFilter tokenAuthorizationFilter() {
         return new TokenAuthorizationFilter(authTokenFactory);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(customAuthenticationProvider());
     }
 
     @Bean

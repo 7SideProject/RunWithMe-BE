@@ -4,7 +4,6 @@ import com.runwithme.runwithme.domain.user.MockEntityFactory;
 import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
-import com.runwithme.runwithme.domain.user.dto.converter.UserConverter;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
