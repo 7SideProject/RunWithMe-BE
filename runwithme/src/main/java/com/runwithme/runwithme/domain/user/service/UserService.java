@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.user.service;
 
+import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.dto.converter.UserConverter;
@@ -15,6 +16,18 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public UserProfileViewDto join(UserCreateDto dto) {
+        if (userRepository.existsByEmail(dto.email())) throw new IllegalArgumentException("Already email exists");
+
+        User joinUser = UserConverter.toEntity(dto);
+
+        return UserConverter.toViewDto(userRepository.save(joinUser));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(IllegalArgumentException::new);
+    }
 
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
         User findUser = userRepository.findById(userSeq).orElseThrow(() -> new IllegalArgumentException("Not found user by invalid user sequence."));
