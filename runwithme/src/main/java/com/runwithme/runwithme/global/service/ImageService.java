@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,7 +29,20 @@ public class ImageService {
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        CacheUtils.put("defaultImage", imageRepository.findById(1L).orElseThrow(IllegalArgumentException::new));
+        Optional<Image> optionalImage = imageRepository.findById(1L);
+        Image image;
+
+        if (optionalImage.isEmpty()) {
+            Image defaultImage = Image.builder()
+                    .originalName("defaultImage")
+                    .savedName("d95c0fed-1cee-4bd0-95a3-a3f3485e9045.jpg")
+                    .build();
+            image = imageRepository.save(defaultImage);
+        } else {
+            image = optionalImage.get();
+        }
+
+        CacheUtils.put("defaultImage", image);
     }
 
     public Long save(MultipartFile multipartFile) throws IOException {
