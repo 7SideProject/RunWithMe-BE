@@ -1,8 +1,9 @@
 package com.runwithme.runwithme.global.security.config;
 
-import com.runwithme.runwithme.domain.user.service.UserService;
 import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
 import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
+import com.runwithme.runwithme.global.security.handler.CustomAuthenticationFailureHandler;
+import com.runwithme.runwithme.global.security.handler.CustomAuthenticationSuccessHandler;
 import com.runwithme.runwithme.global.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import com.runwithme.runwithme.global.security.properties.JwtProperties;
@@ -53,8 +54,8 @@ public class SecurityConfig {
     };
 
     private final String[] PERMIT_ALL_USER = {
-            "/user/login",
-            "/user/join"
+            "/users/login",
+            "/users/join"
     };
 
     private final AuthTokenFactory authTokenFactory;
@@ -66,16 +67,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf().disable();
-
-        http.cors().configurationSource(corsConfigurationSource());
-
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.formLogin().disable();
-        http.httpBasic().disable();
-
-        http.oauth2Login(oauth2 -> oauth2
+        http
+                .csrf().disable()
+                .cors().configurationSource(corsConfigurationSource())
+        .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(authorizationEndpointConfig ->
                         authorizationEndpointConfig.baseUri("/oauth2/authorization")
                                 .authorizationRequestRepository(authorizationRequestRepository()))
@@ -83,20 +83,17 @@ public class SecurityConfig {
                         userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(customOAuth2UserService)
                 )
-                .successHandler(oAuth2AuthenticationSuccessHandler()));
-
-        http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-
-        http.authorizeHttpRequests()
+                .successHandler(oAuth2AuthenticationSuccessHandler()))
+                .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+        .and()
+                .authorizeHttpRequests()
                 .requestMatchers(PERMIT_ALL_SWAGGER).permitAll()
                 .requestMatchers(PERMIT_ALL_ACTUATOR).permitAll()
                 .requestMatchers(PERMIT_ALL_USER).permitAll()
-                .anyRequest().authenticated();
-
-        http.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .anyRequest().authenticated()
+        .and()
+                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -118,10 +115,12 @@ public class SecurityConfig {
 
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter() {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authTokenFactory, properties);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
 
         customAuthenticationFilter.setFilterProcessesUrl("/users/login");
         customAuthenticationFilter.setAuthenticationManager(authenticationManager());
+        customAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(authTokenFactory, properties));
+        customAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 
         return customAuthenticationFilter;
     }

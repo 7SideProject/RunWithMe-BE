@@ -2,6 +2,7 @@ package com.runwithme.runwithme.global.security.provider;
 
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.service.UserService;
+import com.runwithme.runwithme.global.security.exception.DeletedUserException;
 import com.runwithme.runwithme.global.security.model.PrincipalDetails;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +30,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String email = (String) token.getPrincipal();
         String password = (String) token.getCredentials();
 
-        User user = userService.findByEmail(email);
-        PrincipalDetails principal = new PrincipalDetails(user, null);
+        try {
+            User user = userService.findByEmail(email);
+            PrincipalDetails principal = new PrincipalDetails(user, null);
 
-        if (!encoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Invalid password");
+            if (!encoder.matches(password, user.getPassword())) {
+                throw new BadCredentialsException("잘못된 패스워드입니다.");
+            }
+
+            if (user.isDeleted()) throw new DeletedUserException("삭제된 회원입니다.");
+
+            return new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
+        } catch (IllegalArgumentException e) {
+            throw new BadCredentialsException("해당 이메일의 유저가 존재하지 않습니다.");
         }
-
-        return new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
     }
 
     @Override
