@@ -34,7 +34,7 @@ public class UserController {
             return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, response), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 

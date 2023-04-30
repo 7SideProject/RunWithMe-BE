@@ -18,7 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserProfileViewDto join(UserCreateDto dto) {
-        if (userRepository.existsByEmail(dto.email())) throw new IllegalArgumentException("Already email exists");
+        if (userRepository.existsByEmail(dto.email())) throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
 
         User joinUser = UserConverter.toEntity(dto);
 
