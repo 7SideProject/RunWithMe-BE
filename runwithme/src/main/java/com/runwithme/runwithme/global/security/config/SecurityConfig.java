@@ -120,7 +120,7 @@ public class SecurityConfig {
     public CustomAuthenticationFilter customAuthenticationFilter() {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authTokenFactory, properties);
 
-        customAuthenticationFilter.setFilterProcessesUrl("/user/login");
+        customAuthenticationFilter.setFilterProcessesUrl("/users/login");
         customAuthenticationFilter.setAuthenticationManager(authenticationManager());
 
         return customAuthenticationFilter;
