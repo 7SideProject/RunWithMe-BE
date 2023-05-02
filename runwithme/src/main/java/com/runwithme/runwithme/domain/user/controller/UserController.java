@@ -26,7 +26,12 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/join")
+    @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "회원가입", description = "이메일 회원가입 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = UserProfileViewDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
+    })
     public ResponseEntity<ResultResponseDto> join(@RequestBody UserCreateDto dto) {
         try {
             UserProfileViewDto response = userService.join(dto);
