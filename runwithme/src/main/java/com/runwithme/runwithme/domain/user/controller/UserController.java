@@ -49,7 +49,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserProfileViewDto.class)) }),
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
-    public ResponseEntity<?> setUserProfile(@PathVariable Long userSeq, @RequestBody UserProfileDto dto) {
+    public ResponseEntity<ResultResponseDto> setUserProfile(@PathVariable Long userSeq, @RequestBody UserProfileDto dto) {
         try {
             UserProfileViewDto userProfileViewDto = userService.setUserProfile(userSeq, dto);
             log.info("Set profile user {}", userSeq);
@@ -57,6 +57,23 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/{userSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "프로필 조회", description = "유저 프로필을 조회하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserProfileViewDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
+    })
+    public ResponseEntity<ResultResponseDto> getUserProfile(@PathVariable Long userSeq) {
+        try {
+            UserProfileViewDto userProfileViewDto = userService.getUserProfile(userSeq);
+            log.info("Get profile user {}", userSeq);
+            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userProfileViewDto), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }

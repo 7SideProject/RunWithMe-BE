@@ -36,4 +36,10 @@ public class UserService {
 
         return UserConverter.toViewDto(findUser);
     }
+
+    public UserProfileViewDto getUserProfile(Long userSeq) {
+        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new IllegalArgumentException("Not found user by invalid user sequence."));
+
+        return UserConverter.toViewDto(findUser);
+    }
 }

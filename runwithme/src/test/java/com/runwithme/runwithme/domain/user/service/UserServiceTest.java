@@ -126,5 +126,48 @@ class UserServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("[프로필 조회] 사용자는 SEQ를 이용해 유저 프로필을 조회할 수 있습니다.")
+    class GetUserProfile {
 
+        UserProfileViewDto resultDto;
+
+        @BeforeEach
+        void beforeEach() {
+            resultDto = UserProfileViewDto.builder()
+                    .seq(1L)
+                    .email("mungmnb777@gmail.com")
+                    .height(173)
+                    .weight(60)
+                    .nickname("명범")
+                    .point(0)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("[성공 케이스]")
+        void success() {
+            // given
+            BDDMockito.given(userRepository.findById(eq(1L))).willReturn(Optional.of(MockEntityFactory.user()));
+
+            // when
+            UserProfileViewDto actual = userService.getUserProfile(1L);
+
+            // then
+            Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(resultDto);
+
+        }
+
+        @Test
+        @DisplayName("[실패 케이스 1] 해당 SEQ의 유저가 없는 경우")
+        void failure() {
+            // given
+            BDDMockito.given(userRepository.findById(eq(1L))).willThrow(IllegalArgumentException.class);
+
+            // when
+
+            // then
+            Assertions.assertThatThrownBy(() -> userService.getUserProfile(1L)).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }

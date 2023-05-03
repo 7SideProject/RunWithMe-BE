@@ -65,7 +65,7 @@ class UserControllerTest {
             BDDMockito.given(userService.join(any(UserCreateDto.class))).willReturn(result);
 
             // when
-            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post("/user/join")
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post("/users/join")
                     .content(JacksonUtils.convertToJson(given))
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(SecurityMockMvcRequestPostProcessors.csrf()));
@@ -89,7 +89,7 @@ class UserControllerTest {
             BDDMockito.given(userService.join(any(UserCreateDto.class))).willThrow(IllegalArgumentException.class);
 
             // when
-            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post("/user/join")
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post("/users/join")
                     .content(JacksonUtils.convertToJson(given))
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(SecurityMockMvcRequestPostProcessors.csrf()));
@@ -128,7 +128,7 @@ class UserControllerTest {
             BDDMockito.given(userService.setUserProfile(eq(1L), any(UserProfileDto.class))).willReturn(resultDto);
 
             // when
-            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.put("/user/1/profile")
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.put("/users/1/profile")
                     .content(JacksonUtils.convertToJson(givenDto))
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(SecurityMockMvcRequestPostProcessors.csrf()));
@@ -152,9 +152,65 @@ class UserControllerTest {
             BDDMockito.given(userService.setUserProfile(eq(1L), any(UserProfileDto.class))).willThrow(IllegalArgumentException.class);
 
             // when
-            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.put("/user/1/profile")
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.put("/users/1/profile")
                     .content(JacksonUtils.convertToJson(givenDto))
                     .contentType(MediaType.APPLICATION_JSON)
+                    .with(SecurityMockMvcRequestPostProcessors.csrf()));
+
+            // then
+            actions.andExpect(jsonPath("$.code").value("U101"));
+            actions.andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("[프로필 조회] 사용자는 SEQ를 이용해 유저 프로필을 조회할 수 있습니다.")
+    class GetUserProfile {
+        UserProfileViewDto resultDto;
+
+        @BeforeEach
+        void beforeEach() {
+            resultDto = UserProfileViewDto.builder()
+                    .seq(1L)
+                    .email("mungmnb777@gmail.com")
+                    .height(173)
+                    .weight(60)
+                    .nickname("명범")
+                    .point(0)
+                    .build();
+        }
+
+        @Test
+        @WithMockUser(roles = "USER")
+        @DisplayName("[성공 케이스]")
+        void success() throws Exception {
+            // given
+            BDDMockito.given(userService.getUserProfile(eq(1L))).willReturn(resultDto);
+
+            // when
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get("/users/1")
+                    .with(SecurityMockMvcRequestPostProcessors.csrf()));
+
+            // then
+            actions.andExpect(jsonPath("$.data.seq").value(1L));
+            actions.andExpect(jsonPath("$.data.email").value("mungmnb777@gmail.com"));
+            actions.andExpect(jsonPath("$.data.height").value(173));
+            actions.andExpect(jsonPath("$.data.weight").value(60));
+            actions.andExpect(jsonPath("$.data.nickname").value("명범"));
+            actions.andExpect(jsonPath("$.data.point").value(0));
+            actions.andExpect(jsonPath("$.code").value("U002"));
+            actions.andExpect(status().isOk());
+        }
+
+        @Test
+        @WithMockUser(roles = "USER")
+        @DisplayName("[실패 케이스 1] 해당 SEQ의 유저가 없는 경우")
+        void failure() throws Exception {
+            // given
+            BDDMockito.given(userService.getUserProfile(eq(1L))).willThrow(IllegalArgumentException.class);
+
+            // when
+            ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get("/users/1")
                     .with(SecurityMockMvcRequestPostProcessors.csrf()));
 
             // then

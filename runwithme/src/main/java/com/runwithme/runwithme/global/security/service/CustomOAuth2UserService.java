@@ -35,7 +35,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
-
         ProviderType providerType = ProviderType.valueOf(parseRegistrationId(userRequest));
 
         OAuth2User loginUser = ProviderUserFactory.build(providerType, oAuth2User.getAttributes());
