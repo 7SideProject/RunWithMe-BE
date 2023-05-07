@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.user.service;
 
+import com.runwithme.runwithme.domain.user.dto.DuplicatedViewDto;
 import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
@@ -41,5 +42,13 @@ public class UserService {
         User findUser = userRepository.findById(userSeq).orElseThrow(() -> new IllegalArgumentException("Not found user by invalid user sequence."));
 
         return UserConverter.toViewDto(findUser);
+    }
+
+    public DuplicatedViewDto isDuplicatedEmail(String email) {
+         return new DuplicatedViewDto(userRepository.existsByEmail(email));
+    }
+
+    public DuplicatedViewDto isDuplicatedNickname(String nickname) {
+        return new DuplicatedViewDto(userRepository.existsByNickname(nickname));
     }
 }

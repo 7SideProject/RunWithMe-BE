@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.user.controller;
 
+import com.runwithme.runwithme.domain.user.dto.DuplicatedViewDto;
 import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
@@ -75,5 +76,19 @@ public class UserController {
             log.error(e.getMessage());
             return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/duplicate-email")
+    public ResponseEntity<ResultResponseDto> isDuplicatedEmail(@RequestParam String email) {
+        DuplicatedViewDto duplicatedViewDto = userService.isDuplicatedEmail(email);
+        log.info("Success process");
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/duplicate-nickname")
+    public ResponseEntity<ResultResponseDto> isDuplicatedNickname(@RequestParam String nickname) {
+        DuplicatedViewDto duplicatedViewDto = userService.isDuplicatedNickname(nickname);
+        log.info("Success process");
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
     }
 }
