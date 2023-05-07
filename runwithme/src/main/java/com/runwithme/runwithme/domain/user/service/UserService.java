@@ -47,4 +47,8 @@ public class UserService {
     public DuplicatedViewDto isDuplicatedEmail(String email) {
          return new DuplicatedViewDto(userRepository.existsByEmail(email));
     }
+
+    public DuplicatedViewDto isDuplicatedNickname(String nickname) {
+        return new DuplicatedViewDto(userRepository.existsByNickname(nickname));
+    }
 }

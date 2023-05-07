@@ -84,4 +84,11 @@ public class UserController {
         log.info("Success process");
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
     }
+
+    @GetMapping(value = "/duplicate-nickname")
+    public ResponseEntity<ResultResponseDto> isDuplicatedNickname(@RequestParam String nickname) {
+        DuplicatedViewDto duplicatedViewDto = userService.isDuplicatedNickname(nickname);
+        log.info("Success process");
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
+    }
 }
