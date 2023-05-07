@@ -55,7 +55,8 @@ public class SecurityConfig {
 
     private final String[] PERMIT_ALL_USER = {
             "/users/login",
-            "/users/join"
+            "/users/join",
+            "/users/duplicate-email"
     };
 
     private final AuthTokenFactory authTokenFactory;
