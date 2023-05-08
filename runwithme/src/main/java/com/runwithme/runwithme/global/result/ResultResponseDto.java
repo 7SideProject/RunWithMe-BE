@@ -1,23 +1,26 @@
 package com.runwithme.runwithme.global.result;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+//import io.swagger.annotations.ApiModel;
+//import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.Data;
 import lombok.Getter;
 
 
-@ApiModel(description = "결과 응답 데이터")
+//@ApiModel(description = "결과 응답 데이터")
 @Getter
 @Data
 public class ResultResponseDto {
 
-    @ApiModelProperty(value = "Http 상태 코드")
+//    @ApiModelProperty(value = "Http 상태 코드")
+
     private int status;
-    @ApiModelProperty(value = "Business 상태 코드")
+//    @ApiModelProperty(value = "Business 상태 코드")
     private String code;
-    @ApiModelProperty(value = "응답 메세지")
+//    @ApiModelProperty(value = "응답 메세지")
     private String message;
-    @ApiModelProperty(value = "응답 데이터")
+//    @ApiModelProperty(value = "응답 데이터")
     private Object data;
 
     public ResultResponseDto(ResultCode resultCode, Object data) {
