@@ -14,8 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.transform.Result;
-
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 @RestController
