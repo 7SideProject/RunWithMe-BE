@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -90,5 +91,10 @@ public class UserController {
         DuplicatedViewDto duplicatedViewDto = userService.isDuplicatedNickname(nickname);
         log.info("Success process");
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{userSeq}/profile-image", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> getImage(@PathVariable Long userSeq) {
+        return new ResponseEntity<>(userService.getUserImage(userSeq), HttpStatus.OK);
     }
 }
