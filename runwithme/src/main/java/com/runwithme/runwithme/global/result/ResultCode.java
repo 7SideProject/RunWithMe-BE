@@ -16,6 +16,9 @@ public enum ResultCode {
     // User
     // 예시
     LOGIN_SUCCESS(200, "U001", "로그인에 성공하였습니다."),
+    USER_REQUEST_SUCCESS(200, "U002", "요청을 성공적으로 수행했습니다."),
+    INVALID_PARAMETER_FAIL(400, "U101", "잘못된 파라미터입니다."),
+    UNAUTHORIZED(401, "U102", "인증에 실패했습니다."),
 
     // Record
     CREATE_RECORD_SUCCESS(200, "R001", "기록 등록에 성공하였습니다."),
