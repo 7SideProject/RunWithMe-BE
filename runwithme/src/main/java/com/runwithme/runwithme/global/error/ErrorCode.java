@@ -15,13 +15,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
     // User
-    // 예시
     USER_NOT_FOUND(400, "U001", "존재하지 않는 유저입니다."),
 
     // Challenge
-    // 예시
     CHALLENGE_NOT_FOUND(400, "C001", "존재하지 않는 챌린지입니다."),
+    CHALLENGE_JOIN_ALREADY_EXIST(400, "C002", "이미 가입한 챌린지 입니다."),
 
+    // Record
+    RECORD_ALREADY_EXIST(400, "R001", "오늘 이미 기록을 등록 하였습니다."),
 
     ;
 
