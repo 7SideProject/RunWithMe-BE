@@ -2,6 +2,7 @@ package com.runwithme.runwithme.domain.challenge.service;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardPostDto;
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoard;
@@ -57,6 +58,28 @@ public class ChallengeService {
     }
 
     @Transactional
+    public void createChallenge(ChallengeCreateDto challengeCreateDto){
+        final Long userSeq = new Long(1);
+
+        final Challenge challenge = Challenge.builder()
+                .managerSeq(userSeq)
+                .imgSeq(challengeCreateDto.getImgSeq())
+                .name(challengeCreateDto.getName())
+                .description(challengeCreateDto.getDescription())
+                .goalDays(challengeCreateDto.getGoalDays())
+                .goalType(challengeCreateDto.getGoalType())
+                .goalAmount(challengeCreateDto.getGoalAmount())
+                .dateStart(challengeCreateDto.getDateStart())
+                .dateEnd(challengeCreateDto.getDateEnd())
+                .timeStart(challengeCreateDto.getTimeStart())
+                .timeEnd(challengeCreateDto.getTimeEnd())
+                .password(challengeCreateDto.getPassword())
+                .cost(challengeCreateDto.getCost()).build();
+
+        challengeRepository.save(challenge);
+    }
+
+    @Transactional
     public Challenge getChallengeData(Long challengeSeq){
         final Long userSeq = new Long(1);
 
@@ -75,8 +98,12 @@ public class ChallengeService {
 
         final Challenge challenge = challengeRepository.findById(challengeSeq).get();
 
-        challengeUserRepository.save(new ChallengeUser(userSeq, challenge));
-        return true;
+        if (challenge.getPassword() == password) {
+            challengeUserRepository.save(new ChallengeUser(userSeq, challenge));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.record.controller;
 
+import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
@@ -62,5 +63,17 @@ public class RecordController {
     public ResponseEntity<ResultResponseDto> getRunRecord(@PathVariable(value = "challengeSeq") Long challengeSeq, @PathVariable(value = "runRecordSeq") Long runRecordSeq){
         final RunRecord runRecord = recordService.getRunRecord(runRecordSeq);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ONE_RECORD_SUCCESS, runRecord));
+    }
+
+    @Operation(operationId = "addCoordinate", summary = "Record Coordinate 등록")
+    @PostMapping("/{recordSeq}/coordinate")
+    public ResponseEntity<ResultResponseDto> addCoordinate(@PathVariable(value = "recordSeq") Long recordSeq, @RequestBody List<CoordinateDto> coordinates){
+        final boolean success = recordService.addCoordinate(recordSeq, coordinates);
+
+        if (success) {
+            return ResponseEntity.ok().body(ResultResponseDto.of(ADD_COORDINATES_SUCCESS));
+        } else {
+            return ResponseEntity.ok().body(ResultResponseDto.of(ADD_COORDINATES_FAIL));
+        }
     }
 }

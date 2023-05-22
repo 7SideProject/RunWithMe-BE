@@ -1,6 +1,7 @@
 package com.runwithme.runwithme.domain.challenge.controller;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardPostDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.service.ChallengeService;
 import com.runwithme.runwithme.global.dto.PagingResultDto;
@@ -29,6 +30,7 @@ public class ChallengeController {
     @PostMapping("/{challengeSeq}/board")
     public ResponseEntity<ResultResponseDto> createBoard(@PathVariable(value = "challengeSeq") Long challengeSeq, @RequestBody ChallengeBoardPostDto challengeBoardPostDto){
         challengeService.createBoard(challengeSeq, challengeBoardPostDto);
+
         return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_BOARD_SUCCESS));
     }
 
@@ -37,6 +39,7 @@ public class ChallengeController {
     @GetMapping("/{challengeSeq}/board")
     public ResponseEntity<ResultResponseDto> getBoardList(@PathVariable(value = "challengeSeq") Long challengeSeq, @PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getBoardList(challengeSeq, pageable);
+
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_BOARD_SUCCESS, pagingResultDto));
     }
 
@@ -45,14 +48,23 @@ public class ChallengeController {
     @DeleteMapping("/{challengeSeq}/board/{boardSeq}")
     public ResponseEntity<ResultResponseDto> deleteBoard(@PathVariable(value = "boardSeq") Long boardSeq){
         challengeService.deleteBoard(boardSeq);
+
         return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_BOARD_SUCCESS));
     }
 
+    @Operation(operationId = "createChallenge", summary = "챌린지 등록")
+    @PostMapping
+    public ResponseEntity<ResultResponseDto> createChallenge(@RequestBody ChallengeCreateDto challengeCreateDto){
+        challengeService.createChallenge(challengeCreateDto);
+
+        return null;
+    }
 
     @Operation(operationId = "getChallengeData", summary = "챌린지 상세 조회")
     @GetMapping("/{challengeSeq}")
     public ResponseEntity<ResultResponseDto> getChallengeData(@PathVariable(value = "challengeSeq") Long challengeSeq){
         final Challenge challenge = challengeService.getChallengeData(challengeSeq);
+
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ONE_CHALLENGE_SUCCESS, challenge));
     }
 
@@ -60,6 +72,7 @@ public class ChallengeController {
     @PostMapping("/{challengeSeq}/join")
     public ResponseEntity<ResultResponseDto> joinChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq, String password){
         final boolean success = challengeService.joinChallengeUser(challengeSeq, password);
+
         if (success) {
             return ResponseEntity.ok().body(ResultResponseDto.of(JOIN_CHALLENGE_SUCCESS));
         } else {
@@ -71,6 +84,7 @@ public class ChallengeController {
     @GetMapping("/{challengeSeq}/is")
     public ResponseEntity<ResultResponseDto> isChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq){
         final boolean success = challengeService.isChallengeUser(challengeSeq);
+
         if (success) {
             return ResponseEntity.ok().body(ResultResponseDto.of(CHECK_IN_CHALLENGE_SUCCESS));
         } else {
@@ -86,7 +100,7 @@ public class ChallengeController {
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
     }
 
-    @Operation(operationId = "getMyChallengeList", summary = "전체 챌린지 리스트 조회")
+    @Operation(operationId = "getMyChallengeList", summary = "내 챌린지 리스트 조회")
     @GetMapping("/my")
     public ResponseEntity<ResultResponseDto> getMyChallengeList(@PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getMyChallengeList(pageable);

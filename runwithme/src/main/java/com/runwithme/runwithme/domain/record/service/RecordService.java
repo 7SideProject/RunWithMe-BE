@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.record.service;
 
+import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
@@ -82,5 +83,27 @@ public class RecordService {
         final RunRecord runRecord = runRecordRepository.findById(runRecordSeq).get();
 
         return runRecord;
+    }
+
+    @Transactional
+    public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates){
+        int[] results = runRecordRepository.coordinatesInsertBatch(recordSeq, coordinates);
+
+        int success = 0;
+        int fail = 0;
+
+        for (int i = 0; i < results.length; i++) {
+            if (results[i] == -2) {
+                success++;
+            } else {
+                fail++;
+            }
+        }
+
+        if (results.length == success) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
