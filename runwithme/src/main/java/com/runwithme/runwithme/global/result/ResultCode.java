@@ -26,6 +26,8 @@ public enum ResultCode {
     GET_MY_RECORD_SUCCESS(200, "R003", "내 기록 수치 조회에 성공하였습니다."),
     GET_ONE_RECORD_SUCCESS(200, "R004", "기록 상세 조회에 성공하였습니다."),
     GET_ALL_RECORD_SUCCESS(200, "R005", "기록 전체 조회에 성공하였습니다."),
+    ADD_COORDINATES_SUCCESS(200, "R006", "좌표 등록에 성공하였습니다."),
+    ADD_COORDINATES_FAIL(200, "R007", "좌표 등록에 실패하였습니다."),
 
     // Challenge
     GET_ONE_CHALLENGE_SUCCESS(200, "C001", "챌린지 상세 조회에 성공하였습니다."),

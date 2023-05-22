@@ -46,8 +46,8 @@ public class RunRecord {
     @Column(name = "avgSpeed")
     private Long avgSpeed;
 
-//    @Column(name = "coordinates")
-//    private List<Long> coordinates;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "runRecord")
+    private List<RecordCoordinate> coordinates;
 
     @Column(name = "reg_time", nullable = false)
     @CreationTimestamp

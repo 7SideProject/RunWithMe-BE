@@ -17,7 +17,6 @@ public class ChallengeResponseDto {
     private Long goalAmount;
     private LocalDateTime timeStart;
     private LocalDateTime timeEnd;
-//    private boolean joinUserFlag;
 
     @QueryProjection
     public ChallengeResponseDto(Long seq, Long managerSeq, String name, Long imgSeq, Long goalDays, String goalType, Long goalAmount, LocalDateTime timeStart, LocalDateTime timeEnd) {

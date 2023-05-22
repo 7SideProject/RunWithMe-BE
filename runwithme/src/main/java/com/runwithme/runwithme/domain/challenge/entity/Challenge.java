@@ -1,14 +1,13 @@
 package com.runwithme.runwithme.domain.challenge.entity;
 
-import com.runwithme.runwithme.domain.user.entity.User;
-import lombok.*;
-
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -72,4 +71,22 @@ public class Challenge {
 
 //    @Column(name = "join_user")
 //    private List<Long> users = new ArrayList<>();
+
+    @Builder
+    public Challenge(Long managerSeq, Long imgSeq, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, LocalDateTime timeStart, LocalDateTime timeEnd, String password, Long cost, Long maxMember) {
+        this.managerSeq = managerSeq;
+        this.imgSeq = imgSeq;
+        this.name = name;
+        this.description = description;
+        this.goalDays = goalDays;
+        this.goalType = goalType;
+        this.goalAmount = goalAmount;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.password = password;
+        this.cost = cost;
+        this.maxMember = maxMember;
+    }
 }
