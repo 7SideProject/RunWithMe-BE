@@ -1,9 +1,6 @@
 package com.runwithme.runwithme.domain.user.controller;
 
-import com.runwithme.runwithme.domain.user.dto.DuplicatedViewDto;
-import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
-import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
-import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
+import com.runwithme.runwithme.domain.user.dto.*;
 import com.runwithme.runwithme.domain.user.service.UserService;
 import com.runwithme.runwithme.global.result.ResultCode;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
@@ -14,10 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -90,5 +90,20 @@ public class UserController {
         DuplicatedViewDto duplicatedViewDto = userService.isDuplicatedNickname(nickname);
         log.info("Success process");
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{userSeq}/profile-image", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<Resource> getImage(@PathVariable Long userSeq) {
+        return new ResponseEntity<>(userService.getUserImage(userSeq), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{userSeq}/profile-image")
+    public ResponseEntity<Void> changeImage(@PathVariable Long userSeq, @ModelAttribute UserProfileImageDto dto) {
+        try {
+            userService.changeImage(userSeq, dto);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

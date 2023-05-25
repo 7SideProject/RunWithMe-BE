@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,17 +46,29 @@ public class ImageService {
         CacheUtils.put("defaultImage", image);
     }
 
-    public Long save(MultipartFile multipartFile) throws IOException {
+    public Image save(MultipartFile multipartFile) throws IOException {
         MultipartFileUtils multipartFileUtils = new MultipartFileUtils(multipartFile);
 
         uploadToS3(multipartFileUtils);
 
-        Image image = Image.builder()
+        return Image.builder()
                 .originalName(multipartFileUtils.getOriginalFileName())
                 .savedName(multipartFileUtils.getUuidFileName())
                 .build();
+    }
 
-        return imageRepository.save(image).getSeq();
+    public void delete(Long imageSeq) {
+        Image image = imageRepository.findById(imageSeq).orElseThrow(IllegalArgumentException::new);
+
+        image.delete();
+
+        s3Utils.delete("image", image.getSavedName());
+    }
+
+    public Resource getImage(Long imageSeq) {
+        Image image = imageRepository.findById(imageSeq).orElseThrow(IllegalArgumentException::new);
+
+        return s3Utils.download("image", image.getSavedName());
     }
 
     private void uploadToS3(MultipartFileUtils multipartFileUtils) throws IOException {
