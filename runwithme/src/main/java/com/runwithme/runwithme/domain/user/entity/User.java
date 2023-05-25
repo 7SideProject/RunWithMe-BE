@@ -16,7 +16,7 @@ public class User extends BaseEntity {
     @Column(name = "user_seq")
     private Long seq;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "image_seq")
     private Image image;
 
@@ -79,6 +79,10 @@ public class User extends BaseEntity {
 
     public boolean isTempUser() {
         return role == Role.TEMP_USER;
+    }
+
+    public void changeImage(Image image) {
+        this.image = image;
     }
 
     public static User create(OAuth2User oAuth2User) {
