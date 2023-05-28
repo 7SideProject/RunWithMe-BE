@@ -16,7 +16,7 @@ public class User extends BaseEntity {
     @Column(name = "user_seq")
     private Long seq;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_seq")
     private Image image;
 
