@@ -44,6 +44,10 @@ public class UserController {
         }
     }
 
+    @PostMapping(value = "/login")
+    @ResponseStatus(HttpStatus.OK)
+    public void login(@RequestBody UserLoginDto dto) {}
+
     @PutMapping(value = "/{userSeq}/profile", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "프로필 설정", description = "유저 프로필을 설정하는 API입니다.")
     @ApiResponses({
