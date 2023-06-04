@@ -81,6 +81,10 @@ public class User extends BaseEntity {
         return role == Role.TEMP_USER;
     }
 
+    public void changeImage(Image image) {
+        this.image = image;
+    }
+
     public static User create(OAuth2User oAuth2User) {
         return User.builder()
                 .role(Role.TEMP_USER)
