@@ -10,6 +10,8 @@ import com.runwithme.runwithme.domain.challenge.entity.ChallengeUser;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeBoardRepository;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserRepository;
+import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.dto.PagingResultDto;
 import com.runwithme.runwithme.global.error.exception.EntityAlreadyExistException;
 
@@ -31,13 +33,17 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeBoardRepository challengeBoardRepository;
     private final ChallengeUserRepository challengeUserRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void createBoard(Long challengeSeq, ChallengeBoardPostDto challengeBoardPostDto){
         final Long userSeq = new Long(1);
+
+        final User user = userRepository.findById(userSeq).get();
+
         final LocalDateTime challengeBoardRegTime = LocalDateTime.now();
         final ChallengeBoard challengeBoard = ChallengeBoard.builder()
-                .userSeq(userSeq)
+                .user(user)
                 .challengeSeq(challengeSeq)
                 .imgSeq(challengeBoardPostDto.getImgSeq())
                 .challengeBoardContent(challengeBoardPostDto.getChallengeBoardContent())
@@ -47,7 +53,7 @@ public class ChallengeService {
 
     @Transactional
     public PagingResultDto getBoardList(Long challengeSeq, Pageable pageable){
-        final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllByChallengeSeq(challengeSeq, pageable);
+        final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllBoardPage(challengeSeq, pageable);
         final PagingResultDto<ChallengeBoardResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), allBoards.getTotalPages() - 1, allBoards.getContent());
         return pagingResultDto;
     }

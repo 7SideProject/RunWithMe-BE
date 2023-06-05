@@ -8,8 +8,10 @@ import com.runwithme.runwithme.global.dto.PagingResultDto;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
 //import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,8 @@ public class ChallengeController {
 
     @Operation(operationId = "getBoardList", summary = "게시판 조회")
     @GetMapping("/{challengeSeq}/board")
-    public ResponseEntity<ResultResponseDto> getBoardList(@PathVariable(value = "challengeSeq") Long challengeSeq, @PageableDefault Pageable pageable){
+    @PageableAsQueryParam
+    public ResponseEntity<ResultResponseDto> getBoardList(@PathVariable(value = "challengeSeq") Long challengeSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getBoardList(challengeSeq, pageable);
 
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_BOARD_SUCCESS, pagingResultDto));
@@ -94,7 +97,8 @@ public class ChallengeController {
 
     @Operation(operationId = "getAllChallengeList", summary = "전체 챌린지 리스트 조회")
     @GetMapping("/all")
-    public ResponseEntity<ResultResponseDto> getAllChallengeList(@PageableDefault Pageable pageable){
+    @PageableAsQueryParam
+    public ResponseEntity<ResultResponseDto> getAllChallengeList(@Parameter(hidden = true)@PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getAllChallengeList(pageable);
 
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
@@ -102,7 +106,8 @@ public class ChallengeController {
 
     @Operation(operationId = "getMyChallengeList", summary = "내 챌린지 리스트 조회")
     @GetMapping("/my")
-    public ResponseEntity<ResultResponseDto> getMyChallengeList(@PageableDefault Pageable pageable){
+    @PageableAsQueryParam
+    public ResponseEntity<ResultResponseDto> getMyChallengeList(@Parameter(hidden = true)@PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getMyChallengeList(pageable);
 
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));

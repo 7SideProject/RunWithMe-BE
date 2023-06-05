@@ -8,4 +8,5 @@ public interface ChallengeRepositoryQuerydsl {
 
     Page<ChallengeResponseDto> findAllChallengePage(Long userSeq, Pageable pageable);
     Page<ChallengeResponseDto> findMyChallengePage(Long userSeq, Pageable pageable);
+
 }
