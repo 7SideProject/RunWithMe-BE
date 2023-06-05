@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.challenge.entity;
 
+import com.runwithme.runwithme.domain.user.entity.User;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -17,8 +18,9 @@ public class ChallengeBoard {
     @Column(name = "challenge_seq")
     private Long challengeSeq;
 
-    @Column(name = "user_seq")
-    private Long userSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_seq")
+    private User user;
 
     @Column(name = "img_seq")
     private Long imgSeq;
@@ -30,8 +32,8 @@ public class ChallengeBoard {
     private LocalDateTime challengeBoardRegTime;
 
     @Builder
-    public ChallengeBoard(Long userSeq, Long challengeSeq, Long imgSeq, String challengeBoardContent, LocalDateTime challengeBoardRegTime){
-        this.userSeq = userSeq;
+    public ChallengeBoard(User user, Long challengeSeq, Long imgSeq, String challengeBoardContent, LocalDateTime challengeBoardRegTime){
+        this.user = user;
         this.challengeSeq = challengeSeq;
         this.imgSeq = imgSeq;
         this.challengeBoardContent = challengeBoardContent;

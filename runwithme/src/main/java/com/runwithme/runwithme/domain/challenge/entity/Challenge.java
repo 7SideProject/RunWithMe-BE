@@ -69,9 +69,6 @@ public class Challenge {
     @Column(name = "reg_time")
     private LocalDateTime regTime;
 
-//    @Column(name = "join_user")
-//    private List<Long> users = new ArrayList<>();
-
     @Builder
     public Challenge(Long managerSeq, Long imgSeq, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, LocalDateTime timeStart, LocalDateTime timeEnd, String password, Long cost, Long maxMember) {
         this.managerSeq = managerSeq;

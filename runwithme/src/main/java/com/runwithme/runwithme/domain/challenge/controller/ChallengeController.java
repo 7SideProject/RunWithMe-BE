@@ -97,7 +97,8 @@ public class ChallengeController {
 
     @Operation(operationId = "getAllChallengeList", summary = "전체 챌린지 리스트 조회")
     @GetMapping("/all")
-    public ResponseEntity<ResultResponseDto> getAllChallengeList(@PageableDefault Pageable pageable){
+    @PageableAsQueryParam
+    public ResponseEntity<ResultResponseDto> getAllChallengeList(@Parameter(hidden = true)@PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getAllChallengeList(pageable);
 
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
@@ -105,7 +106,8 @@ public class ChallengeController {
 
     @Operation(operationId = "getMyChallengeList", summary = "내 챌린지 리스트 조회")
     @GetMapping("/my")
-    public ResponseEntity<ResultResponseDto> getMyChallengeList(@PageableDefault Pageable pageable){
+    @PageableAsQueryParam
+    public ResponseEntity<ResultResponseDto> getMyChallengeList(@Parameter(hidden = true)@PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getMyChallengeList(pageable);
 
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
