@@ -25,15 +25,15 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setCharacterEncoding(CharEncoding.UTF_8);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        setResponseBody(response, exception);
+        setResponseBody(response);
     }
 
-    private void setResponseBody(HttpServletResponse response, AuthenticationException exception) throws IOException {
+    private void setResponseBody(HttpServletResponse response) throws IOException {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        String responseBody = om.writerWithDefaultPrettyPrinter().writeValueAsString(ResultResponseDto.of(ResultCode.UNAUTHORIZED, exception.getMessage()));
+        String responseBody = om.writerWithDefaultPrettyPrinter().writeValueAsString(ResultResponseDto.of(ResultCode.UNAUTHORIZED));
         PrintWriter writer = response.getWriter();
         writer.write(responseBody);
     }
