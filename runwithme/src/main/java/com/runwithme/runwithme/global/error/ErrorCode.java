@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.global.error;
 
+import com.runwithme.runwithme.global.error.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -29,4 +30,6 @@ public enum ErrorCode {
     private final int status;
     private final String code;
     private final String message;
+
+
 }

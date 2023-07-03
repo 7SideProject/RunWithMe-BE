@@ -20,5 +20,4 @@ public class ErrorResponseDto {
     public static ErrorResponseDto of(final ErrorCode code) {
         return new ErrorResponseDto(code);
     }
-
 }

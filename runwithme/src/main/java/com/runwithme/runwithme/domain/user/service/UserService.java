@@ -4,6 +4,7 @@ import com.runwithme.runwithme.domain.user.dto.*;
 import com.runwithme.runwithme.domain.user.dto.converter.UserConverter;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
+import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.CacheUtils;
 import jakarta.transaction.Transactional;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
+
+import static com.runwithme.runwithme.global.error.ErrorCode.USER_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -34,14 +37,12 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() ->
-            new IllegalStateException("해당 이메일을 가진 유저가 존재하지 않습니다.")
-        );
+        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
         User findUser = userRepository.findById(userSeq).orElseThrow(() ->
-            new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
         );
 
         findUser.setProfile(dto);
@@ -51,14 +52,14 @@ public class UserService {
 
     public UserProfileViewDto getUserProfile(Long userSeq) {
         User findUser = userRepository.findById(userSeq).orElseThrow(() ->
-            new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
         );
 
         return UserConverter.toViewDto(findUser);
     }
 
     public DuplicatedViewDto isDuplicatedEmail(String email) {
-         return new DuplicatedViewDto(userRepository.existsByEmail(email));
+        return new DuplicatedViewDto(userRepository.existsByEmail(email));
     }
 
     public DuplicatedViewDto isDuplicatedNickname(String nickname) {
@@ -67,7 +68,7 @@ public class UserService {
 
     public Resource getUserImage(Long userSeq) {
         User user = userRepository.findById(userSeq).orElseThrow(() ->
-            new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
         );
         return imageService.getImage(user.getImage().getSeq());
     }
@@ -75,7 +76,7 @@ public class UserService {
     public void changeImage(Long userSeq, UserProfileImageDto dto) {
         try {
             User user = userRepository.findById(userSeq).orElseThrow(() ->
-                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+                    new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
             );
             if (!ObjectUtils.nullSafeEquals(user.getImage(), CacheUtils.get("defaultImage"))) {
                 imageService.delete(user.getImage().getSeq());
