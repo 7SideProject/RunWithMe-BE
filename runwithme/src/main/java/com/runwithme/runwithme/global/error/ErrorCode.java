@@ -16,6 +16,7 @@ import lombok.Getter;
 public enum ErrorCode {
     // User
     USER_NOT_FOUND(400, "U001", "존재하지 않는 유저입니다."),
+    AUTHENTICATION_FAIL(401, "U002", "로그인이 필요한 화면입니다."),
 
     // Challenge
     CHALLENGE_NOT_FOUND(400, "C001", "존재하지 않는 챌린지입니다."),

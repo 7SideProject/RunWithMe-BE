@@ -7,6 +7,7 @@ import com.runwithme.runwithme.domain.record.entity.RunRecord;
 import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
 import com.runwithme.runwithme.domain.record.repository.RunRecordRepository;
 import com.runwithme.runwithme.global.error.exception.EntityAlreadyExistException;
+import com.runwithme.runwithme.global.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +25,11 @@ public class RecordService {
     private final RunRecordRepository runRecordRepository;
     private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
 
+    private final AuthUtils authUtils;
+
     @Transactional
     public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
 
         if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())){
             throw new EntityAlreadyExistException(RECORD_ALREADY_EXIST);
@@ -51,7 +54,7 @@ public class RecordService {
 
     @Transactional
     public ChallengeTotalRecord getTotalRecord(Long challengeSeq){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
 
         final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
 
@@ -60,7 +63,7 @@ public class RecordService {
 
     @Transactional
     public List<RunRecord> getMyRunRecord(Long challengeSeq){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
 
         final List<RunRecord> myRunRecords = runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
 
@@ -69,7 +72,7 @@ public class RecordService {
 
     @Transactional
     public List<RunRecord> getAllRunRecord(Long challengeSeq){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
 
         final List<RunRecord> allRunRecords = runRecordRepository.findAllByChallengeSeq(challengeSeq);
 
@@ -78,7 +81,7 @@ public class RecordService {
 
     @Transactional
     public RunRecord getRunRecord(Long runRecordSeq){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
 
         final RunRecord runRecord = runRecordRepository.findById(runRecordSeq).get();
 

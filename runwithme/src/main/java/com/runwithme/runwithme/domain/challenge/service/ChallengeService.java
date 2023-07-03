@@ -14,6 +14,7 @@ import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.error.exception.EntityAlreadyExistException;
 
 import com.runwithme.runwithme.global.service.ImageService;
+import com.runwithme.runwithme.global.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,11 +36,11 @@ public class ChallengeService {
     private final UserRepository userRepository;
     private final ImageService imageService;
 
+    private final AuthUtils authUtils;
+
     @Transactional
     public void createBoard(Long challengeSeq, ChallengeBoardPostDto challengeBoardPostDto){
-        final Long userSeq = new Long(1);
-
-        final User user = userRepository.findById(userSeq).get();
+        final User user = authUtils.getLoginUser();
 
         final LocalDateTime challengeBoardRegTime = LocalDateTime.now();
         final ChallengeBoard challengeBoard = ChallengeBoard.builder()
@@ -53,6 +54,8 @@ public class ChallengeService {
 
     @Transactional
     public PagingResultDto getBoardList(Long challengeSeq, Pageable pageable){
+        final User user = authUtils.getLoginUser();
+
         final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllBoardPage(challengeSeq, pageable);
         final PagingResultDto<ChallengeBoardResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), allBoards.getTotalPages() - 1, allBoards.getContent());
         return pagingResultDto;
@@ -60,13 +63,14 @@ public class ChallengeService {
 
     @Transactional
     public void deleteBoard(Long boardSeq){
+        final User user = authUtils.getLoginUser();
+
         challengeBoardRepository.deleteById(boardSeq);
     }
 
     @Transactional
     public void createChallenge(ChallengeCreateDto challengeCreateDto, ChallengeImageDto imgFile) throws IOException {
-        final Long userSeq = new Long(1);
-        final User user = userRepository.findById(userSeq).orElseThrow(IllegalArgumentException::new);
+        final User user = authUtils.getLoginUser();
 
         final Image savedImage = imageService.save(imgFile.image());
 
@@ -91,7 +95,7 @@ public class ChallengeService {
 
     @Transactional
     public Challenge getChallengeData(Long challengeSeq){
-        final Long userSeq = new Long(1);
+        final User user = authUtils.getLoginUser();
 
         final Challenge challenge = challengeRepository.findById(challengeSeq).get();
 
@@ -100,7 +104,7 @@ public class ChallengeService {
 
     @Transactional
     public boolean joinChallengeUser(Long challengeSeq, String password){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
 
         if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)){
             throw new EntityAlreadyExistException(CHALLENGE_JOIN_ALREADY_EXIST);
@@ -118,7 +122,7 @@ public class ChallengeService {
 
     @Transactional
     public boolean isChallengeUser(Long challengeSeq){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
 
         if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)){
             throw new EntityAlreadyExistException(CHALLENGE_JOIN_ALREADY_EXIST);
@@ -129,7 +133,7 @@ public class ChallengeService {
 
     @Transactional
     public PagingResultDto getAllChallengeList(Pageable pageable){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findAllChallengePage(userSeq, pageable);
         final PagingResultDto<ChallengeResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
 
@@ -138,7 +142,7 @@ public class ChallengeService {
 
     @Transactional
     public PagingResultDto getMyChallengeList(Pageable pageable){
-        final Long userSeq = new Long(1);
+        final Long userSeq = authUtils.getLoginUserSeq();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findMyChallengePage(userSeq, pageable);
         final PagingResultDto<ChallengeResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
 
