@@ -46,7 +46,7 @@ public class QChallengeUser extends EntityPathBase<ChallengeUser> {
 
     public QChallengeUser(Class<? extends ChallengeUser> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.challenge = inits.isInitialized("challenge") ? new QChallenge(forProperty("challenge")) : null;
+        this.challenge = inits.isInitialized("challenge") ? new QChallenge(forProperty("challenge"), inits.get("challenge")) : null;
     }
 
 }

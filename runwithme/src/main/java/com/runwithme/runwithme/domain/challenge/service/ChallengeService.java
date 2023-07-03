@@ -1,9 +1,6 @@
 package com.runwithme.runwithme.domain.challenge.service;
 
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardPostDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
+import com.runwithme.runwithme.domain.challenge.dto.*;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoard;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeUser;
@@ -13,14 +10,17 @@ import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserReposito
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.dto.PagingResultDto;
+import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.error.exception.EntityAlreadyExistException;
 
+import com.runwithme.runwithme.global.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static com.runwithme.runwithme.global.error.ErrorCode.*;
@@ -29,11 +29,11 @@ import static com.runwithme.runwithme.global.error.ErrorCode.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ChallengeService {
-
     private final ChallengeRepository challengeRepository;
     private final ChallengeBoardRepository challengeBoardRepository;
     private final ChallengeUserRepository challengeUserRepository;
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
     @Transactional
     public void createBoard(Long challengeSeq, ChallengeBoardPostDto challengeBoardPostDto){
@@ -64,23 +64,27 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void createChallenge(ChallengeCreateDto challengeCreateDto){
+    public void createChallenge(ChallengeCreateDto challengeCreateDto, ChallengeImageDto imgFile) throws IOException {
         final Long userSeq = new Long(1);
+        final User user = userRepository.findById(userSeq).orElseThrow(IllegalArgumentException::new);
+
+        final Image savedImage = imageService.save(imgFile.image());
 
         final Challenge challenge = Challenge.builder()
-                .managerSeq(userSeq)
-                .imgSeq(challengeCreateDto.getImgSeq())
+                .manager(user)
+                .image(savedImage)
                 .name(challengeCreateDto.getName())
                 .description(challengeCreateDto.getDescription())
                 .goalDays(challengeCreateDto.getGoalDays())
                 .goalType(challengeCreateDto.getGoalType())
                 .goalAmount(challengeCreateDto.getGoalAmount())
-                .dateStart(challengeCreateDto.getDateStart())
-                .dateEnd(challengeCreateDto.getDateEnd())
                 .timeStart(challengeCreateDto.getTimeStart())
                 .timeEnd(challengeCreateDto.getTimeEnd())
                 .password(challengeCreateDto.getPassword())
-                .cost(challengeCreateDto.getCost()).build();
+                .cost(challengeCreateDto.getCost())
+                .nowMember(challengeCreateDto.getNowMember())
+                .maxMember(challengeCreateDto.getMaxMember())
+                .build();
 
         challengeRepository.save(challenge);
     }

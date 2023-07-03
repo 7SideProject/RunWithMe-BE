@@ -2,11 +2,11 @@ package com.runwithme.runwithme.domain.challenge.controller;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardPostDto;
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.service.ChallengeService;
 import com.runwithme.runwithme.global.dto.PagingResultDto;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
-//import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
@@ -57,10 +60,16 @@ public class ChallengeController {
 
     @Operation(operationId = "createChallenge", summary = "챌린지 등록")
     @PostMapping
-    public ResponseEntity<ResultResponseDto> createChallenge(@RequestBody ChallengeCreateDto challengeCreateDto){
-        challengeService.createChallenge(challengeCreateDto);
-
-        return null;
+    public ResponseEntity<ResultResponseDto> createChallenge(
+            @RequestBody ChallengeCreateDto challengeCreateDto,
+            @Parameter(name = "file", description = "업로드 사진 데이터")
+            @RequestParam(name = "file") ChallengeImageDto imgFile){
+        try {
+            challengeService.createChallenge(challengeCreateDto, imgFile);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (IOException e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(operationId = "getChallengeData", summary = "챌린지 상세 조회")
