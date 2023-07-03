@@ -17,8 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @Slf4j
 @RestController
 @RequestMapping("/users")
@@ -34,14 +32,9 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
     public ResponseEntity<ResultResponseDto> join(@RequestBody UserCreateDto dto) {
-        try {
-            UserProfileViewDto response = userService.join(dto);
-            log.info("Join user {}", response.seq());
-            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, response), HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL, e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+        UserProfileViewDto response = userService.join(dto);
+        log.info("Join user {}", response.seq());
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, response), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/login")
@@ -55,14 +48,9 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
     public ResponseEntity<ResultResponseDto> setUserProfile(@PathVariable Long userSeq, @RequestBody UserProfileDto dto) {
-        try {
-            UserProfileViewDto userProfileViewDto = userService.setUserProfile(userSeq, dto);
-            log.info("Set profile user {}", userSeq);
-            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userProfileViewDto), HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL), HttpStatus.BAD_REQUEST);
-        }
+        UserProfileViewDto userProfileViewDto = userService.setUserProfile(userSeq, dto);
+        log.info("Set profile user {}", userSeq);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userProfileViewDto), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{userSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,14 +60,9 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
     public ResponseEntity<ResultResponseDto> getUserProfile(@PathVariable Long userSeq) {
-        try {
-            UserProfileViewDto userProfileViewDto = userService.getUserProfile(userSeq);
-            log.info("Get profile user {}", userSeq);
-            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userProfileViewDto), HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL, e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+        UserProfileViewDto userProfileViewDto = userService.getUserProfile(userSeq);
+        log.info("Get profile user {}", userSeq);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userProfileViewDto), HttpStatus.OK);
     }
 
     @GetMapping(value = "/duplicate-email")
@@ -103,11 +86,7 @@ public class UserController {
 
     @PutMapping(value = "/{userSeq}/profile-image")
     public ResponseEntity<Void> changeImage(@PathVariable Long userSeq, @ModelAttribute UserProfileImageDto dto) {
-        try {
-            userService.changeImage(userSeq, dto);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        userService.changeImage(userSeq, dto);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

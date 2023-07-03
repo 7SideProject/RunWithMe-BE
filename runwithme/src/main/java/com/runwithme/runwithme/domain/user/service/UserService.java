@@ -4,17 +4,18 @@ import com.runwithme.runwithme.domain.user.dto.*;
 import com.runwithme.runwithme.domain.user.dto.converter.UserConverter;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
-import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.CacheUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -24,19 +25,24 @@ public class UserService {
     private final ImageService imageService;
 
     public UserProfileViewDto join(UserCreateDto dto) {
-        if (userRepository.existsByEmail(dto.email())) throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        if (userRepository.existsByEmail(dto.email())) {
+            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+        }
 
         User joinUser = UserConverter.toEntity(dto);
-
         return UserConverter.toViewDto(userRepository.save(joinUser));
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(IllegalArgumentException::new);
+        return userRepository.findByEmail(email).orElseThrow(() ->
+            new IllegalStateException("해당 이메일을 가진 유저가 존재하지 않습니다.")
+        );
     }
 
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new IllegalArgumentException("Not found user by invalid user sequence."));
+        User findUser = userRepository.findById(userSeq).orElseThrow(() ->
+            new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+        );
 
         findUser.setProfile(dto);
 
@@ -44,7 +50,9 @@ public class UserService {
     }
 
     public UserProfileViewDto getUserProfile(Long userSeq) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new IllegalArgumentException("Not found user by invalid user sequence."));
+        User findUser = userRepository.findById(userSeq).orElseThrow(() ->
+            new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+        );
 
         return UserConverter.toViewDto(findUser);
     }
@@ -58,17 +66,23 @@ public class UserService {
     }
 
     public Resource getUserImage(Long userSeq) {
-        User user = userRepository.findById(userSeq).orElseThrow(IllegalArgumentException::new);
+        User user = userRepository.findById(userSeq).orElseThrow(() ->
+            new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+        );
         return imageService.getImage(user.getImage().getSeq());
     }
 
-    public void changeImage(Long userSeq, UserProfileImageDto dto) throws IOException {
-        User user = userRepository.findById(userSeq).orElseThrow(IllegalArgumentException::new);
-
-        if (!ObjectUtils.nullSafeEquals(user.getImage(), CacheUtils.get("defaultImage"))) imageService.delete(user.getImage().getSeq());
-
-        Image savedImage = imageService.save(dto.image());
-
-        user.changeImage(savedImage);
+    public void changeImage(Long userSeq, UserProfileImageDto dto) {
+        try {
+            User user = userRepository.findById(userSeq).orElseThrow(() ->
+                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
+            );
+            if (!ObjectUtils.nullSafeEquals(user.getImage(), CacheUtils.get("defaultImage"))) {
+                imageService.delete(user.getImage().getSeq());
+            }
+            user.changeImage(imageService.save(dto.image()));
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 }
