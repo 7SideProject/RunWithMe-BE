@@ -20,15 +20,19 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
     @Override
     public Page<ChallengeResponseDto> findAllChallengePage(Long userSeq, Pageable pageable){
         QueryResults<ChallengeResponseDto> result = jpaQueryFactory.select(new QChallengeResponseDto(
-                                challenge.seq,
-                                challenge.managerSeq,
-                                challenge.name,
-                                challenge.imgSeq,
-                                challenge.goalDays,
-                                challenge.goalType,
-                                challenge.goalAmount,
-                                challenge.timeStart,
-                                challenge.timeEnd
+                        challenge.seq,
+                        challenge.manager.seq,
+                        challenge.manager.nickname,
+                        challenge.image,
+                        challenge.name,
+                        challenge.goalDays,
+                        challenge.goalType,
+                        challenge.goalAmount,
+                        challenge.timeStart,
+                        challenge.timeEnd,
+                        challenge.nowMember,
+                        challenge.maxMember,
+                        challenge.cost
                         )
                 ).from(challenge)
                 .offset(pageable.getOffset())
@@ -40,15 +44,19 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
     @Override
     public Page<ChallengeResponseDto> findMyChallengePage(Long userSeq, Pageable pageable){
         QueryResults<ChallengeResponseDto> result = jpaQueryFactory.select(new QChallengeResponseDto(
-                                challengeUser.challenge.seq,
-                                challengeUser.challenge.managerSeq,
-                                challengeUser.challenge.name,
-                                challengeUser.challenge.imgSeq,
-                                challengeUser.challenge.goalDays,
-                                challengeUser.challenge.goalType,
-                                challengeUser.challenge.goalAmount,
-                                challengeUser.challenge.timeStart,
-                                challengeUser.challenge.timeEnd
+                        challengeUser.challenge.seq,
+                        challengeUser.challenge.manager.seq,
+                        challengeUser.challenge.manager.nickname,
+                        challengeUser.challenge.image,
+                        challengeUser.challenge.name,
+                        challengeUser.challenge.goalDays,
+                        challengeUser.challenge.goalType,
+                        challengeUser.challenge.goalAmount,
+                        challengeUser.challenge.timeStart,
+                        challengeUser.challenge.timeEnd,
+                        challengeUser.challenge.nowMember,
+                        challengeUser.challenge.maxMember,
+                        challengeUser.challenge.cost
                         )
                 ).from(challengeUser)
                 .where(challengeUser.userSeq.eq(userSeq))

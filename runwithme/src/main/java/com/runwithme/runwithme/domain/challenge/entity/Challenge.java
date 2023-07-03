@@ -1,5 +1,7 @@
 package com.runwithme.runwithme.domain.challenge.entity;
 
+import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.global.entity.Image;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,14 +20,13 @@ public class Challenge {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long seq;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "manager_seq")
-//    private User managerSeq;
-    @Column(name = "manager_seq")
-    private Long managerSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_seq")
+    private User manager;
 
-    @Column(name = "img_seq")
-    private Long imgSeq;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_seq")
+    private Image image;
 
     @Column(name = "name", length = 30)
     private String name;
@@ -42,24 +43,18 @@ public class Challenge {
     @Column(name = "goal_amount")
     private Long goalAmount;
 
-    @Column(name = "date_start")
-    private LocalDate dateStart;
-
-    @Column(name = "date_end")
-    private LocalDate dateEnd;
-
     @Column(name = "time_start")
     private LocalDateTime timeStart;
 
     @Column(name = "time_end")
     private LocalDateTime timeEnd;
-
     @Column(name = "password", length = 10)
     private String password;
 
     @Column(name = "cost")
     private Long cost;
-
+    @Column(name = "now_member")
+    private Long nowMember;
     @Column(name = "max_member")
     private Long maxMember;
 
@@ -70,20 +65,19 @@ public class Challenge {
     private LocalDateTime regTime;
 
     @Builder
-    public Challenge(Long managerSeq, Long imgSeq, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, LocalDateTime timeStart, LocalDateTime timeEnd, String password, Long cost, Long maxMember) {
-        this.managerSeq = managerSeq;
-        this.imgSeq = imgSeq;
+    public Challenge(User manager, Image image, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDateTime timeStart, LocalDateTime timeEnd, String password, Long cost, Long nowMember, Long maxMember) {
+        this.manager = manager;
+        this.image = image;
         this.name = name;
         this.description = description;
         this.goalDays = goalDays;
         this.goalType = goalType;
         this.goalAmount = goalAmount;
-        this.dateStart = dateStart;
-        this.dateEnd = dateEnd;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.password = password;
         this.cost = cost;
+        this.nowMember = nowMember;
         this.maxMember = maxMember;
     }
 }
