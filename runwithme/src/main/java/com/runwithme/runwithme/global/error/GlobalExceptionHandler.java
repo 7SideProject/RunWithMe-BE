@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,19 +21,21 @@ import java.util.Enumeration;
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     private final NotificationManager notificationManager;
 
 
-    @ExceptionHandler({ErrorCodeException.class})
+    @ExceptionHandler({CustomException.class})
     protected ResponseEntity<ErrorResponse> exceptionHandler(CustomException e, HttpServletRequest request) {
 //        notificationManager.sendNotification(errorCode, request.getRequestURI(), getParams(request));
+        System.out.println(ErrorResponse.toResponseEntity(e.getErrorCode()));
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
 
     @Getter
     @Builder
+    @ToString
     public static class ErrorResponse {
         private final LocalDateTime timestamp = LocalDateTime.now();
         private final int status;
@@ -79,17 +82,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             );
         }
         return params.toString();
-    }
-
-    @Getter
-    public static class ErrorCodeException extends Exception {
-        private final ErrorCode error;
-
-        public ErrorCodeException(ErrorCode e) {
-            super(e.getMessage());
-            this.error = e;
-        }
-
     }
 
     /*@RestControllerAdvice

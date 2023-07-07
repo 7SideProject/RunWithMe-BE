@@ -30,20 +30,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String email = (String) token.getPrincipal();
         String password = (String) token.getCredentials();
 
-        try {
-            User user = userService.findByEmail(email);
-            PrincipalDetails principal = new PrincipalDetails(user, null);
+        User user = userService.findByEmail(email);
+        System.out.println("TTTTTTTTTT");
+        System.out.println(user);
+        PrincipalDetails principal = new PrincipalDetails(user, null);
 
-            if (!encoder.matches(password, user.getPassword())) {
-                throw new BadCredentialsException("잘못된 패스워드입니다.");
-            }
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("잘못된 패스워드입니다.");
+        }
 
-            if (user.isDeleted()) throw new DeletedUserException("삭제된 회원입니다.");
+        if (user.isDeleted()) throw new DeletedUserException("삭제된 회원입니다.");
 
-            return new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
+
+        /*try {
+
         } catch (IllegalArgumentException e) {
             throw new BadCredentialsException("해당 이메일의 유저가 존재하지 않습니다.");
-        }
+        }*/
     }
 
     @Override

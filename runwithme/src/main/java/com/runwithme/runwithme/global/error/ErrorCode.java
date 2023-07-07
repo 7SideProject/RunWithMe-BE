@@ -3,6 +3,7 @@ package com.runwithme.runwithme.global.error;
 import com.runwithme.runwithme.global.error.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * ErrorCode Convention
@@ -14,6 +15,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+@ToString
 public enum ErrorCode {
     // User
     USER_NOT_FOUND(400, "U001", "존재하지 않는 유저입니다."),
