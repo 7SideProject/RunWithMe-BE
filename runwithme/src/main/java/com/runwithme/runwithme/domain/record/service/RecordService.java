@@ -25,10 +25,10 @@ public class RecordService {
     private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
 
     @Transactional
-    public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto){
-        final Long userSeq = new Long(1);
+    public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto) {
+        final Long userSeq = 1L;
 
-        if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())){
+        if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
             throw new CustomException(RECORD_ALREADY_EXIST);
         }
 
@@ -50,60 +50,38 @@ public class RecordService {
     }
 
     @Transactional
-    public ChallengeTotalRecord getTotalRecord(Long challengeSeq){
-        final Long userSeq = new Long(1);
+    public ChallengeTotalRecord getTotalRecord(Long challengeSeq) {
+        final Long userSeq = 1L;
 
-        final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
-
-        return myTotals;
+        return challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
     }
 
     @Transactional
-    public List<RunRecord> getMyRunRecord(Long challengeSeq){
-        final Long userSeq = new Long(1);
-
-        final List<RunRecord> myRunRecords = runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
-
-        return myRunRecords;
+    public List<RunRecord> getMyRunRecord(Long challengeSeq) {
+        final Long userSeq = 1L;
+        return runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
     }
 
     @Transactional
-    public List<RunRecord> getAllRunRecord(Long challengeSeq){
-        final Long userSeq = new Long(1);
-
-        final List<RunRecord> allRunRecords = runRecordRepository.findAllByChallengeSeq(challengeSeq);
-
-        return allRunRecords;
+    public List<RunRecord> getAllRunRecord(Long challengeSeq) {
+        return runRecordRepository.findAllByChallengeSeq(challengeSeq);
     }
 
     @Transactional
-    public RunRecord getRunRecord(Long runRecordSeq){
-        final Long userSeq = new Long(1);
-
-        final RunRecord runRecord = runRecordRepository.findById(runRecordSeq).get();
-
-        return runRecord;
+    public RunRecord getRunRecord(Long runRecordSeq) {
+        return runRecordRepository.findById(runRecordSeq).get();
     }
 
     @Transactional
-    public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates){
+    public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates) {
         int[] results = runRecordRepository.coordinatesInsertBatch(recordSeq, coordinates);
-
         int success = 0;
-        int fail = 0;
 
-        for (int i = 0; i < results.length; i++) {
-            if (results[i] == -2) {
+        for (int result : results) {
+            if (result == -2) {
                 success++;
-            } else {
-                fail++;
             }
         }
-
-        if (results.length == success) {
-            return true;
-        } else {
-            return false;
-        }
+        return results.length == success;
     }
 }

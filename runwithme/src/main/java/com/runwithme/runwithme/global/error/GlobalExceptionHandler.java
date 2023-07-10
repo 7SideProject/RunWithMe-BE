@@ -1,7 +1,6 @@
 package com.runwithme.runwithme.global.error;
 
 import com.runwithme.runwithme.global.result.ResultCode;
-import com.runwithme.runwithme.global.result.ResultResponseDto;
 import com.runwithme.runwithme.global.webhook.NotificationManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
@@ -9,11 +8,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
 import java.util.Enumeration;

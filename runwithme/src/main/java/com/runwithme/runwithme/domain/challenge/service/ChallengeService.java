@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
@@ -36,7 +37,7 @@ public class ChallengeService {
 
     @Transactional
     public void createBoard(Long challengeSeq, ChallengeBoardPostDto challengeBoardPostDto){
-        final Long userSeq = new Long(1);
+        final Long userSeq = 1L;
 
         final User user = userRepository.findById(userSeq).get();
 
@@ -51,10 +52,9 @@ public class ChallengeService {
     }
 
     @Transactional
-    public PagingResultDto getBoardList(Long challengeSeq, Pageable pageable){
+    public PagingResultDto<ChallengeBoardResponseDto> getBoardList(Long challengeSeq, Pageable pageable){
         final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllBoardPage(challengeSeq, pageable);
-        final PagingResultDto<ChallengeBoardResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), allBoards.getTotalPages() - 1, allBoards.getContent());
-        return pagingResultDto;
+        return new PagingResultDto<>(pageable.getPageNumber(), allBoards.getTotalPages() - 1, allBoards.getContent());
     }
 
     @Transactional
@@ -64,7 +64,7 @@ public class ChallengeService {
 
     @Transactional
     public void createChallenge(ChallengeCreateDto challengeCreateDto){
-        final Long userSeq = new Long(1);
+        final Long userSeq = 1L;
 
         final Challenge challenge = Challenge.builder()
                 .managerSeq(userSeq)
@@ -86,16 +86,12 @@ public class ChallengeService {
 
     @Transactional
     public Challenge getChallengeData(Long challengeSeq){
-        final Long userSeq = new Long(1);
-
-        final Challenge challenge = challengeRepository.findById(challengeSeq).get();
-
-        return challenge;
+        return challengeRepository.findById(challengeSeq).get();
     }
 
     @Transactional
     public boolean joinChallengeUser(Long challengeSeq, String password){
-        final Long userSeq = new Long(1);
+        final Long userSeq = 1L;
 
         if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)){
             throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
@@ -103,17 +99,16 @@ public class ChallengeService {
 
         final Challenge challenge = challengeRepository.findById(challengeSeq).get();
 
-        if (challenge.getPassword() == password) {
+        if (Objects.equals(challenge.getPassword(), password)) {
             challengeUserRepository.save(new ChallengeUser(userSeq, challenge));
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Transactional
     public boolean isChallengeUser(Long challengeSeq){
-        final Long userSeq = new Long(1);
+        final Long userSeq = 1L;
 
         if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)){
             throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
@@ -123,20 +118,16 @@ public class ChallengeService {
     }
 
     @Transactional
-    public PagingResultDto getAllChallengeList(Pageable pageable){
-        final Long userSeq = new Long(1);
+    public PagingResultDto<ChallengeResponseDto> getAllChallengeList(Pageable pageable){
+        final Long userSeq = 1L;
         final Page<ChallengeResponseDto> challenges = challengeRepository.findAllChallengePage(userSeq, pageable);
-        final PagingResultDto<ChallengeResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
-
-        return pagingResultDto;
+        return new PagingResultDto<>(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
     }
 
     @Transactional
-    public PagingResultDto getMyChallengeList(Pageable pageable){
-        final Long userSeq = new Long(1);
+    public PagingResultDto<ChallengeResponseDto> getMyChallengeList(Pageable pageable){
+        final Long userSeq = 1L;
         final Page<ChallengeResponseDto> challenges = challengeRepository.findMyChallengePage(userSeq, pageable);
-        final PagingResultDto<ChallengeResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
-
-        return pagingResultDto;
+        return new PagingResultDto<>(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
     }
 }
