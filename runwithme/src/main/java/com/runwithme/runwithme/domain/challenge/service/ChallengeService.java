@@ -104,16 +104,16 @@ public class ChallengeService {
 
     @Transactional
     public boolean joinChallengeUser(Long challengeSeq, String password){
-        final Long userSeq = authUtils.getLoginUserSeq();
+        final User user = authUtils.getLoginUser();
 
-        if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)){
+        if (challengeUserRepository.existsByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq)){
             throw new EntityAlreadyExistException(CHALLENGE_JOIN_ALREADY_EXIST);
         }
 
         final Challenge challenge = challengeRepository.findById(challengeSeq).get();
 
         if (challenge.getPassword() == password) {
-            challengeUserRepository.save(new ChallengeUser(userSeq, challenge));
+            challengeUserRepository.save(new ChallengeUser(user, challenge));
             return true;
         } else {
             return false;
@@ -134,7 +134,18 @@ public class ChallengeService {
     @Transactional
     public PagingResultDto getAllChallengeList(Pageable pageable){
         final Long userSeq = authUtils.getLoginUserSeq();
+        final LocalDateTime localDateTime = LocalDateTime.now();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findAllChallengePage(userSeq, pageable);
+        final PagingResultDto<ChallengeResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
+
+        return pagingResultDto;
+    }
+
+    @Transactional
+    public PagingResultDto getRecruitChallengeList(Pageable pageable){
+        final Long userSeq = authUtils.getLoginUserSeq();
+        final LocalDateTime localDateTime = LocalDateTime.now();
+        final Page<ChallengeResponseDto> challenges = challengeRepository.findRecruitChallengePage(userSeq, localDateTime, pageable);
         final PagingResultDto<ChallengeResponseDto> pagingResultDto = new PagingResultDto(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
 
         return pagingResultDto;

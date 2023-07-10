@@ -26,7 +26,7 @@ public class QChallengeUser extends EntityPathBase<ChallengeUser> {
 
     public final NumberPath<Long> seq = createNumber("seq", Long.class);
 
-    public final NumberPath<Long> userSeq = createNumber("userSeq", Long.class);
+    public final com.runwithme.runwithme.domain.user.entity.QUser user;
 
     public QChallengeUser(String variable) {
         this(ChallengeUser.class, forVariable(variable), INITS);
@@ -47,6 +47,7 @@ public class QChallengeUser extends EntityPathBase<ChallengeUser> {
     public QChallengeUser(Class<? extends ChallengeUser> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.challenge = inits.isInitialized("challenge") ? new QChallenge(forProperty("challenge"), inits.get("challenge")) : null;
+        this.user = inits.isInitialized("user") ? new com.runwithme.runwithme.domain.user.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }
