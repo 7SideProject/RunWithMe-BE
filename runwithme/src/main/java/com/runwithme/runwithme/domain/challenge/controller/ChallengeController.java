@@ -113,6 +113,15 @@ public class ChallengeController {
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
     }
 
+    @Operation(operationId = "getRecruitChallengeList", summary = "모집중인 전체 챌린지 리스트 조회")
+    @GetMapping("/all/recruit")
+    @PageableAsQueryParam
+    public ResponseEntity<ResultResponseDto> getRecruitChallengeList(@Parameter(hidden = true)@PageableDefault Pageable pageable){
+        final PagingResultDto pagingResultDto = challengeService.getRecruitChallengeList(pageable);
+
+        return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
+    }
+
     @Operation(operationId = "getMyChallengeList", summary = "내 챌린지 리스트 조회")
     @GetMapping("/my")
     @PageableAsQueryParam

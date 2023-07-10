@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.challenge.entity;
 
+import com.runwithme.runwithme.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,16 +17,17 @@ public class ChallengeUser {
     @Column(name = "challenge_user")
     private Long seq;
 
-    @Column(name = "user_seq")
-    private Long userSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_seq")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_seq")
     private Challenge challenge;
 
     @Builder
-    public ChallengeUser(Long userSeq, Challenge challenge){
-        this.userSeq = userSeq;
+    public ChallengeUser(User user, Challenge challenge){
+        this.user = user;
         this.challenge = challenge;
     }
 }
