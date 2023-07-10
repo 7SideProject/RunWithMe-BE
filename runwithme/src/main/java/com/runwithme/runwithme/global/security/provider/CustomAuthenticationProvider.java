@@ -2,17 +2,18 @@ package com.runwithme.runwithme.global.security.provider;
 
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.service.UserService;
-import com.runwithme.runwithme.global.security.exception.DeletedUserException;
+import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.security.model.PrincipalDetails;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import static com.runwithme.runwithme.global.result.ResultCode.BAD_PASSWORD;
+import static com.runwithme.runwithme.global.result.ResultCode.DELETED_USER;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,30 +25,22 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private UserService userService;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         String email = (String) token.getPrincipal();
         String password = (String) token.getCredentials();
 
         User user = userService.findByEmail(email);
-        System.out.println("TTTTTTTTTT");
-        System.out.println(user);
         PrincipalDetails principal = new PrincipalDetails(user, null);
 
         if (!encoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("잘못된 패스워드입니다.");
+            throw new CustomException(BAD_PASSWORD);
         }
 
-        if (user.isDeleted()) throw new DeletedUserException("삭제된 회원입니다.");
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
 
         return new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
-
-        /*try {
-
-        } catch (IllegalArgumentException e) {
-            throw new BadCredentialsException("해당 이메일의 유저가 존재하지 않습니다.");
-        }*/
     }
 
     @Override

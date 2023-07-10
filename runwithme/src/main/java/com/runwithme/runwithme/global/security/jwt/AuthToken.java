@@ -56,6 +56,7 @@ public class AuthToken {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+            // 이거 어떻게 처리하지?
         } catch (SecurityException e) {
             log.info("Invalid JWT signature.");
         } catch (MalformedJwtException e) {

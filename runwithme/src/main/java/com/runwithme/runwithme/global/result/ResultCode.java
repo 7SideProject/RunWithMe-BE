@@ -23,6 +23,8 @@ public enum ResultCode {
     EMAIL_EXISTS(400, "UXXX", "이미 존재하는 이메일입니다."),
     UNAUTHORIZED(401, "U102", "인증에 실패했습니다."),
     INTERNAL_SERVER_ERROR(500, "U103", "서버 오류입니다."),
+    DELETED_USER(400, "UXXX", "삭제된 회원입니다."),
+    BAD_PASSWORD(400, "UXXX", "잘못된 패스워드입니다."),
 
     // Record
     CREATE_RECORD_SUCCESS(200, "R001", "기록 등록에 성공하였습니다."),
@@ -52,7 +54,11 @@ public enum ResultCode {
     DELETE_BOARD_SUCCESS(200, "B004", "게시글 삭제에 성공하였습니다."),
 
     // Image
+    IMAGE_NOT_FOUND(400, "IXXX", "이미지를 찾을 수 없습니다."),
+    FAILED_CONVERT(400, "IXXX", "잘못된 파일입니다."),
 
+    // Auth
+    FAILED_GENERATE_TOKEN(400, "TXXX", "Failed to generate Token."),
 
     ;
 
