@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.global.utils;
 
+import com.runwithme.runwithme.global.error.CustomException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -10,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.runwithme.runwithme.global.result.ResultCode.FAILED_CONVERT;
 
 @Slf4j
 @Getter
@@ -29,17 +32,18 @@ public class MultipartFileUtils {
         this.uuidFileName = makeUuidFileName(multipartFile);
     }
 
-    public Optional<File> convertToFile()  {
+    public Optional<File> convertToFile() {
         File convertFile = new File(uuidFileName);
-
-        if (convertFile.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(multipartFile.getBytes());
+        try {
+            if (convertFile.createNewFile()) {
+                try (FileOutputStream fos = new FileOutputStream(convertFile)) {
+                    fos.write(multipartFile.getBytes());
+                }
+                return Optional.of(convertFile);
             }
-
-            return Optional.of(convertFile);
+        } catch (Exception e) {
+            throw new CustomException(FAILED_CONVERT);
         }
-
         return Optional.empty();
     }
 
