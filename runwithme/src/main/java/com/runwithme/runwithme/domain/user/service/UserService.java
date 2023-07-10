@@ -39,13 +39,13 @@ public class UserService {
     }
 
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
         findUser.setProfile(dto);
         return UserConverter.toViewDto(findUser);
     }
 
     public UserProfileViewDto getUserProfile(Long userSeq) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
         return UserConverter.toViewDto(findUser);
     }
 
@@ -58,12 +58,12 @@ public class UserService {
     }
 
     public Resource getUserImage(Long userSeq) {
-        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
         return imageService.getImage(user.getImage().getSeq());
     }
 
     public void changeImage(Long userSeq, UserProfileImageDto dto) {
-        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
 
         if (!ObjectUtils.nullSafeEquals(user.getImage(), CacheUtils.get("defaultImage"))) {
             imageService.delete(user.getImage().getSeq());

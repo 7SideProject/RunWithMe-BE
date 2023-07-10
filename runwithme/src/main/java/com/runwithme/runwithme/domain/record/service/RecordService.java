@@ -52,7 +52,6 @@ public class RecordService {
     @Transactional
     public ChallengeTotalRecord getTotalRecord(Long challengeSeq) {
         final Long userSeq = 1L;
-
         return challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
     }
 
