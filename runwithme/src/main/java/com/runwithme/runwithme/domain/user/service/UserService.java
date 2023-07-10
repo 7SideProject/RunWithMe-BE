@@ -16,7 +16,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 
-import static com.runwithme.runwithme.global.error.ErrorCode.USER_NOT_FOUND;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
 
 @Slf4j
 @Service
@@ -29,7 +30,8 @@ public class UserService {
 
     public UserProfileViewDto join(UserCreateDto dto) {
         if (userRepository.existsByEmail(dto.email())) {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+            throw new CustomException(USER_NOT_FOUND);
+//            throw new IllegalStateException("이미 존재하는 이메일입니다.");
         }
 
         User joinUser = UserConverter.toEntity(dto);

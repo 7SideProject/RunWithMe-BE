@@ -6,7 +6,7 @@ import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
 import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
 import com.runwithme.runwithme.domain.record.repository.RunRecordRepository;
-import com.runwithme.runwithme.global.error.exception.EntityAlreadyExistException;
+import com.runwithme.runwithme.global.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.runwithme.runwithme.global.error.ErrorCode.*;
+import static com.runwithme.runwithme.global.result.ResultCode.RECORD_ALREADY_EXIST;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class RecordService {
         final Long userSeq = new Long(1);
 
         if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())){
-            throw new EntityAlreadyExistException(RECORD_ALREADY_EXIST);
+            throw new CustomException(RECORD_ALREADY_EXIST);
         }
 
         final RunRecord runRecord = RunRecord.builder()

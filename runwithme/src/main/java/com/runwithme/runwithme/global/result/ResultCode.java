@@ -18,6 +18,7 @@ public enum ResultCode {
     LOGIN_SUCCESS(200, "U001", "로그인에 성공하였습니다."),
     USER_REQUEST_SUCCESS(200, "U002", "요청을 성공적으로 수행했습니다."),
     INVALID_PARAMETER_FAIL(400, "U101", "잘못된 파라미터입니다."),
+    USER_NOT_FOUND(400, "U001", "존재하지 않는 유저입니다."),
     UNAUTHORIZED(401, "U102", "인증에 실패했습니다."),
     INTERNAL_SERVER_ERROR(500, "U103", "서버 오류입니다."),
 
@@ -29,6 +30,8 @@ public enum ResultCode {
     GET_ALL_RECORD_SUCCESS(200, "R005", "기록 전체 조회에 성공하였습니다."),
     ADD_COORDINATES_SUCCESS(200, "R006", "좌표 등록에 성공하였습니다."),
     ADD_COORDINATES_FAIL(200, "R007", "좌표 등록에 실패하였습니다."),
+    RECORD_ALREADY_EXIST(400, "R001", "오늘 이미 기록을 등록 하였습니다."),
+
 
     // Challenge
     GET_ONE_CHALLENGE_SUCCESS(200, "C001", "챌린지 상세 조회에 성공하였습니다."),
@@ -38,7 +41,8 @@ public enum ResultCode {
     CHECK_IN_CHALLENGE_SUCCESS(200, "C005", "챌린지 가입되어 있는 계정입니다."),
     CHECK_IN_CHALLENGE_FAIL(200, "C006", "챌린지 가입되지 않은 계정입니다."),    
     GET_MY_CHALLENGE_SUCCESS(200, "C007", "가입한 챌린지 조회에 성공하였습니다."),
-
+    CHALLENGE_NOT_FOUND(400, "C001", "존재하지 않는 챌린지입니다."),
+    CHALLENGE_JOIN_ALREADY_EXIST(400, "C002", "이미 가입한 챌린지 입니다."),
 
     // Board
     CREATE_BOARD_SUCCESS(200, "B001", "게시글 등록에 성공하였습니다."),

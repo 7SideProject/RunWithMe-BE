@@ -13,8 +13,7 @@ import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserReposito
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.dto.PagingResultDto;
-import com.runwithme.runwithme.global.error.exception.EntityAlreadyExistException;
-
+import com.runwithme.runwithme.global.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static com.runwithme.runwithme.global.error.ErrorCode.*;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -99,7 +98,7 @@ public class ChallengeService {
         final Long userSeq = new Long(1);
 
         if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)){
-            throw new EntityAlreadyExistException(CHALLENGE_JOIN_ALREADY_EXIST);
+            throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
         }
 
         final Challenge challenge = challengeRepository.findById(challengeSeq).get();
@@ -117,7 +116,7 @@ public class ChallengeService {
         final Long userSeq = new Long(1);
 
         if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)){
-            throw new EntityAlreadyExistException(CHALLENGE_JOIN_ALREADY_EXIST);
+            throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
         }
 
         return true;

@@ -25,12 +25,11 @@ public class GlobalExceptionHandler {
 
     private final NotificationManager notificationManager;
 
-
     @ExceptionHandler({CustomException.class})
     protected ResponseEntity<ErrorResponse> exceptionHandler(CustomException e, HttpServletRequest request) {
 //        notificationManager.sendNotification(errorCode, request.getRequestURI(), getParams(request));
-        System.out.println(ErrorResponse.toResponseEntity(e.getErrorCode()));
-        return ErrorResponse.toResponseEntity(e.getErrorCode());
+        System.out.println(ErrorResponse.toResponseEntity(e.getResultCode()));
+        return ErrorResponse.toResponseEntity(e.getResultCode());
     }
 
     @Getter
@@ -42,13 +41,13 @@ public class GlobalExceptionHandler {
         private final String code;
         private final String message;
 
-        public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode) {
+        public static ResponseEntity<ErrorResponse> toResponseEntity(ResultCode resultCode) {
             return ResponseEntity
-                    .status(errorCode.getStatus())
+                    .status(resultCode.getStatus())
                     .body(ErrorResponse.builder()
-                            .status(errorCode.getStatus())
-                            .code(errorCode.getCode())
-                            .message(errorCode.getMessage())
+                            .status(resultCode.getStatus())
+                            .code(resultCode.getCode())
+                            .message(resultCode.getMessage())
                             .build()
                     );
         }
