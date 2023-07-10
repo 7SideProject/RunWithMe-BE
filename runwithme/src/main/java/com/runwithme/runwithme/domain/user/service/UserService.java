@@ -14,10 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.io.IOException;
-
 import static com.runwithme.runwithme.global.result.ResultCode.*;
-
 
 @Slf4j
 @Service
@@ -30,8 +27,7 @@ public class UserService {
 
     public UserProfileViewDto join(UserCreateDto dto) {
         if (userRepository.existsByEmail(dto.email())) {
-            throw new CustomException(USER_NOT_FOUND);
-//            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+            throw new CustomException(EMAIL_EXISTS);
         }
 
         User joinUser = UserConverter.toEntity(dto);
@@ -43,20 +39,13 @@ public class UserService {
     }
 
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() ->
-                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
-        );
-
+        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         findUser.setProfile(dto);
-
         return UserConverter.toViewDto(findUser);
     }
 
     public UserProfileViewDto getUserProfile(Long userSeq) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() ->
-                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
-        );
-
+        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         return UserConverter.toViewDto(findUser);
     }
 
@@ -69,23 +58,16 @@ public class UserService {
     }
 
     public Resource getUserImage(Long userSeq) {
-        User user = userRepository.findById(userSeq).orElseThrow(() ->
-                new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
-        );
+        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         return imageService.getImage(user.getImage().getSeq());
     }
 
     public void changeImage(Long userSeq, UserProfileImageDto dto) {
-        try {
-            User user = userRepository.findById(userSeq).orElseThrow(() ->
-                    new IllegalStateException("해당 SEQ를 가진 유저가 존재하지 않습니다.")
-            );
-            if (!ObjectUtils.nullSafeEquals(user.getImage(), CacheUtils.get("defaultImage"))) {
-                imageService.delete(user.getImage().getSeq());
-            }
-            user.changeImage(imageService.save(dto.image()));
-        } catch (IOException e) {
-            log.error(e.getMessage());
+        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if (!ObjectUtils.nullSafeEquals(user.getImage(), CacheUtils.get("defaultImage"))) {
+            imageService.delete(user.getImage().getSeq());
         }
+        user.changeImage(imageService.save(dto.image()));
     }
 }

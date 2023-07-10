@@ -46,7 +46,7 @@ public class ImageService {
         CacheUtils.put("defaultImage", image);
     }
 
-    public Image save(MultipartFile multipartFile) throws IOException {
+    public Image save(MultipartFile multipartFile) {
         MultipartFileUtils multipartFileUtils = new MultipartFileUtils(multipartFile);
 
         uploadToS3(multipartFileUtils);
@@ -71,7 +71,7 @@ public class ImageService {
         return s3Utils.download("image", image.getSavedName());
     }
 
-    private void uploadToS3(MultipartFileUtils multipartFileUtils) throws IOException {
+    private void uploadToS3(MultipartFileUtils multipartFileUtils) {
         File file = multipartFileUtils.convertToFile().orElseThrow(() -> new IllegalArgumentException("잘못된 파일입니다."));
         s3Utils.upload(file, multipartFileUtils.getFileType(), multipartFileUtils.getUuidFileName());
     }

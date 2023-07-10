@@ -28,7 +28,7 @@ public class UserController {
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "회원가입", description = "이메일 회원가입 API입니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema(implementation = UserProfileViewDto.class)) }),
+            @ApiResponse(responseCode = "201", content = {@Content(schema = @Schema(implementation = UserProfileViewDto.class))}),
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
     public ResponseEntity<ResultResponseDto> join(@RequestBody UserCreateDto dto) {
@@ -39,12 +39,13 @@ public class UserController {
 
     @PostMapping(value = "/login")
     @ResponseStatus(HttpStatus.OK)
-    public void login(@RequestBody UserLoginDto dto) {}
+    public void login(@RequestBody UserLoginDto dto) {
+    }
 
     @PutMapping(value = "/{userSeq}/profile", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "프로필 설정", description = "유저 프로필을 설정하는 API입니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserProfileViewDto.class)) }),
+            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = UserProfileViewDto.class))}),
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
     public ResponseEntity<ResultResponseDto> setUserProfile(@PathVariable Long userSeq, @RequestBody UserProfileDto dto) {
@@ -56,7 +57,7 @@ public class UserController {
     @GetMapping(value = "/{userSeq}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "프로필 조회", description = "유저 프로필을 조회하는 API입니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserProfileViewDto.class)) }),
+            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = UserProfileViewDto.class))}),
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
     public ResponseEntity<ResultResponseDto> getUserProfile(@PathVariable Long userSeq) {

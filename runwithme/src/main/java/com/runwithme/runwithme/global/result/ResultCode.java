@@ -19,6 +19,8 @@ public enum ResultCode {
     USER_REQUEST_SUCCESS(200, "U002", "요청을 성공적으로 수행했습니다."),
     INVALID_PARAMETER_FAIL(400, "U101", "잘못된 파라미터입니다."),
     USER_NOT_FOUND(400, "U001", "존재하지 않는 유저입니다."),
+    SEQ_NOT_FOUND(400, "UXXX", "해당 SEQ를 가진 유저가 존재하지 않습니다."),
+    EMAIL_EXISTS(400, "UXXX", "이미 존재하는 이메일입니다."),
     UNAUTHORIZED(401, "U102", "인증에 실패했습니다."),
     INTERNAL_SERVER_ERROR(500, "U103", "서버 오류입니다."),
 
@@ -31,7 +33,6 @@ public enum ResultCode {
     ADD_COORDINATES_SUCCESS(200, "R006", "좌표 등록에 성공하였습니다."),
     ADD_COORDINATES_FAIL(200, "R007", "좌표 등록에 실패하였습니다."),
     RECORD_ALREADY_EXIST(400, "R001", "오늘 이미 기록을 등록 하였습니다."),
-
 
     // Challenge
     GET_ONE_CHALLENGE_SUCCESS(200, "C001", "챌린지 상세 조회에 성공하였습니다."),
@@ -50,6 +51,7 @@ public enum ResultCode {
     GET_ALL_BOARD_SUCCESS(200, "B003", "게시글 전체 조회에 성공하였습니다."),
     DELETE_BOARD_SUCCESS(200, "B004", "게시글 삭제에 성공하였습니다."),
 
+    // Image
 
 
     ;

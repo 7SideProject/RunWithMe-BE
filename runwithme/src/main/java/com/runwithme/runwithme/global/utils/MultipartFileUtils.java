@@ -29,7 +29,7 @@ public class MultipartFileUtils {
         this.uuidFileName = makeUuidFileName(multipartFile);
     }
 
-    public Optional<File> convertToFile() throws IOException {
+    public Optional<File> convertToFile()  {
         File convertFile = new File(uuidFileName);
 
         if (convertFile.createNewFile()) {
