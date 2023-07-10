@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-//import java.util.Optional;
+import java.util.Optional;
 
 import static com.runwithme.runwithme.domain.challenge.entity.QChallenge.challenge;
 import static com.runwithme.runwithme.domain.challenge.entity.QChallengeUser.challengeUser;
@@ -22,27 +22,27 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 
     private final JPAQueryFactory jpaQueryFactory;
 
-//    public Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq){
-//        return Optional.ofNullable(jpaQueryFactory.select(new QChallengeResponseDto(
-//                challenge.seq,
-//                challenge.manager.seq,
-//                challenge.manager.nickname,
-//                challenge.image,
-//                challenge.name,
-//                challenge.goalDays,
-//                challenge.goalType,
-//                challenge.goalAmount,
-//                challenge.timeStart,
-//                challenge.timeEnd,
-//                challenge.nowMember,
-//                challenge.maxMember,
-//                challenge.cost,
-//                isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
-//            )
-//        ).from(challenge)
-//                .where(challenge.seq.eq(challengeSeq))
-//                .fetchOne());
-//    }
+    public Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq){
+        return Optional.ofNullable(jpaQueryFactory.select(new QChallengeResponseDto(
+                challenge.seq,
+                challenge.manager.seq,
+                challenge.manager.nickname,
+                challenge.image,
+                challenge.name,
+                challenge.goalDays,
+                challenge.goalType,
+                challenge.goalAmount,
+                challenge.timeStart,
+                challenge.timeEnd,
+                challenge.nowMember,
+                challenge.maxMember,
+                challenge.cost,
+                isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
+            )
+        ).from(challenge)
+                .where(challenge.seq.eq(challengeSeq))
+                .fetchOne());
+    }
     @Override
     public Page<ChallengeResponseDto> findAllChallengePage(Long userSeq, Pageable pageable){
         QueryResults<ChallengeResponseDto> result = jpaQueryFactory.select(new QChallengeResponseDto(

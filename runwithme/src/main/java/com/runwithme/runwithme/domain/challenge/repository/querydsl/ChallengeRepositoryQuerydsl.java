@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ChallengeRepositoryQuerydsl {
 
-//    Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq);
+    Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq);
 
     Page<ChallengeResponseDto> findAllChallengePage(Long userSeq, Pageable pageable);
 
