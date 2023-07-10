@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({CustomException.class})
     protected ResponseEntity<ErrorResponse> exceptionHandler(CustomException e, HttpServletRequest request) {
-//        notificationManager.sendNotification(errorCode, request.getRequestURI(), getParams(request));
+        notificationManager.sendNotification(e, request.getRequestURI(), getParams(request));
         System.out.println(ErrorResponse.toResponseEntity(e.getResultCode()));
         return ErrorResponse.toResponseEntity(e.getResultCode());
     }
@@ -50,22 +50,6 @@ public class GlobalExceptionHandler {
         }
     }
 
-    /*@ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
-    protected ResponseEntity<ResultResponseDto> badParameter(RuntimeException e, HttpServletRequest request) {
-        notificationManager.sendNotification(e, request.getRequestURI(), getParams(request));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL, e.getMessage())
-        );
-    }
-
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ResultResponseDto> exception(Exception e, HttpServletRequest request) {
-        notificationManager.sendNotification(e, request.getRequestURI(), getParams(request));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                ResultResponseDto.of(ResultCode.INTERNAL_SERVER_ERROR, e.getMessage())
-        );
-    }*/
-
     private String getParams(HttpServletRequest req) {
         StringBuilder params = new StringBuilder();
         Enumeration<String> keys = req.getParameterNames();
@@ -79,13 +63,4 @@ public class GlobalExceptionHandler {
         }
         return params.toString();
     }
-
-    /*@RestControllerAdvice
-    public class GlobalExceptionHandler {
-
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<?> handleException(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }*/
 }

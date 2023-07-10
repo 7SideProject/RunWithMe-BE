@@ -14,7 +14,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResultCode {
     // User
-    // 예시
     LOGIN_SUCCESS(200, "U001", "로그인에 성공하였습니다."),
     USER_REQUEST_SUCCESS(200, "U002", "요청을 성공적으로 수행했습니다."),
     INVALID_PARAMETER_FAIL(400, "U101", "잘못된 파라미터입니다."),
@@ -58,8 +57,7 @@ public enum ResultCode {
     FAILED_CONVERT(400, "IXXX", "잘못된 파일입니다."),
 
     // Auth
-    FAILED_GENERATE_TOKEN(400, "TXXX", "Failed to generate Token."),
-
+    FAILED_GENERATE_TOKEN(400, "TXXX", "토큰을 생성할 수 없습니다."),
     ;
 
     private final int status;

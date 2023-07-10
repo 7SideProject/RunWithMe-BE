@@ -22,10 +22,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         setDetails(request, authenticationToken);
 
-        System.out.println("tt");
-        Authentication authentication = this.getAuthenticationManager().authenticate(authenticationToken);
-
-        return authentication;
+        return this.getAuthenticationManager().authenticate(authenticationToken);
     }
 
     private static UsernamePasswordAuthenticationToken getAuthenticationToken(HttpServletRequest request) {
