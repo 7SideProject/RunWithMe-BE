@@ -1,11 +1,19 @@
 package com.runwithme.runwithme.global.error;
 
 import com.runwithme.runwithme.global.result.ResultCode;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class CustomException extends RuntimeException {
+public class CustomException extends CommonException {
     private final ResultCode resultCode;
+
+    public CustomException(ResultCode resultCode) {
+        super(resultCode.getMessage());
+        this.resultCode = resultCode;
+    }
+
+    @Override
+    public ResultCode getResultCode() {
+        return this.resultCode;
+    }
 }
