@@ -1,18 +1,15 @@
 package com.runwithme.runwithme.global.error;
 
 import com.runwithme.runwithme.global.result.ResultCode;
+import com.runwithme.runwithme.global.result.ResultResponseDto;
 import com.runwithme.runwithme.global.webhook.NotificationManager;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
 import java.util.Enumeration;
 
 @Slf4j
@@ -22,32 +19,13 @@ public class GlobalExceptionHandler {
 
     private final NotificationManager notificationManager;
 
-    @ExceptionHandler({CustomException.class})
-    protected ResponseEntity<ErrorResponse> exceptionHandler(CustomException e, HttpServletRequest request) {
+    @ExceptionHandler({Exception.class})
+    protected ResponseEntity<ResultResponseDto> exceptionHandler(CommonException e, HttpServletRequest request) {
         notificationManager.sendNotification(e, request.getRequestURI(), getParams(request));
-        System.out.println(ErrorResponse.toResponseEntity(e.getResultCode()));
-        return ErrorResponse.toResponseEntity(e.getResultCode());
-    }
-
-    @Getter
-    @Builder
-    @ToString
-    public static class ErrorResponse {
-        private final LocalDateTime timestamp = LocalDateTime.now();
-        private final int status;
-        private final String code;
-        private final String message;
-
-        public static ResponseEntity<ErrorResponse> toResponseEntity(ResultCode resultCode) {
-            return ResponseEntity
-                    .status(resultCode.getStatus())
-                    .body(ErrorResponse.builder()
-                            .status(resultCode.getStatus())
-                            .code(resultCode.getCode())
-                            .message(resultCode.getMessage())
-                            .build()
-                    );
-        }
+        ResultCode resultCode = e.getResultCode();
+        return ResponseEntity
+                .status(resultCode.getStatus())
+                .body(ResultResponseDto.of(resultCode, resultCode.getMessage()));
     }
 
     private String getParams(HttpServletRequest req) {
