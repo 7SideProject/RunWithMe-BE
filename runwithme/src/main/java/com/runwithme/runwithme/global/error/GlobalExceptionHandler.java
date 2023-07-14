@@ -9,17 +9,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Enumeration;
 
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+//public class GlobalExceptionHandler {
 
     private final NotificationManager notificationManager;
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler({CommonException.class})
     protected ResponseEntity<ResultResponseDto> exceptionHandler(CommonException e, HttpServletRequest request) {
         notificationManager.sendNotification(e, request.getRequestURI(), getParams(request));
         ResultCode resultCode = e.getResultCode();

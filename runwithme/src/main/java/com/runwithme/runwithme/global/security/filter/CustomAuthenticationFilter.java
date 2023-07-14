@@ -21,7 +21,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(request);
 
         setDetails(request, authenticationToken);
-
+        /*Authentication authenticate;
+        try {
+            authenticate = this.getAuthenticationManager().authenticate(authenticationToken);
+        } catch (Exception e) {
+            System.out.println("Error:: " + e);
+            throw new AuthenticationServiceException("tqldsfaslkdfjaskdlfjalksdjflkd");
+        }
+        return authenticate;*/
         return this.getAuthenticationManager().authenticate(authenticationToken);
     }
 
