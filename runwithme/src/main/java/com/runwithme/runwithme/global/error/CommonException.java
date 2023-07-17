@@ -6,5 +6,6 @@ public abstract class CommonException extends RuntimeException {
     public CommonException(String message) {
         super(message);
     }
+
     public abstract ResultCode getResultCode();
 }

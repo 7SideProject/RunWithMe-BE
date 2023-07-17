@@ -9,7 +9,7 @@ import lombok.*;
 public class ResultResponseDto {
 
     @Schema
-    private String code;
+    private int code;
     @Schema
     private String message;
     @Schema

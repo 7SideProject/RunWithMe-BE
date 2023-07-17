@@ -14,54 +14,54 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResultCode {
     // User
-    LOGIN_SUCCESS(200, "U001", "로그인에 성공하였습니다."),
-    USER_REQUEST_SUCCESS(200, "U002", "요청을 성공적으로 수행했습니다."),
-    INVALID_PARAMETER_FAIL(400, "U101", "잘못된 파라미터입니다."),
-    USER_NOT_FOUND(400, "U001", "존재하지 않는 유저입니다."),
-    SEQ_NOT_FOUND(400, "UXXX", "해당 SEQ를 가진 유저가 존재하지 않습니다."),
-    EMAIL_EXISTS(400, "UXXX", "이미 존재하는 이메일입니다."),
-    UNAUTHORIZED(401, "U102", "인증에 실패했습니다."),
-    INTERNAL_SERVER_ERROR(500, "U103", "서버 오류입니다."),
-    DELETED_USER(400, "UXXX", "삭제된 회원입니다."),
-    BAD_PASSWORD(400, "UXXX", "잘못된 패스워드입니다."),
-    UNAUTHORIZED_USER(400, "UXXX", "권한 없는 사용자입니다."),
+    LOGIN_SUCCESS                   (200, 100, "로그인에 성공하였습니다."),
+    USER_REQUEST_SUCCESS            (200, 101, "요청을 성공적으로 수행했습니다."),
+    INVALID_PARAMETER_FAIL          (400, -100, "잘못된 파라미터입니다."),
+    USER_NOT_FOUND                  (400, -101, "존재하지 않는 유저입니다."),
+    SEQ_NOT_FOUND                   (400, -102, "해당 SEQ를 가진 유저가 존재하지 않습니다."),
+    EMAIL_EXISTS                    (400, -103, "이미 존재하는 이메일입니다."),
+    UNAUTHORIZED                    (400, -104, "인증에 실패했습니다."),
+    INTERNAL_SERVER_ERROR           (400, -105, "서버 오류입니다."),
+    DELETED_USER                    (400, -106, "삭제된 회원입니다."),
+    BAD_PASSWORD                    (400, -107, "잘못된 패스워드입니다."),
+    UNAUTHORIZED_USER               (400, -108, "권한 없는 사용자입니다."),
 
     // Record
-    CREATE_RECORD_SUCCESS(200, "R001", "기록 등록에 성공하였습니다."),
-    GET_MY_TOTAL_RECORD_SUCCESS(200, "R002", "내 기록 누적 수치 조회에 성공하였습니다."),
-    GET_MY_RECORD_SUCCESS(200, "R003", "내 기록 수치 조회에 성공하였습니다."),
-    GET_ONE_RECORD_SUCCESS(200, "R004", "기록 상세 조회에 성공하였습니다."),
-    GET_ALL_RECORD_SUCCESS(200, "R005", "기록 전체 조회에 성공하였습니다."),
-    ADD_COORDINATES_SUCCESS(200, "R006", "좌표 등록에 성공하였습니다."),
-    ADD_COORDINATES_FAIL(200, "R007", "좌표 등록에 실패하였습니다."),
-    RECORD_ALREADY_EXIST(400, "R001", "오늘 이미 기록을 등록 하였습니다."),
+    CREATE_RECORD_SUCCESS           (200, 200, "기록 등록에 성공하였습니다."),
+    GET_MY_TOTAL_RECORD_SUCCESS     (200, 201, "내 기록 누적 수치 조회에 성공하였습니다."),
+    GET_MY_RECORD_SUCCESS           (200, 202, "내 기록 수치 조회에 성공하였습니다."),
+    GET_ONE_RECORD_SUCCESS          (200, 203, "기록 상세 조회에 성공하였습니다."),
+    GET_ALL_RECORD_SUCCESS          (200, 204, "기록 전체 조회에 성공하였습니다."),
+    ADD_COORDINATES_SUCCESS         (200, 205, "좌표 등록에 성공하였습니다."),
+    ADD_COORDINATES_FAIL            (200, 206, "좌표 등록에 실패하였습니다."),
+    RECORD_ALREADY_EXIST            (400, -200, "오늘 이미 기록을 등록 하였습니다."),
 
     // Challenge
-    GET_ONE_CHALLENGE_SUCCESS(200, "C001", "챌린지 상세 조회에 성공하였습니다."),
-    GET_ALL_CHALLENGE_SUCCESS(200, "C002", "챌린지 전체 조회에 성공하였습니다."),
-    JOIN_CHALLENGE_SUCCESS(200, "C003", "챌린지 가입에 성공하였습니다."),
-    JOIN_CHALLENGE_FAIL(200, "C004", "챌린지 가입에 실패하였습니다."),
-    CHECK_IN_CHALLENGE_SUCCESS(200, "C005", "챌린지 가입되어 있는 계정입니다."),
-    CHECK_IN_CHALLENGE_FAIL(200, "C006", "챌린지 가입되지 않은 계정입니다."),    
-    GET_MY_CHALLENGE_SUCCESS(200, "C007", "가입한 챌린지 조회에 성공하였습니다."),
-    CHALLENGE_NOT_FOUND(400, "C001", "존재하지 않는 챌린지입니다."),
-    CHALLENGE_JOIN_ALREADY_EXIST(400, "C002", "이미 가입한 챌린지 입니다."),
+    GET_ONE_CHALLENGE_SUCCESS       (200, 300, "챌린지 상세 조회에 성공하였습니다."),
+    GET_ALL_CHALLENGE_SUCCESS       (200, 301, "챌린지 전체 조회에 성공하였습니다."),
+    JOIN_CHALLENGE_SUCCESS          (200, 302, "챌린지 가입에 성공하였습니다."),
+    JOIN_CHALLENGE_FAIL             (200, 303, "챌린지 가입에 실패하였습니다."),
+    CHECK_IN_CHALLENGE_SUCCESS      (200, 304, "챌린지 가입되어 있는 계정입니다."),
+    CHECK_IN_CHALLENGE_FAIL         (200, 305, "챌린지 가입되지 않은 계정입니다."),
+    GET_MY_CHALLENGE_SUCCESS        (200, 306, "가입한 챌린지 조회에 성공하였습니다."),
+    CHALLENGE_NOT_FOUND             (400, -300, "존재하지 않는 챌린지입니다."),
+    CHALLENGE_JOIN_ALREADY_EXIST    (400, -301, "이미 가입한 챌린지 입니다."),
 
     // Board
-    CREATE_BOARD_SUCCESS(200, "B001", "게시글 등록에 성공하였습니다."),
-    GET_ONE_BOARD_SUCCESS(200, "B002", "게시글 상세 조회에 성공하였습니다."),
-    GET_ALL_BOARD_SUCCESS(200, "B003", "게시글 전체 조회에 성공하였습니다."),
-    DELETE_BOARD_SUCCESS(200, "B004", "게시글 삭제에 성공하였습니다."),
+    CREATE_BOARD_SUCCESS            (200, 400, "게시글 등록에 성공하였습니다."),
+    GET_ONE_BOARD_SUCCESS           (200, 401, "게시글 상세 조회에 성공하였습니다."),
+    GET_ALL_BOARD_SUCCESS           (200, 402, "게시글 전체 조회에 성공하였습니다."),
+    DELETE_BOARD_SUCCESS            (200, 403, "게시글 삭제에 성공하였습니다."),
 
     // Image
-    IMAGE_NOT_FOUND(400, "IXXX", "이미지를 찾을 수 없습니다."),
-    FAILED_CONVERT(400, "IXXX", "잘못된 파일입니다."),
+    IMAGE_NOT_FOUND                 (400, -500, "이미지를 찾을 수 없습니다."),
+    FAILED_CONVERT                  (400, -501, "잘못된 파일입니다."),
 
     // Auth
-    FAILED_GENERATE_TOKEN(400, "TXXX", "토큰을 생성할 수 없습니다."),
+    FAILED_GENERATE_TOKEN           (400, -600, "토큰을 생성할 수 없습니다."),
     ;
 
     private final int status;
-    private final String code;
+    private final int code;
     private final String message;
 }
