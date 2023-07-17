@@ -6,8 +6,11 @@ import com.runwithme.runwithme.global.webhook.NotificationManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -28,6 +31,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(resultCode.getStatus())
                 .body(ResultResponseDto.of(resultCode, resultCode.getMessage()));
+    }
+
+    @ExceptionHandler({AuthenticationException.class})
+    @ResponseBody
+    public ResponseEntity<ResultResponseDto> handleAuthenticationException(Exception e) {
+        System.out.println(e);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ResultResponseDto.of(ResultCode.UNAUTHORIZED_USER));
     }
 
     private String getParams(HttpServletRequest req) {

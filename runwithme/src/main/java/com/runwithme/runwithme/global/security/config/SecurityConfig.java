@@ -6,6 +6,7 @@ import com.runwithme.runwithme.global.security.handler.CustomAuthenticationFailu
 import com.runwithme.runwithme.global.security.handler.CustomAuthenticationSuccessHandler;
 import com.runwithme.runwithme.global.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
+import com.runwithme.runwithme.global.security.point.DelegatedAuthenticationEntryPoint;
 import com.runwithme.runwithme.global.security.properties.JwtProperties;
 import com.runwithme.runwithme.global.security.provider.CustomAuthenticationProvider;
 import com.runwithme.runwithme.global.security.repository.CustomAuthorizationRequestRepository;
@@ -13,7 +14,6 @@ import com.runwithme.runwithme.global.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -36,21 +35,21 @@ import java.util.List;
 public class SecurityConfig {
 
     private final String[] PERMIT_ALL_SWAGGER = {
-        /* swagger v2 */
-        "/v2/api-docs",
-        "/swagger-resources",
-        "/swagger-resources/**",
-        "/configuration/ui",
-        "/configuration/security",
-        "/swagger-ui.html",
-        "/webjars/**",
-        /* swagger v3 */
-        "/v3/api-docs/**",
-        "/swagger-ui/**"
+            /* swagger v2 */
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            /* swagger v3 */
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
     };
 
     private final String[] PERMIT_ALL_ACTUATOR = {
-        "/management/**"
+            "/management/**"
     };
 
     private final String[] PERMIT_ALL_USER = {
@@ -67,37 +66,38 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
+    private final DelegatedAuthenticationEntryPoint authEntryPoint;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf().disable()
                 .cors().configurationSource(corsConfigurationSource())
-        .and()
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
+                .and()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .oauth2Login(oauth2 -> oauth2
-                .authorizationEndpoint(authorizationEndpointConfig ->
-                        authorizationEndpointConfig.baseUri("/oauth2/authorization")
-                                .authorizationRequestRepository(authorizationRequestRepository()))
-                .userInfoEndpoint(
-                        userInfoEndpointConfig ->
-                                userInfoEndpointConfig.userService(customOAuth2UserService)
-                )
-                .successHandler(oAuth2AuthenticationSuccessHandler()))
-//                .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-//        .and()
+                        .authorizationEndpoint(authorizationEndpointConfig ->
+                                authorizationEndpointConfig.baseUri("/oauth2/authorization")
+                                        .authorizationRequestRepository(authorizationRequestRepository()))
+                        .userInfoEndpoint(
+                                userInfoEndpointConfig ->
+                                        userInfoEndpointConfig.userService(customOAuth2UserService)
+                        )
+                        .successHandler(oAuth2AuthenticationSuccessHandler()))
+
                 .authorizeHttpRequests()
                 .requestMatchers(PERMIT_ALL_SWAGGER).permitAll()
                 .requestMatchers(PERMIT_ALL_ACTUATOR).permitAll()
                 .requestMatchers(PERMIT_ALL_USER).permitAll()
                 .anyRequest().authenticated()
-        .and()
+                .and()
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(authEntryPoint);
         return http.build();
     }
 
@@ -148,7 +148,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("HEAD","POST","GET","DELETE","PUT"));
+        configuration.setAllowedMethods(List.of("HEAD", "POST", "GET", "DELETE", "PUT"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 

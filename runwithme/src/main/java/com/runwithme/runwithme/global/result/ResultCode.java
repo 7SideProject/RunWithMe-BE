@@ -24,6 +24,7 @@ public enum ResultCode {
     INTERNAL_SERVER_ERROR(500, "U103", "서버 오류입니다."),
     DELETED_USER(400, "UXXX", "삭제된 회원입니다."),
     BAD_PASSWORD(400, "UXXX", "잘못된 패스워드입니다."),
+    UNAUTHORIZED_USER(400, "UXXX", "권한 없는 사용자입니다."),
 
     // Record
     CREATE_RECORD_SUCCESS(200, "R001", "기록 등록에 성공하였습니다."),
