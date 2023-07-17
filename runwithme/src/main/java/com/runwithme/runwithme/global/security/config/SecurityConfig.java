@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.global.security.config;
 
+import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
 import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
 import com.runwithme.runwithme.global.security.handler.CustomAuthenticationFailureHandler;
@@ -70,7 +71,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .csrf().disable()
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
@@ -87,18 +88,16 @@ public class SecurityConfig {
                                         userInfoEndpointConfig.userService(customOAuth2UserService)
                         )
                         .successHandler(oAuth2AuthenticationSuccessHandler()))
-
                 .authorizeHttpRequests()
                 .requestMatchers(PERMIT_ALL_SWAGGER).permitAll()
                 .requestMatchers(PERMIT_ALL_ACTUATOR).permitAll()
                 .requestMatchers(PERMIT_ALL_USER).permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling()
-                .authenticationEntryPoint(authEntryPoint);
-        return http.build();
+                .build();
     }
 
     @Bean
@@ -117,7 +116,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CustomAuthenticationFilter customAuthenticationFilter() {
+    public CustomAuthenticationFilter customAuthenticationFilter() throws CustomException {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
 
         customAuthenticationFilter.setFilterProcessesUrl("/users/login");

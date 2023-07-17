@@ -3,11 +3,13 @@ package com.runwithme.runwithme.global.security.point;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+@Order(0)
 @Component
 public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -19,6 +21,6 @@ public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoi
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
-        resolver.resolveException(request, response, null, authException);
+        resolver.resolveException(request, response, null, (Exception) request.getAttribute("exception"));
     }
 }

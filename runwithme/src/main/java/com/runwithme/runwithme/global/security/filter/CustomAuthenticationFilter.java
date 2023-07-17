@@ -20,7 +20,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(request);
         setDetails(request, authenticationToken);
-        return this.getAuthenticationManager().authenticate(authenticationToken);
+        Authentication authenticate;
+        try {
+            authenticate = this.getAuthenticationManager().authenticate(authenticationToken);
+        } catch (Exception e) {
+            request.setAttribute("exception", e);
+            throw e;
+        }
+        return authenticate;
     }
 
     private static UsernamePasswordAuthenticationToken getAuthenticationToken(HttpServletRequest request) {
