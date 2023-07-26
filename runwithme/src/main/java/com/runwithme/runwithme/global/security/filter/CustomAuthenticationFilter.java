@@ -2,6 +2,7 @@ package com.runwithme.runwithme.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.runwithme.runwithme.domain.user.dto.UserLoginDto;
+import com.runwithme.runwithme.global.error.CustomException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+
+import static com.runwithme.runwithme.global.result.ResultCode.HAEDER_NO_TOKEN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,8 +38,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             UserLoginDto dto = new ObjectMapper().readValue(request.getInputStream(), UserLoginDto.class);
             log.debug("CustomAuthenticationFilter :: email : {}, password : {}", dto.email(), dto.password());
             return new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e.getCause());
+        } catch (Exception e) {
+            throw new CustomException(HAEDER_NO_TOKEN);
         }
     }
 }

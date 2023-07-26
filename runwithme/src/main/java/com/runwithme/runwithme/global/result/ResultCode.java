@@ -59,6 +59,7 @@ public enum ResultCode {
 
     // Auth
     FAILED_GENERATE_TOKEN           (400, -600, "토큰을 생성할 수 없습니다."),
+    HAEDER_NO_TOKEN                 (400, -601, "헤더에 토큰이 존재하지 않습니다."),
     ;
 
     private final int status;

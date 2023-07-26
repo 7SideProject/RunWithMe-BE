@@ -42,7 +42,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             responseBody = om.writerWithDefaultPrettyPrinter().writeValueAsString(ResultResponseDto.of(ResultCode.UNAUTHORIZED));
             PrintWriter writer = response.getWriter();
             writer.write(responseBody);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new CustomException(SEQ_NOT_FOUND);
         }
     }

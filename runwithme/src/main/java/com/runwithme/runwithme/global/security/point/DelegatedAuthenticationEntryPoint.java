@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.global.security.point;
 
+import com.runwithme.runwithme.global.error.CustomException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,6 +9,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import static com.runwithme.runwithme.global.result.ResultCode.HAEDER_NO_TOKEN;
 
 @Order(0)
 @Component
@@ -21,6 +24,7 @@ public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoi
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
-        resolver.resolveException(request, response, null, (Exception) request.getAttribute("exception"));
+        resolver.resolveException(request, response, null, request.getAttribute("exception") == null ?
+                new CustomException(HAEDER_NO_TOKEN) : (Exception) request.getAttribute("exception"));
     }
 }
