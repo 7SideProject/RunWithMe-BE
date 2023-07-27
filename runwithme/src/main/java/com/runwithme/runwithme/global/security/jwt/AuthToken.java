@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.global.security.jwt;
 
+import com.runwithme.runwithme.global.error.CustomException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.security.Key;
 import java.util.Date;
+
+import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -56,19 +59,15 @@ public class AuthToken {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            // 이거 어떻게 처리하지?
         } catch (SecurityException e) {
-            log.info("Invalid JWT signature.");
+            throw new CustomException(INVALID_JWT_SIGNATURE);
         } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token.");
+            throw new CustomException(INVALID_JWT_TOKEN);
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
+            throw new CustomException(EXPIRED_JWT_TOKEN);
+        } catch (Exception e) {
+            throw new CustomException(UNSUPPORTED_JWT_TOKEN);
         }
-        return null;
     }
 
     public Claims getExpiredTokenClaims() {
