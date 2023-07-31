@@ -56,21 +56,18 @@ public class UserController {
     })
     public ResponseEntity<ResultResponseDto> getUserProfile(@PathVariable Long userSeq) {
         UserProfileViewDto userProfileViewDto = userService.getUserProfile(userSeq);
-        log.info("Get profile user {}", userSeq);
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userProfileViewDto), HttpStatus.OK);
     }
 
     @GetMapping(value = "/duplicate-email")
     public ResponseEntity<ResultResponseDto> isDuplicatedEmail(@RequestParam String email) {
         DuplicatedViewDto duplicatedViewDto = userService.isDuplicatedEmail(email);
-        log.info("Success process");
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
     }
 
     @GetMapping(value = "/duplicate-nickname")
     public ResponseEntity<ResultResponseDto> isDuplicatedNickname(@RequestParam String nickname) {
         DuplicatedViewDto duplicatedViewDto = userService.isDuplicatedNickname(nickname);
-        log.info("Success process");
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, duplicatedViewDto), HttpStatus.OK);
     }
 

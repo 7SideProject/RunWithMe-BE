@@ -11,9 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.IOException;
-
-import static com.runwithme.runwithme.global.result.ResultCode.HAEDER_NO_TOKEN;
+import static com.runwithme.runwithme.global.result.ResultCode.HEADER_NO_TOKEN;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             log.debug("CustomAuthenticationFilter :: email : {}, password : {}", dto.email(), dto.password());
             return new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         } catch (Exception e) {
-            throw new CustomException(HAEDER_NO_TOKEN);
+            throw new CustomException(HEADER_NO_TOKEN);
         }
     }
 }

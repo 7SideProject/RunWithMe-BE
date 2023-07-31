@@ -59,11 +59,11 @@ public enum ResultCode {
 
     // Auth
     FAILED_GENERATE_TOKEN           (400, -600, "토큰을 생성할 수 없습니다."),
-    HAEDER_NO_TOKEN                 (400, -601, "헤더에 토큰이 존재하지 않습니다."),
+    HEADER_NO_TOKEN                 (400, -601, "헤더에 토큰이 존재하지 않습니다."),
     INVALID_JWT_SIGNATURE           (400, -602, "시그니처가 유효하지 않습니다."),
-    INVALID_JWT_TOKEN               (400, -602, "JWT Token이 유효하지 않습니다."),
-    EXPIRED_JWT_TOKEN               (400, -602, "JWT Token이 만료되었습니다."),
-    UNSUPPORTED_JWT_TOKEN           (400, -602, "지원되지 않는 Token입니다."),
+    INVALID_JWT_TOKEN               (400, -603, "JWT Token이 유효하지 않습니다."),
+    EXPIRED_JWT_TOKEN               (400, -604, "JWT Token이 만료되었습니다."),
+    UNSUPPORTED_JWT_TOKEN           (400, -605, "지원되지 않는 Token입니다."),
     ;
 
     private final int status;

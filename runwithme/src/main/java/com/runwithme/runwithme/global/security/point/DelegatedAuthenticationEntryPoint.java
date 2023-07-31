@@ -10,7 +10,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import static com.runwithme.runwithme.global.result.ResultCode.HAEDER_NO_TOKEN;
+import static com.runwithme.runwithme.global.result.ResultCode.HEADER_NO_TOKEN;
 
 @Order(0)
 @Component
@@ -25,6 +25,6 @@ public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoi
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
         resolver.resolveException(request, response, null, request.getAttribute("exception") == null ?
-                new CustomException(HAEDER_NO_TOKEN) : (Exception) request.getAttribute("exception"));
+                new CustomException(HEADER_NO_TOKEN) : (Exception) request.getAttribute("exception"));
     }
 }
