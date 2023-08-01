@@ -1,6 +1,8 @@
 package com.runwithme.runwithme.global.security.handler;
 
 import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.result.ResultCode;
 import com.runwithme.runwithme.global.security.jwt.AuthToken;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import com.runwithme.runwithme.global.security.model.PrincipalDetails;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.runwithme.runwithme.global.result.ResultCode.REDIRECT_NOT_FOUND;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REDIRECT_URI;
 
 @Slf4j
@@ -37,8 +40,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI)
                 .map(Cookie::getValue);
 
-        if(redirectUri.isEmpty()) {
-            throw new IllegalArgumentException("We need to contain redirect URI");
+        if (redirectUri.isEmpty()) {
+            throw new CustomException(REDIRECT_NOT_FOUND);
         }
 
         String targetUri = redirectUri.orElse(getDefaultTargetUrl());

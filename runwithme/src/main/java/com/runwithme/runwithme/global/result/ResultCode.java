@@ -25,6 +25,7 @@ public enum ResultCode {
     DELETED_USER                    (400, -106, "삭제된 회원입니다."),
     BAD_PASSWORD                    (400, -107, "잘못된 패스워드입니다."),
     UNAUTHORIZED_USER               (400, -108, "권한 없는 사용자입니다."),
+    REDIRECT_NOT_FOUND              (400, -109, "리디렉션 URI를 포함해야 합니다"),
 
     // Record
     CREATE_RECORD_SUCCESS           (200, 200, "기록 등록에 성공하였습니다."),
