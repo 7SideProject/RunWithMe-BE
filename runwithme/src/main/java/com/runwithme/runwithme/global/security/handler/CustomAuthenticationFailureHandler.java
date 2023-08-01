@@ -1,8 +1,6 @@
 package com.runwithme.runwithme.global.security.handler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.runwithme.runwithme.global.error.CustomException;
@@ -17,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import static com.runwithme.runwithme.global.result.ResultCode.SEQ_NOT_FOUND;
