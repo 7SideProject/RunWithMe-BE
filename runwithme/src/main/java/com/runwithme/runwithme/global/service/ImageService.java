@@ -1,6 +1,7 @@
 package com.runwithme.runwithme.global.service;
 
 import com.runwithme.runwithme.global.entity.Image;
+import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.repository.ImageRepository;
 import com.runwithme.runwithme.global.utils.CacheUtils;
 import com.runwithme.runwithme.global.utils.MultipartFileUtils;
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Optional;
+
+import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 @Slf4j
 @Service
@@ -46,7 +48,7 @@ public class ImageService {
         CacheUtils.put("defaultImage", image);
     }
 
-    public Image save(MultipartFile multipartFile) throws IOException {
+    public Image save(MultipartFile multipartFile) {
         MultipartFileUtils multipartFileUtils = new MultipartFileUtils(multipartFile);
 
         uploadToS3(multipartFileUtils);
@@ -58,7 +60,7 @@ public class ImageService {
     }
 
     public void delete(Long imageSeq) {
-        Image image = imageRepository.findById(imageSeq).orElseThrow(IllegalArgumentException::new);
+        Image image = imageRepository.findById(imageSeq).orElseThrow(() -> new CustomException(IMAGE_NOT_FOUND));
 
         image.delete();
 
@@ -66,13 +68,12 @@ public class ImageService {
     }
 
     public Resource getImage(Long imageSeq) {
-        Image image = imageRepository.findById(imageSeq).orElseThrow(IllegalArgumentException::new);
-
+        Image image = imageRepository.findById(imageSeq).orElseThrow(() -> new CustomException(IMAGE_NOT_FOUND));
         return s3Utils.download("image", image.getSavedName());
     }
 
-    private void uploadToS3(MultipartFileUtils multipartFileUtils) throws IOException {
-        File file = multipartFileUtils.convertToFile().orElseThrow(() -> new IllegalArgumentException("잘못된 파일입니다."));
+    private void uploadToS3(MultipartFileUtils multipartFileUtils) {
+        File file = multipartFileUtils.convertToFile().orElseThrow(() -> new CustomException(FAILED_CONVERT));
         s3Utils.upload(file, multipartFileUtils.getFileType(), multipartFileUtils.getUuidFileName());
     }
 }

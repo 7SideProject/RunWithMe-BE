@@ -21,14 +21,11 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String tokenStr = HeaderUtils.getAccessToken(request);
-
         AuthToken token = tokenFactory.convertAuthToken(tokenStr);
-
         if (token.validate()) {
             Authentication authentication = tokenFactory.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         chain.doFilter(request, response);
     }
 }

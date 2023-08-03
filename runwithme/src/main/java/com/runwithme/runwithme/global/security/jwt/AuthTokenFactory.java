@@ -1,6 +1,6 @@
 package com.runwithme.runwithme.global.security.jwt;
 
-import com.runwithme.runwithme.global.security.exception.TokenValidFailedException;
+import com.runwithme.runwithme.global.error.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 
 @Slf4j
@@ -40,7 +42,7 @@ public class AuthTokenFactory {
 
     public Authentication getAuthentication(AuthToken authToken) {
 
-        if(authToken.validate()) {
+        if (authToken.validate()) {
 
             Claims claims = authToken.getTokenClaims();
             Collection<? extends GrantedAuthority> authorities =
@@ -53,7 +55,7 @@ public class AuthTokenFactory {
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         } else {
-            throw new TokenValidFailedException();
+            throw new CustomException(FAILED_GENERATE_TOKEN);
         }
     }
 }

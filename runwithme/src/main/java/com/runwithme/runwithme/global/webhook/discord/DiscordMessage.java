@@ -38,7 +38,6 @@ public class DiscordMessage {
         public void addExceptionInfo(Exception e) {
             title = e.getClass().getSimpleName();
             description = """
-                    
                     **Error Message**
                     `%s`
                     """.formatted(e.getMessage());

@@ -6,8 +6,12 @@ import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
 import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
 import com.runwithme.runwithme.domain.record.repository.RunRecordRepository;
+<<<<<<< HEAD
+import com.runwithme.runwithme.global.error.CustomException;
+=======
 import com.runwithme.runwithme.global.error.exception.EntityAlreadyExistException;
 import com.runwithme.runwithme.global.utils.AuthUtils;
+>>>>>>> develop
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.runwithme.runwithme.global.error.ErrorCode.*;
+import static com.runwithme.runwithme.global.result.ResultCode.RECORD_ALREADY_EXIST;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +32,16 @@ public class RecordService {
     private final AuthUtils authUtils;
 
     @Transactional
+<<<<<<< HEAD
+    public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto) {
+        final Long userSeq = 1L;
+=======
     public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto){
         final Long userSeq = authUtils.getLoginUserSeq();
+>>>>>>> develop
 
-        if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())){
-            throw new EntityAlreadyExistException(RECORD_ALREADY_EXIST);
+        if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
+            throw new CustomException(RECORD_ALREADY_EXIST);
         }
 
         final RunRecord runRecord = RunRecord.builder()
@@ -53,6 +62,27 @@ public class RecordService {
     }
 
     @Transactional
+<<<<<<< HEAD
+    public ChallengeTotalRecord getTotalRecord(Long challengeSeq) {
+        final Long userSeq = 1L;
+        return challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+    }
+
+    @Transactional
+    public List<RunRecord> getMyRunRecord(Long challengeSeq) {
+        final Long userSeq = 1L;
+        return runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+    }
+
+    @Transactional
+    public List<RunRecord> getAllRunRecord(Long challengeSeq) {
+        return runRecordRepository.findAllByChallengeSeq(challengeSeq);
+    }
+
+    @Transactional
+    public RunRecord getRunRecord(Long runRecordSeq) {
+        return runRecordRepository.findById(runRecordSeq).get();
+=======
     public ChallengeTotalRecord getTotalRecord(Long challengeSeq){
         final Long userSeq = authUtils.getLoginUserSeq();
 
@@ -86,27 +116,19 @@ public class RecordService {
         final RunRecord runRecord = runRecordRepository.findById(runRecordSeq).get();
 
         return runRecord;
+>>>>>>> develop
     }
 
     @Transactional
-    public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates){
+    public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates) {
         int[] results = runRecordRepository.coordinatesInsertBatch(recordSeq, coordinates);
-
         int success = 0;
-        int fail = 0;
 
-        for (int i = 0; i < results.length; i++) {
-            if (results[i] == -2) {
+        for (int result : results) {
+            if (result == -2) {
                 success++;
-            } else {
-                fail++;
             }
         }
-
-        if (results.length == success) {
-            return true;
-        } else {
-            return false;
-        }
+        return results.length == success;
     }
 }
