@@ -9,11 +9,6 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
-
 @Configuration
 public class SwaggerConfig {
 
@@ -35,7 +30,6 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI apiInfo() {
-
         String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
