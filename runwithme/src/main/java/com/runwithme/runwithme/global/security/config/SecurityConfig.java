@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,32 +34,21 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
     private final String[] PERMIT_ALL_SWAGGER = {
-            /* swagger v2 */
-            "/v2/api-docs",
-            "/swagger-resources",
+            "/favicon.ico",
+            "/error",
+            "/swagger-ui/**",
             "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            /* swagger v3 */
             "/v3/api-docs/**",
-            "/swagger-ui/**"
-    };
 
-    private final String[] PERMIT_ALL_ACTUATOR = {
-            "/management/**"
-    };
-
-    private final String[] PERMIT_ALL_USER = {
-            "/users/login",
+            "/management/**",
             "/users/join",
             "/users/duplicate-email",
             "/users/duplicate-nickname",
-            "/users/**/profile-image"
+            "/users/**/profile-image",
     };
 
     private final AuthTokenFactory authTokenFactory;
@@ -90,8 +80,6 @@ public class SecurityConfig {
                         .successHandler(oAuth2AuthenticationSuccessHandler()))
                 .authorizeHttpRequests()
                 .requestMatchers(PERMIT_ALL_SWAGGER).permitAll()
-                .requestMatchers(PERMIT_ALL_ACTUATOR).permitAll()
-                .requestMatchers(PERMIT_ALL_USER).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
