@@ -1,13 +1,6 @@
 package com.runwithme.runwithme.domain.challenge.controller;
 
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardPostDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
-<<<<<<< HEAD
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
-=======
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
->>>>>>> develop
+import com.runwithme.runwithme.domain.challenge.dto.*;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.service.ChallengeService;
 import com.runwithme.runwithme.global.dto.PagingResultDto;
@@ -61,11 +54,6 @@ public class ChallengeController {
 
     @Operation(operationId = "createChallenge", summary = "챌린지 등록")
     @PostMapping
-<<<<<<< HEAD
-    public ResponseEntity<ResultResponseDto> createChallenge(@RequestBody ChallengeCreateDto challengeCreateDto) {
-        challengeService.createChallenge(challengeCreateDto);
-        return null;
-=======
     public ResponseEntity<ResultResponseDto> createChallenge(
             @RequestBody ChallengeCreateDto challengeCreateDto,
             @Parameter(name = "file", description = "업로드 사진 데이터")
@@ -76,7 +64,6 @@ public class ChallengeController {
         } catch (IOException e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
->>>>>>> develop
     }
 
     @Operation(operationId = "getChallengeData", summary = "챌린지 상세 조회")
@@ -113,7 +100,6 @@ public class ChallengeController {
     @PageableAsQueryParam
     public ResponseEntity<ResultResponseDto> getRecruitChallengeList(@Parameter(hidden = true)@PageableDefault Pageable pageable){
         final PagingResultDto pagingResultDto = challengeService.getRecruitChallengeList(pageable);
-
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
     }
 
