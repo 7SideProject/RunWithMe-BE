@@ -23,13 +23,17 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String[] PERMIT_ALL_SWAGGER = {
+                /* SWAGGER */
                 "/favicon.ico",
                 "/error",
                 "/swagger-ui/**",
                 "/swagger-resources/**",
                 "/v3/api-docs/**",
 
+                /* ACTUATOR */
                 "/management/**",
+
+                /* USER */
                 "/users/join",
                 "/users/duplicate-email",
                 "/users/duplicate-nickname",
