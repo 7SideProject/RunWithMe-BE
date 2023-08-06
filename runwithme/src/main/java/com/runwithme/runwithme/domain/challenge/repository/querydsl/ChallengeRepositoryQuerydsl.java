@@ -11,10 +11,11 @@ public interface ChallengeRepositoryQuerydsl {
 
     Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq);
 
-    Page<ChallengeResponseDto> findAllChallengePage(Long userSeq, Pageable pageable);
+    Page<ChallengeResponseDto> findAllChallengePage(Long cursorSeq, Long userSeq, Pageable pageable);
 
-    Page<ChallengeResponseDto> findRecruitChallengePage(Long userSeq, LocalDateTime nowTime, Pageable pageable);
 
-    Page<ChallengeResponseDto> findMyChallengePage(Long userSeq, Pageable pageable);
+    Page<ChallengeResponseDto> findRecruitChallengePage(Long cursorSeq, Long userSeq, LocalDateTime nowTime, Pageable pageable);
+
+    Page<ChallengeResponseDto> findMyChallengePage(Long cursorSeq, Long userSeq, Pageable pageable);
 
 }

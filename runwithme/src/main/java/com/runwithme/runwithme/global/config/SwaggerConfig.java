@@ -9,11 +9,6 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
-
 @Configuration
 public class SwaggerConfig {
 
@@ -52,15 +47,4 @@ public class SwaggerConfig {
                 .addSecurityItem(securityRequirement)
                 .components(components);
     }
-
-//    @Getter
-//    @Setter
-//    @Schema
-//    static class Page {
-//        @Schema(accessMode = READ_ONLY, description = "페이지 번호(0..N)")
-//        private Integer page;
-//
-//        @Schema(accessMode = READ_ONLY, description = "페이지 크기", allowableValues="range[0, 100]")
-//        private Integer size;
-//    }
 }

@@ -18,6 +18,8 @@ public class QRunRecord extends EntityPathBase<RunRecord> {
 
     private static final long serialVersionUID = 468921659L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QRunRecord runRecord = new QRunRecord("runRecord");
 
     public final NumberPath<Long> avgSpeed = createNumber("avgSpeed", Long.class);
@@ -30,7 +32,7 @@ public class QRunRecord extends EntityPathBase<RunRecord> {
 
     public final StringPath endTime = createString("endTime");
 
-    public final NumberPath<Long> imgSeq = createNumber("imgSeq", Long.class);
+    public final com.runwithme.runwithme.global.entity.QImage image;
 
     public final DatePath<java.time.LocalDate> regTime = createDate("regTime", java.time.LocalDate.class);
 
@@ -45,15 +47,24 @@ public class QRunRecord extends EntityPathBase<RunRecord> {
     public final NumberPath<Long> userSeq = createNumber("userSeq", Long.class);
 
     public QRunRecord(String variable) {
-        super(RunRecord.class, forVariable(variable));
+        this(RunRecord.class, forVariable(variable), INITS);
     }
 
     public QRunRecord(Path<? extends RunRecord> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QRunRecord(PathMetadata metadata) {
-        super(RunRecord.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QRunRecord(PathMetadata metadata, PathInits inits) {
+        this(RunRecord.class, metadata, inits);
+    }
+
+    public QRunRecord(Class<? extends RunRecord> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.image = inits.isInitialized("image") ? new com.runwithme.runwithme.global.entity.QImage(forProperty("image")) : null;
     }
 
 }

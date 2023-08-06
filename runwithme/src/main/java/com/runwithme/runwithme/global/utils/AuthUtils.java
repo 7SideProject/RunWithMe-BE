@@ -17,18 +17,16 @@ public class AuthUtils {
     private final UserRepository userRepository;
 
     public User getLoginUser() {
-        final Long userSeq = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        final User loginUser = userRepository.findById(userSeq)
+        final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        final User loginUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         return loginUser;
     }
 
     public Long getLoginUserSeq() {
-        try {
-            final Long userSeq = (Long)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return userSeq;
-        } catch (Exception e) {
-            throw new UserNotLoginException();
-        }
+        final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        final User loginUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        return loginUser.getSeq();
     }
 }

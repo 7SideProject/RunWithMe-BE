@@ -58,7 +58,7 @@ public class SecurityConfig {
             "/users/join",
             "/users/duplicate-email",
             "/users/duplicate-nickname",
-            "/users/**/profile-image"
+            "/users/**/profile-image",
     };
 
     private final AuthTokenFactory authTokenFactory;
