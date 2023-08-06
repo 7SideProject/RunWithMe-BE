@@ -1,17 +1,21 @@
 package com.runwithme.runwithme.domain.record.service;
 
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
 import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
 import com.runwithme.runwithme.domain.record.repository.RunRecordRepository;
+import com.runwithme.runwithme.global.entity.Image;
+import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,10 +30,14 @@ public class RecordService {
     private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
 
     private final AuthUtils authUtils;
+    private final ImageService imageService;
 
     @Transactional
-    public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto){
+    public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, ChallengeImageDto imgFile)  throws IOException {
         final Long userSeq = authUtils.getLoginUserSeq();
+
+        final Image savedImage = imageService.save(imgFile.image());
+
         if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
             throw new CustomException(RECORD_ALREADY_EXIST);
         }
@@ -41,8 +49,7 @@ public class RecordService {
                 .endTime(runRecordPostDto.getEndTime())
                 .runningTime(runRecordPostDto.getRunningTime())
                 .runningDistance(runRecordPostDto.getRunningDistance())
-//                .coordinates(runRecordPostDto.getCoordinates())
-                .imgSeq(runRecordPostDto.getImgSeq()).build();
+                .image(savedImage).build();
         runRecordRepository.save(runRecord);
 
         final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);

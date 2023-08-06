@@ -28,7 +28,7 @@ public class QChallengeBoard extends EntityPathBase<ChallengeBoard> {
 
     public final NumberPath<Long> challengeSeq = createNumber("challengeSeq", Long.class);
 
-    public final NumberPath<Long> imgSeq = createNumber("imgSeq", Long.class);
+    public final com.runwithme.runwithme.global.entity.QImage image;
 
     public final NumberPath<Long> seq = createNumber("seq", Long.class);
 
@@ -52,6 +52,7 @@ public class QChallengeBoard extends EntityPathBase<ChallengeBoard> {
 
     public QChallengeBoard(Class<? extends ChallengeBoard> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.image = inits.isInitialized("image") ? new com.runwithme.runwithme.global.entity.QImage(forProperty("image")) : null;
         this.user = inits.isInitialized("user") ? new com.runwithme.runwithme.domain.user.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
 

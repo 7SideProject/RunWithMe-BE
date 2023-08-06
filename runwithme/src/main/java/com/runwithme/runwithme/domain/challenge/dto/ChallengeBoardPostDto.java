@@ -6,5 +6,4 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeBoardPostDto {
     private String challengeBoardContent;
-    private Long imgSeq;
 }

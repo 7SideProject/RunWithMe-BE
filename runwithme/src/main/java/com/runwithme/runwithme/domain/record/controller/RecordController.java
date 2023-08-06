@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.record.controller;
 
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
@@ -8,11 +9,14 @@ import com.runwithme.runwithme.domain.record.service.RecordService;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 //import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
@@ -28,9 +32,18 @@ public class RecordController {
     //    @ApiOperation(value = "기록 등록")
     @Operation(operationId = "createRunRecord", summary = "기록 등록", description = "기록을 등록한다")
     @PostMapping("/{challengeSeq}/record")
-    public ResponseEntity<ResultResponseDto> createRunRecord(@PathVariable(value = "challengeSeq") Long challengeSeq, @RequestBody RunRecordPostDto runRecordPostDto) {
-        recordService.createRunRecord(challengeSeq, runRecordPostDto);
-        return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_RECORD_SUCCESS));
+    public ResponseEntity<ResultResponseDto> createRunRecord(
+            @PathVariable(value = "challengeSeq") Long challengeSeq,
+            @RequestBody RunRecordPostDto runRecordPostDto,
+            @Parameter(name = "file", description = "업로드 사진 데이터")
+            @RequestParam(name = "file") ChallengeImageDto imgFile
+    ){
+        try {
+            recordService.createRunRecord(challengeSeq, runRecordPostDto, imgFile);
+            return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_RECORD_SUCCESS));
+        } catch (IOException e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //    @ApiOperation(value = "챌린지내 내 기록 누적 수치")

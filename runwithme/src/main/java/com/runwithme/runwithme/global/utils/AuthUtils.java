@@ -17,16 +17,14 @@ public class AuthUtils {
     private final UserRepository userRepository;
 
     public User getLoginUser() {
-        final Long userSeq = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findById(userSeq)
+        final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
     public Long getLoginUserSeq() {
-        try {
-            return (Long)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        } catch (Exception e) {
-            throw new CustomException(USER_NOT_FOUND);
-        }
+        final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND)).getSeq();
     }
 }

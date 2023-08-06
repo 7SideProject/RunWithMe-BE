@@ -46,15 +46,4 @@ public class SwaggerConfig {
                 .addSecurityItem(securityRequirement)
                 .components(components);
     }
-
-//    @Getter
-//    @Setter
-//    @Schema
-//    static class Page {
-//        @Schema(accessMode = READ_ONLY, description = "페이지 번호(0..N)")
-//        private Integer page;
-//
-//        @Schema(accessMode = READ_ONLY, description = "페이지 크기", allowableValues="range[0, 100]")
-//        private Integer size;
-//    }
 }

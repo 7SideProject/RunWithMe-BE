@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeCreateDto {
 
-//    private Long managerSeq;
     private String name;
     private String description;
     private Long goalDays;

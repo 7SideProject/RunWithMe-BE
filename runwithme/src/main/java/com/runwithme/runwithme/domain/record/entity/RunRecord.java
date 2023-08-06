@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.record.entity;
 
+import com.runwithme.runwithme.global.entity.Image;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,8 +38,9 @@ public class RunRecord {
     @Column(name = "running_distance")
     private Long runningDistance;
 
-    @Column(name = "img_seq")
-    private Long imgSeq;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_seq")
+    private Image image;
 
     @Column(name = "calorie")
     private Long calorie;
@@ -54,14 +56,13 @@ public class RunRecord {
     private LocalDate regTime;
 
     @Builder
-    public RunRecord(Long userSeq, Long challengeSeq, String startTime, String endTime, Long runningTime, Long runningDistance, Long imgSeq){
+    public RunRecord(Long userSeq, Long challengeSeq, String startTime, String endTime, Long runningTime, Long runningDistance, Image image){
         this.userSeq = userSeq;
         this.challengeSeq = challengeSeq;
         this.startTime = startTime;
         this.endTime = endTime;
         this.runningTime = runningTime;
         this.runningDistance = runningDistance;
-//        this.coordinates = coordinates;
-        this.imgSeq = imgSeq;
+        this.image = image;
     }
 }
