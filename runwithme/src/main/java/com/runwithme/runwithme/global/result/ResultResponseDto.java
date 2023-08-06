@@ -1,10 +1,7 @@
 package com.runwithme.runwithme.global.result;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 
 @Schema(name = "결과 응답 데이터")
 @Getter
@@ -12,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class ResultResponseDto {
 
     @Schema
-    private String code;
+    private int code;
     @Schema
     private String message;
     @Schema
@@ -43,5 +40,4 @@ public class ResultResponseDto {
     public static ResultResponseDto of(ResultCode resultCode, String message) {
         return new ResultResponseDto(resultCode, message, null);
     }
-
 }
