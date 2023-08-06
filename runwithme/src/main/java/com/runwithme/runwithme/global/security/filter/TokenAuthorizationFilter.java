@@ -22,7 +22,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String[] PERMIT_ALL_SWAGGER = {
+        String[] PERMIT_URL_PATHS = {
                 /* SWAGGER */
                 "/favicon.ico",
                 "/error",
@@ -39,7 +39,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                 "/users/duplicate-nickname",
                 "/users/**/profile-image",
         };
-        return Arrays.stream(PERMIT_ALL_SWAGGER)
+        return Arrays.stream(PERMIT_URL_PATHS)
                 .anyMatch(e -> new AntPathMatcher().match(e, request.getServletPath()));
     }
 

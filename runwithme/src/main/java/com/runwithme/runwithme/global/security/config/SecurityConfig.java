@@ -37,14 +37,18 @@ import java.util.List;
 @EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
-    private final String[] PERMIT_ALL_SWAGGER = {
+    private final String[] PERMIT_URL_PATHS = {
+            /* SWAGGER */
             "/favicon.ico",
             "/error",
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/v3/api-docs/**",
 
+            /* ACTUATOR */
             "/management/**",
+
+            /* USER */
             "/users/join",
             "/users/duplicate-email",
             "/users/duplicate-nickname",
@@ -79,7 +83,7 @@ public class SecurityConfig {
                         )
                         .successHandler(oAuth2AuthenticationSuccessHandler()))
                 .authorizeHttpRequests()
-                .requestMatchers(PERMIT_ALL_SWAGGER).permitAll()
+                .requestMatchers(PERMIT_URL_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
