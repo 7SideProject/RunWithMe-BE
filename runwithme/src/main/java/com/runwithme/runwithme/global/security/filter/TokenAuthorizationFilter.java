@@ -38,6 +38,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                 "/users/duplicate-email",
                 "/users/duplicate-nickname",
                 "/users/**/profile-image",
+                "/token"
         };
         return Arrays.stream(PERMIT_URL_PATHS)
                 .anyMatch(e -> new AntPathMatcher().match(e, request.getServletPath()));
