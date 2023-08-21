@@ -3,8 +3,10 @@ package com.runwithme.runwithme.domain.challenge.service;
 import com.runwithme.runwithme.domain.challenge.dto.*;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoard;
+import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoardWarn;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeUser;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeBoardRepository;
+import com.runwithme.runwithme.domain.challenge.repository.ChallengeBoardWarnRepository;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserRepository;
 import com.runwithme.runwithme.domain.user.entity.User;
@@ -14,6 +16,7 @@ import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +36,7 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final ChallengeBoardRepository challengeBoardRepository;
     private final ChallengeUserRepository challengeUserRepository;
+    private final ChallengeBoardWarnRepository challengeBoardWarnRepository;
     private final ImageService imageService;
 
     private final AuthUtils authUtils;
@@ -55,9 +59,9 @@ public class ChallengeService {
 
     @Transactional
     public PagingResultDto<ChallengeBoardResponseDto> getBoardList(Long cursorSeq, Long challengeSeq, Pageable pageable){
-        final User user = authUtils.getLoginUser();
+        final Long userSeq = authUtils.getLoginUserSeq();
 
-        final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllBoardPage(cursorSeq, challengeSeq, pageable);
+        final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllBoardPage(cursorSeq, userSeq, challengeSeq, pageable);
         return new PagingResultDto<>(pageable.getPageNumber(), allBoards.getTotalPages() - 1, allBoards.getContent());
     }
 
@@ -139,5 +143,21 @@ public class ChallengeService {
         final Long userSeq = authUtils.getLoginUserSeq();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findMyChallengePage(cursorSeq, userSeq, pageable);
         return new PagingResultDto<>(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
+    }
+
+    @Transactional
+    public boolean boardWarn(Long boardSeq) {
+        final User user = authUtils.getLoginUser();
+        final ChallengeBoard challengeBoard = challengeBoardRepository.findById(boardSeq)
+                .orElseThrow(()->new CustomException(BOARD_NOT_FOUND));
+
+        if(challengeBoardWarnRepository.existsByUserAndChallengeBoard(user, challengeBoard)) {
+            throw new CustomException(WARN_BOARD_ALREADY_EXIST);
+        }
+
+        final ChallengeBoardWarn challengeBoardWarn = new ChallengeBoardWarn(user, challengeBoard);
+        challengeBoardWarnRepository.save(challengeBoardWarn);
+
+        return true;
     }
 }
