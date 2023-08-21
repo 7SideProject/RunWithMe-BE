@@ -32,9 +32,9 @@ public class ChallengeController {
     @PostMapping("/{challengeSeq}/board")
     public ResponseEntity<ResultResponseDto> createBoard(
             @PathVariable(value = "challengeSeq") Long challengeSeq,
-            @RequestBody ChallengeBoardPostDto challengeBoardPostDto,
+            ChallengeBoardPostDto challengeBoardPostDto,
             @Parameter(name = "file", description = "업로드 사진 데이터")
-            @RequestParam(name = "file") ChallengeImageDto imgFile
+            @RequestParam(name = "file", required = false) ChallengeImageDto imgFile
     ) {
         try {
             challengeService.createBoard(challengeSeq, challengeBoardPostDto, imgFile);
@@ -64,9 +64,9 @@ public class ChallengeController {
     @Operation(operationId = "createChallenge", summary = "챌린지 등록")
     @PostMapping
     public ResponseEntity<ResultResponseDto> createChallenge(
-            @RequestBody ChallengeCreateDto challengeCreateDto,
+            ChallengeCreateDto challengeCreateDto,
             @Parameter(name = "file", description = "업로드 사진 데이터")
-            @RequestParam(name = "file") ChallengeImageDto imgFile){
+            @RequestParam(name = "file", required = false) ChallengeImageDto imgFile){
         try {
             challengeService.createChallenge(challengeCreateDto, imgFile);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -118,5 +118,17 @@ public class ChallengeController {
     public ResponseEntity<ResultResponseDto> getMyChallengeList(@Parameter(description = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
         final PagingResultDto<ChallengeResponseDto> pagingResultDto = challengeService.getMyChallengeList(cursorSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
+    }
+
+    @Operation(operationId = "", summary = "게시글 신고")
+    @PostMapping("/warn/{boardSeq}")
+    public ResponseEntity<ResultResponseDto> boardWarn(@PathVariable(value = "boardSeq") Long boardSeq) {
+        final boolean success = challengeService.boardWarn(boardSeq);
+
+        if (success) {
+            return ResponseEntity.ok().body(ResultResponseDto.of(WARN_BOARD_SUCCESS));
+        } else {
+            return ResponseEntity.ok().body(ResultResponseDto.of(WARN_BOARD_FAIL));
+        }
     }
 }
