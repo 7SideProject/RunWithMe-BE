@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.global.security.config;
 
+import com.runwithme.runwithme.domain.user.service.RefreshTokenService;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
 import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
@@ -53,6 +54,7 @@ public class SecurityConfig {
             "/users/duplicate-email",
             "/users/duplicate-nickname",
             "/users/**/profile-image",
+            "/token"
     };
 
     private final AuthTokenFactory authTokenFactory;
@@ -62,6 +64,8 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
 
     private final DelegatedAuthenticationEntryPoint authEntryPoint;
+
+    private final RefreshTokenService refreshTokenService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -113,7 +117,7 @@ public class SecurityConfig {
 
         customAuthenticationFilter.setFilterProcessesUrl("/users/login");
         customAuthenticationFilter.setAuthenticationManager(authenticationManager());
-        customAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(authTokenFactory, properties));
+        customAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(authTokenFactory, properties, refreshTokenService));
         customAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 
         return customAuthenticationFilter;
