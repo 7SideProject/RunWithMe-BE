@@ -30,25 +30,16 @@ public class ChallengeController {
 
     @Operation(operationId = "createBoard", summary = "게시글 등록", description = "게시글을 등록한다")
     @PostMapping("/{challengeSeq}/board")
-    public ResponseEntity<ResultResponseDto> createBoard(
-            @PathVariable(value = "challengeSeq") Long challengeSeq,
-            ChallengeBoardPostDto challengeBoardPostDto,
-            @Parameter(name = "file", description = "업로드 사진 데이터")
-            @RequestParam(name = "file", required = false) ChallengeImageDto imgFile
-    ) {
-        try {
-            challengeService.createBoard(challengeSeq, challengeBoardPostDto, imgFile);
-            return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_BOARD_SUCCESS));
-        } catch (IOException e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ResultResponseDto> createBoard(@PathVariable(value = "challengeSeq") Long challengeSeq, @ModelAttribute ChallengeBoardPostDto challengeBoardPostDto) {
+        challengeService.createBoard(challengeSeq, challengeBoardPostDto);
+        return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_BOARD_SUCCESS));
     }
 
 
     @Operation(operationId = "getBoardList", summary = "게시판 조회")
     @GetMapping("/{challengeSeq}/board")
     @PageableAsQueryParam
-    public ResponseEntity<ResultResponseDto> getBoardList(@Parameter(description = "cursorSeq") Long cursorSeq, @PathVariable(value = "challengeSeq") Long challengeSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
+    public ResponseEntity<ResultResponseDto> getBoardList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @PathVariable(value = "challengeSeq") Long challengeSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
         final PagingResultDto<ChallengeBoardResponseDto> pagingResultDto = challengeService.getBoardList(cursorSeq, challengeSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_BOARD_SUCCESS, pagingResultDto));
     }
@@ -63,16 +54,10 @@ public class ChallengeController {
 
     @Operation(operationId = "createChallenge", summary = "챌린지 등록")
     @PostMapping
-    public ResponseEntity<ResultResponseDto> createChallenge(
-            ChallengeCreateDto challengeCreateDto,
-            @Parameter(name = "file", description = "업로드 사진 데이터")
-            @RequestParam(name = "file", required = false) ChallengeImageDto imgFile){
-        try {
-            challengeService.createChallenge(challengeCreateDto, imgFile);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (IOException e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ResultResponseDto> createChallenge(@ModelAttribute ChallengeCreateDto challengeCreateDto) {
+        challengeService.createChallenge(challengeCreateDto);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
     @Operation(operationId = "getChallengeData", summary = "챌린지 상세 조회")
@@ -84,7 +69,7 @@ public class ChallengeController {
 
     @Operation(operationId = "joinChallengeUser", summary = "챌린지 가입")
     @PostMapping("/{challengeSeq}/join")
-    public ResponseEntity<ResultResponseDto> joinChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq, String password) {
+    public ResponseEntity<ResultResponseDto> joinChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq, @Parameter(description = "password", name = "password") String password) {
         final boolean success = challengeService.joinChallengeUser(challengeSeq, password);
         return ResponseEntity.ok().body(ResultResponseDto.of(success ? JOIN_CHALLENGE_SUCCESS : JOIN_CHALLENGE_FAIL));
     }
@@ -99,7 +84,7 @@ public class ChallengeController {
     @Operation(operationId = "getAllChallengeList", summary = "전체 챌린지 리스트 조회")
     @GetMapping("/all")
     @PageableAsQueryParam
-    public ResponseEntity<ResultResponseDto> getAllChallengeList(@Parameter(description = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
+    public ResponseEntity<ResultResponseDto> getAllChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
         final PagingResultDto<ChallengeResponseDto> pagingResultDto = challengeService.getAllChallengeList(cursorSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
     }
@@ -107,7 +92,7 @@ public class ChallengeController {
     @Operation(operationId = "getRecruitChallengeList", summary = "모집중인 전체 챌린지 리스트 조회")
     @GetMapping("/all/recruit")
     @PageableAsQueryParam
-    public ResponseEntity<ResultResponseDto> getRecruitChallengeList(@Parameter(description = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
+    public ResponseEntity<ResultResponseDto> getRecruitChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
         final PagingResultDto<ChallengeResponseDto> pagingResultDto = challengeService.getRecruitChallengeList(cursorSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
     }
@@ -115,7 +100,7 @@ public class ChallengeController {
     @Operation(operationId = "getMyChallengeList", summary = "내 챌린지 리스트 조회")
     @GetMapping("/my")
     @PageableAsQueryParam
-    public ResponseEntity<ResultResponseDto> getMyChallengeList(@Parameter(description = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
+    public ResponseEntity<ResultResponseDto> getMyChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
         final PagingResultDto<ChallengeResponseDto> pagingResultDto = challengeService.getMyChallengeList(cursorSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
     }

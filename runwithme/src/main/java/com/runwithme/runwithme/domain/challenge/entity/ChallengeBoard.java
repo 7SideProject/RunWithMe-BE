@@ -23,7 +23,7 @@ public class ChallengeBoard {
     @JoinColumn(name = "user_seq")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "image_seq")
     private Image image;
 

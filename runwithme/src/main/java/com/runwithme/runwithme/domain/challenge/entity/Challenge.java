@@ -24,8 +24,8 @@ public class Challenge {
     @JoinColumn(name = "manager_seq")
     private User manager;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_seq")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "image_seq", nullable = true)
     private Image image;
 
     @Column(name = "name", length = 30)
@@ -44,10 +44,10 @@ public class Challenge {
     private Long goalAmount;
 
     @Column(name = "time_start")
-    private LocalDateTime timeStart;
+    private LocalDate timeStart;
 
     @Column(name = "time_end")
-    private LocalDateTime timeEnd;
+    private LocalDate timeEnd;
     @Column(name = "password", length = 10)
     private String password;
 
@@ -65,7 +65,7 @@ public class Challenge {
     private LocalDateTime regTime;
 
     @Builder
-    public Challenge(User manager, Image image, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDateTime timeStart, LocalDateTime timeEnd, String password, Long cost, Long nowMember, Long maxMember) {
+    public Challenge(User manager, Image image, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDate timeStart, LocalDate timeEnd, String password, Long cost, Long nowMember, Long maxMember) {
         this.manager = manager;
         this.image = image;
         this.name = name;

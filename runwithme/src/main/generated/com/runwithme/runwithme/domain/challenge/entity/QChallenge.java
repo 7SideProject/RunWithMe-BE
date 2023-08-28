@@ -50,9 +50,9 @@ public class QChallenge extends EntityPathBase<Challenge> {
 
     public final NumberPath<Long> seq = createNumber("seq", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> timeEnd = createDateTime("timeEnd", java.time.LocalDateTime.class);
+    public final DatePath<java.time.LocalDate> timeEnd = createDate("timeEnd", java.time.LocalDate.class);
 
-    public final DateTimePath<java.time.LocalDateTime> timeStart = createDateTime("timeStart", java.time.LocalDateTime.class);
+    public final DatePath<java.time.LocalDate> timeStart = createDate("timeStart", java.time.LocalDate.class);
 
     public QChallenge(String variable) {
         this(Challenge.class, forVariable(variable), INITS);
