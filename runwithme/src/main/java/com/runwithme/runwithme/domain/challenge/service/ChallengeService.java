@@ -14,6 +14,7 @@ import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.dto.PagingResultDto;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.entity.Image;
+import com.runwithme.runwithme.global.repository.ImageRepository;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,14 +39,15 @@ public class ChallengeService {
     private final ChallengeUserRepository challengeUserRepository;
     private final ChallengeBoardWarnRepository challengeBoardWarnRepository;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     private final AuthUtils authUtils;
 
     @Transactional
-    public void createBoard(Long challengeSeq, ChallengeBoardPostDto challengeBoardPostDto, ChallengeImageDto imgFile) throws IOException {
+    public void createBoard(Long challengeSeq, ChallengeBoardPostDto challengeBoardPostDto) {
         final User user = authUtils.getLoginUser();
 
-        final Image savedImage = imageService.save(imgFile.image());
+        final Image savedImage = imageService.save(challengeBoardPostDto.getImage());
 
         final LocalDateTime challengeBoardRegTime = LocalDateTime.now();
         final ChallengeBoard challengeBoard = ChallengeBoard.builder()
@@ -62,7 +64,7 @@ public class ChallengeService {
         final Long userSeq = authUtils.getLoginUserSeq();
 
         final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllBoardPage(cursorSeq, userSeq, challengeSeq, pageable);
-        return new PagingResultDto<>(pageable.getPageNumber(), allBoards.getTotalPages() - 1, allBoards.getContent());
+        return new PagingResultDto<>(allBoards.getContent());
     }
 
     @Transactional
@@ -72,10 +74,11 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void createChallenge(ChallengeCreateDto challengeCreateDto, ChallengeImageDto imgFile) throws IOException {
+    public void createChallenge(ChallengeCreateDto challengeCreateDto) {
         final User user = authUtils.getLoginUser();
 
-        final Image savedImage = imageService.save(imgFile.image());
+        final Image savedImage = imageService.save(challengeCreateDto.getImage());
+
         final Challenge challenge = Challenge.builder()
                 .manager(user)
                 .image(savedImage)
@@ -88,9 +91,9 @@ public class ChallengeService {
                 .timeEnd(challengeCreateDto.getTimeEnd())
                 .password(challengeCreateDto.getPassword())
                 .cost(challengeCreateDto.getCost())
-                .nowMember(challengeCreateDto.getNowMember())
                 .maxMember(challengeCreateDto.getMaxMember())
                 .build();
+
         challengeRepository.save(challenge);
     }
 
@@ -127,7 +130,7 @@ public class ChallengeService {
     public PagingResultDto getAllChallengeList(Long cursorSeq, Pageable pageable) {
         final Long userSeq = authUtils.getLoginUserSeq();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findAllChallengePage(cursorSeq, userSeq, pageable);
-        return new PagingResultDto<>(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
+        return new PagingResultDto<>(challenges.getContent());
     }
 
     @Transactional
@@ -135,14 +138,14 @@ public class ChallengeService {
         final Long userSeq = authUtils.getLoginUserSeq();
         final LocalDateTime localDateTime = LocalDateTime.now();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findRecruitChallengePage(cursorSeq, userSeq, localDateTime, pageable);
-        return new PagingResultDto<>(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
+        return new PagingResultDto<>(challenges.getContent());
     }
 
     @Transactional
     public PagingResultDto getMyChallengeList(Long cursorSeq, Pageable pageable) {
         final Long userSeq = authUtils.getLoginUserSeq();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findMyChallengePage(cursorSeq, userSeq, pageable);
-        return new PagingResultDto<>(pageable.getPageNumber(), challenges.getTotalPages() - 1, challenges.getContent());
+        return new PagingResultDto<>(challenges.getContent());
     }
 
     @Transactional

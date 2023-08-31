@@ -48,7 +48,7 @@ public class QRecordCoordinate extends EntityPathBase<RecordCoordinate> {
 
     public QRecordCoordinate(Class<? extends RecordCoordinate> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.runRecord = inits.isInitialized("runRecord") ? new QRunRecord(forProperty("runRecord")) : null;
+        this.runRecord = inits.isInitialized("runRecord") ? new QRunRecord(forProperty("runRecord"), inits.get("runRecord")) : null;
     }
 
 }

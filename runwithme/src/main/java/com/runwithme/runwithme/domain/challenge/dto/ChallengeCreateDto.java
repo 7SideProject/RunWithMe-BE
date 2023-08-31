@@ -1,13 +1,13 @@
 package com.runwithme.runwithme.domain.challenge.dto;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Data
+@AllArgsConstructor
+@Builder
 public class ChallengeCreateDto {
 
     private String name;
@@ -16,13 +16,13 @@ public class ChallengeCreateDto {
     private String goalType;
     private Long goalAmount;
 
-    private LocalDateTime timeStart;
-    private LocalDateTime timeEnd;
+    private LocalDate timeStart;
+    private LocalDate timeEnd;
 
     private String password;
     private Long cost;
 
-    private Long nowMember;
     private Long maxMember;
 
+    private MultipartFile image;
 }
