@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -136,8 +137,8 @@ public class ChallengeService {
     @Transactional
     public PagingResultDto getRecruitChallengeList(Long cursorSeq, Pageable pageable) {
         final Long userSeq = authUtils.getLoginUserSeq();
-        final LocalDateTime localDateTime = LocalDateTime.now();
-        final Page<ChallengeResponseDto> challenges = challengeRepository.findRecruitChallengePage(cursorSeq, userSeq, localDateTime, pageable);
+        final LocalDate localDate = LocalDate.now();
+        final Page<ChallengeResponseDto> challenges = challengeRepository.findRecruitChallengePage(cursorSeq, userSeq, localDate, pageable);
         return new PagingResultDto<>(challenges.getContent());
     }
 

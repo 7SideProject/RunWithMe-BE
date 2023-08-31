@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -68,7 +69,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
     @Override
-    public Page<ChallengeResponseDto> findRecruitChallengePage(Long cursorSeq, Long userSeq, LocalDateTime nowTime, Pageable pageable){
+    public Page<ChallengeResponseDto> findRecruitChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable){
         QueryResults<ChallengeResponseDto> result = jpaQueryFactory.select(new QChallengeResponseDto(
                                 challenge.seq,
                                 challenge.manager.seq,
