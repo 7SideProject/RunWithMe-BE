@@ -1,10 +1,10 @@
 package com.runwithme.runwithme.domain.challenge.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.global.entity.Image;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,8 +18,8 @@ public class ChallengeResponseDto {
     private Long goalDays;
     private String goalType;
     private Long goalAmount;
-    private LocalDateTime timeStart;
-    private LocalDateTime timeEnd;
+    private LocalDate timeStart;
+    private LocalDate timeEnd;
     private Long nowMember;
     private Long maxMember;
     private Long cost;
@@ -27,7 +27,7 @@ public class ChallengeResponseDto {
     private boolean challengeUserFlag;
 
     @QueryProjection
-    public ChallengeResponseDto(Long seq, Long managerSeq, String managerName, Image image, String name, Long goalDays, String goalType, Long goalAmount, LocalDateTime timeStart, LocalDateTime timeEnd, Long nowMember, Long maxMember, Long cost, boolean challengeUserFlag) {
+    public ChallengeResponseDto(Long seq, Long managerSeq, String managerName, Image image, String name, Long goalDays, String goalType, Long goalAmount, LocalDate timeStart, LocalDate timeEnd, Long nowMember, Long maxMember, Long cost, boolean challengeUserFlag) {
         this.seq = seq;
         this.managerSeq = managerSeq;
         this.managerName = managerName;
