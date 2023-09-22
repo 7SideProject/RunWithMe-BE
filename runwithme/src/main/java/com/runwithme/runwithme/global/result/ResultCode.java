@@ -55,6 +55,7 @@ public enum ResultCode {
     DELETE_BOARD_SUCCESS            (200, 403, "게시글 삭제에 성공하였습니다."),
     WARN_BOARD_SUCCESS              (200, 404, "게시글 신고에 성공하였습니다."),
     WARN_BOARD_FAIL                 (200, 405, "게시글 신고에 실패하였습니다."),
+    CREATE_CHALLENGE_SUCCESS        (200, 406, "챌린지 생성에 성공하였습니다."),
     BOARD_NOT_FOUND                 (400, -400, "존재하지 않는 게시글 입니다."),
     WARN_BOARD_ALREADY_EXIST        (400, -401, "이미 신고한 게시글 입니다."),
 
