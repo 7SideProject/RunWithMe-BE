@@ -55,7 +55,7 @@ public class ChallengeController {
     }
 
     @Operation(operationId = "createChallenge", summary = "챌린지 등록")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     public ResponseEntity<ResultResponseDto> createChallenge(@RequestPart(value = "challengeCreateDto") ChallengeCreateDto challengeCreateDto, @RequestPart(value = "image", required = false)MultipartFile image) {
         challengeService.createChallenge(challengeCreateDto, image);
         return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_CHALLENGE_SUCCESS));
