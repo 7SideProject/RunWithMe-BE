@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -75,10 +76,10 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void createChallenge(ChallengeCreateDto challengeCreateDto) {
+    public void createChallenge(ChallengeCreateDto challengeCreateDto, MultipartFile image) {
         final User user = authUtils.getLoginUser();
 
-        final Image savedImage = imageService.save(challengeCreateDto.getImage());
+        final Image savedImage = imageService.save(image);
 
         final Challenge challenge = Challenge.builder()
                 .manager(user)
