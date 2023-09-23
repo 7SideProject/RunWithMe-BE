@@ -23,6 +23,4 @@ public class ChallengeCreateDto {
     private Long cost;
 
     private Long maxMember;
-
-    private MultipartFile image;
 }

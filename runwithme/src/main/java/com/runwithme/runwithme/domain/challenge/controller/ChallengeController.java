@@ -13,8 +13,10 @@ import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -53,11 +55,10 @@ public class ChallengeController {
     }
 
     @Operation(operationId = "createChallenge", summary = "챌린지 등록")
-    @PostMapping
-    public ResponseEntity<ResultResponseDto> createChallenge(@ModelAttribute ChallengeCreateDto challengeCreateDto) {
-        challengeService.createChallenge(challengeCreateDto);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResultResponseDto> createChallenge(@RequestPart(value = "challengeCreateDto") ChallengeCreateDto challengeCreateDto, @RequestPart(value = "image", required = false)MultipartFile image) {
+        challengeService.createChallenge(challengeCreateDto, image);
+        return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_CHALLENGE_SUCCESS));
     }
 
     @Operation(operationId = "getChallengeData", summary = "챌린지 상세 조회")
