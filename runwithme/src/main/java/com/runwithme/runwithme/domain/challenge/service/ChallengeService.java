@@ -79,7 +79,7 @@ public class ChallengeService {
     public void createChallenge(ChallengeCreateDto challengeCreateDto, MultipartFile image) {
         final User user = authUtils.getLoginUser();
 
-        final Image savedImage = imageService.save(image);
+        final Image savedImage = imageIsEmpty(image);
 
         final Challenge challenge = Challenge.builder()
                 .manager(user)
@@ -164,5 +164,13 @@ public class ChallengeService {
         challengeBoardWarnRepository.save(challengeBoardWarn);
 
         return true;
+    }
+
+    public Image imageIsEmpty(MultipartFile image) {
+        if (image.isEmpty()) {
+            return null;
+        } else {
+            return imageService.save(image);
+        }
     }
 }
