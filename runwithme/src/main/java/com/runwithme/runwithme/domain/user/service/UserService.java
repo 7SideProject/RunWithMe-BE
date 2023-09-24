@@ -65,9 +65,13 @@ public class UserService {
     public void changeImage(Long userSeq, UserProfileImageDto dto) {
         User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
 
-        if (!ObjectUtils.nullSafeEquals(user.getImage(), CacheUtils.get("defaultImage"))) {
+        if (!isDefaultImage(user)) {
             imageService.delete(user.getImage().getSeq());
         }
         user.changeImage(imageService.save(dto.image()));
+    }
+
+    private boolean isDefaultImage(User user) {
+        return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), CacheUtils.get("defaultImage").getSeq());
     }
 }

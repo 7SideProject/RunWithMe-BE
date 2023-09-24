@@ -38,7 +38,7 @@ public class ImageService {
         if (optionalImage.isEmpty()) {
             Image defaultImage = Image.builder()
                     .originalName("defaultImage")
-                    .savedName("d95c0fed-1cee-4bd0-95a3-a3f3485e9045.jpg")
+                    .savedName("default.jpg")
                     .build();
             image = imageRepository.save(defaultImage);
         } else {
@@ -53,10 +53,12 @@ public class ImageService {
 
         uploadToS3(multipartFileUtils);
 
-        return Image.builder()
+        Image image = Image.builder()
                 .originalName(multipartFileUtils.getOriginalFileName())
                 .savedName(multipartFileUtils.getUuidFileName())
                 .build();
+
+        return imageRepository.save(image);
     }
 
     public void delete(Long imageSeq) {
