@@ -28,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
@@ -46,17 +48,17 @@ public class ChallengeService {
     private final AuthUtils authUtils;
 
     @Transactional
-    public void createBoard(Long challengeSeq, ChallengeBoardPostDto challengeBoardPostDto) {
+    public void createBoard(Long challengeSeq, String challengeBoardContent, MultipartFile image) {
         final User user = authUtils.getLoginUser();
 
-        final Image savedImage = imageService.save(challengeBoardPostDto.getImage());
+        final Image savedImage = imageIsEmpty(image);
 
         final LocalDateTime challengeBoardRegTime = LocalDateTime.now();
         final ChallengeBoard challengeBoard = ChallengeBoard.builder()
                 .user(user)
                 .challengeSeq(challengeSeq)
                 .image(savedImage)
-                .challengeBoardContent(challengeBoardPostDto.getChallengeBoardContent())
+                .challengeBoardContent(challengeBoardContent)
                 .challengeBoardRegTime(challengeBoardRegTime).build();
         challengeBoardRepository.save(challengeBoard);
     }
@@ -100,8 +102,10 @@ public class ChallengeService {
     }
 
     @Transactional
-    public Challenge getChallengeData(Long challengeSeq) {
-        return challengeRepository.findById(challengeSeq).get();
+    public Optional<ChallengeResponseDto> getChallengeData(Long challengeSeq) {
+        final Long userSeq = authUtils.getLoginUserSeq();
+
+        return challengeRepository.findChallengeBySeq(userSeq, challengeSeq);
     }
 
     @Transactional
@@ -136,11 +140,12 @@ public class ChallengeService {
     }
 
     @Transactional
-    public PagingResultDto getRecruitChallengeList(Long cursorSeq, Pageable pageable) {
+    public List<ChallengeResponseDto> getRecruitChallengeList(Long cursorSeq, Pageable pageable) {
         final Long userSeq = authUtils.getLoginUserSeq();
         final LocalDate localDate = LocalDate.now();
         final Page<ChallengeResponseDto> challenges = challengeRepository.findRecruitChallengePage(cursorSeq, userSeq, localDate, pageable);
-        return new PagingResultDto<>(challenges.getContent());
+//        return new PagingResultDto<>(challenges.getContent());
+        return challenges.getContent();
     }
 
     @Transactional

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
@@ -32,8 +35,8 @@ public class ChallengeController {
 
     @Operation(operationId = "createBoard", summary = "게시글 등록", description = "게시글을 등록한다")
     @PostMapping("/{challengeSeq}/board")
-    public ResponseEntity<ResultResponseDto> createBoard(@PathVariable(value = "challengeSeq") Long challengeSeq, @ModelAttribute ChallengeBoardPostDto challengeBoardPostDto) {
-        challengeService.createBoard(challengeSeq, challengeBoardPostDto);
+    public ResponseEntity<ResultResponseDto> createBoard(@PathVariable(value = "challengeSeq") Long challengeSeq, @RequestPart(value = "challengeBoardContent") String challengeBoardContent, @RequestPart(value = "image", required = false)MultipartFile image) {
+        challengeService.createBoard(challengeSeq, challengeBoardContent, image);
         return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_BOARD_SUCCESS));
     }
 
@@ -64,7 +67,7 @@ public class ChallengeController {
     @Operation(operationId = "getChallengeData", summary = "챌린지 상세 조회")
     @GetMapping("/{challengeSeq}")
     public ResponseEntity<ResultResponseDto> getChallengeData(@PathVariable(value = "challengeSeq") Long challengeSeq) {
-        final Challenge challenge = challengeService.getChallengeData(challengeSeq);
+        final Optional<ChallengeResponseDto> challenge = challengeService.getChallengeData(challengeSeq);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ONE_CHALLENGE_SUCCESS, challenge));
     }
 
@@ -94,8 +97,8 @@ public class ChallengeController {
     @GetMapping("/all/recruit")
     @PageableAsQueryParam
     public ResponseEntity<ResultResponseDto> getRecruitChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
-        final PagingResultDto<ChallengeResponseDto> pagingResultDto = challengeService.getRecruitChallengeList(cursorSeq, pageable);
-        return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
+        final List<ChallengeResponseDto> challenges = challengeService.getRecruitChallengeList(cursorSeq, pageable);
+        return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, challenges));
     }
 
     @Operation(operationId = "getMyChallengeList", summary = "내 챌린지 리스트 조회")

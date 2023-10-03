@@ -10,7 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PagingResultDto<T> {
-//    private int page;
-//    private int totalPage;
     private List<T> result;
 }

@@ -13,7 +13,7 @@ public class ChallengeResponseDto {
     private Long seq;
     private Long managerSeq;
     private String managerName;
-    private Image image;
+    private Long image;
     private String name;
     private Long goalDays;
     private String goalType;
@@ -27,7 +27,7 @@ public class ChallengeResponseDto {
     private boolean challengeUserFlag;
 
     @QueryProjection
-    public ChallengeResponseDto(Long seq, Long managerSeq, String managerName, Image image, String name, Long goalDays, String goalType, Long goalAmount, LocalDate timeStart, LocalDate timeEnd, Long nowMember, Long maxMember, Long cost, boolean challengeUserFlag) {
+    public ChallengeResponseDto(Long seq, Long managerSeq, String managerName, Long image, String name, Long goalDays, String goalType, Long goalAmount, LocalDate timeStart, LocalDate timeEnd, Long nowMember, Long maxMember, Long cost, boolean challengeUserFlag) {
         this.seq = seq;
         this.managerSeq = managerSeq;
         this.managerName = managerName;
