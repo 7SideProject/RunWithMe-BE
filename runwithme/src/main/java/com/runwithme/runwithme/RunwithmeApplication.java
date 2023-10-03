@@ -1,10 +1,15 @@
 package com.runwithme.runwithme;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.runwithme.runwithme.global.quartz.Quartz;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
+
+@EnableScheduling
 @OpenAPIDefinition(servers = {@Server(url = "https://server.runwithme.shop")})
 //@OpenAPIDefinition(servers = {@Server(url = "http://localhost:8080")})
 @SpringBootApplication
@@ -16,6 +21,9 @@ public class RunwithmeApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RunwithmeApplication.class, args);
+
+//		Quartz quartz = new Quartz();
+//		quartz.run();
 	}
 
 }
