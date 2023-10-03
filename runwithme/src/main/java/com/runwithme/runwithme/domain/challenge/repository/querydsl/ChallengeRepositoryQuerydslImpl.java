@@ -28,7 +28,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                 challenge.seq,
                 challenge.manager.seq,
                 challenge.manager.nickname,
-                challenge.image,
+                challenge.image.seq,
                 challenge.name,
                 challenge.goalDays,
                 challenge.goalType,
@@ -50,7 +50,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         challenge.seq,
                         challenge.manager.seq,
                         challenge.manager.nickname,
-                        challenge.image,
+                        challenge.image.seq,
                         challenge.name,
                         challenge.goalDays,
                         challenge.goalType,
@@ -63,7 +63,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
                         )
                 ).from(challenge)
-                .offset(pageable.getOffset())
+                .where(eqCursorSeq(cursorSeq))
+                .orderBy(challenge.seq.desc())
                 .limit(pageable.getPageSize())
                 .fetchResults();
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
@@ -74,7 +75,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                                 challenge.seq,
                                 challenge.manager.seq,
                                 challenge.manager.nickname,
-                                challenge.image,
+                                challenge.image.seq,
                                 challenge.name,
                                 challenge.goalDays,
                                 challenge.goalType,
@@ -87,9 +88,11 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                                 isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
                         )
                 ).from(challenge)
-                .where(challenge.timeStart.after(nowTime).and(challenge.nowMember.lt(challenge.maxMember))
-                        , eqCursorSeq(cursorSeq))
-                .orderBy(challenge.timeStart.desc())
+                .where(
+                        challenge.timeStart.after(nowTime).and
+                                (challenge.nowMember.lt(challenge.maxMember)),
+                        eqCursorSeq(cursorSeq))
+                .orderBy(challenge.seq.desc())
                 .limit(pageable.getPageSize())
                 .fetchResults();
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
@@ -101,7 +104,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         challengeUser.challenge.seq,
                         challengeUser.challenge.manager.seq,
                         challengeUser.challenge.manager.nickname,
-                        challengeUser.challenge.image,
+                        challengeUser.challenge.image.seq,
                         challengeUser.challenge.name,
                         challengeUser.challenge.goalDays,
                         challengeUser.challenge.goalType,
@@ -132,6 +135,6 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
     }
 
     private BooleanExpression eqCursorSeq(Long cursorSeq) {
-        return cursorSeq == null ? null : challenge.seq.gt(cursorSeq);
+        return cursorSeq == null ? null : challenge.seq.lt(cursorSeq);
     }
 }

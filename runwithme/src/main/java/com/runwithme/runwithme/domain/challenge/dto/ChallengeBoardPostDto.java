@@ -8,5 +8,4 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class ChallengeBoardPostDto {
     private String challengeBoardContent;
-    private MultipartFile image;
 }

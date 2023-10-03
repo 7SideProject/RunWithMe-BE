@@ -24,7 +24,7 @@ public class ChallengeBoard {
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "image_seq")
+    @JoinColumn(name = "image_seq", nullable = true)
     private Image image;
 
     @Column(name = "challenge_board_content", length = 255)
