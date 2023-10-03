@@ -3,6 +3,14 @@ package com.runwithme.runwithme.domain.challenge.dto;
 import java.time.LocalDate;
 
 import com.querydsl.core.annotations.QueryProjection;
+import com.runwithme.runwithme.global.entity.Image;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+
+import com.querydsl.core.annotations.QueryProjection;
 
 import com.runwithme.runwithme.domain.challenge.entity.GoalType;
 import lombok.AccessLevel;

@@ -1,19 +1,20 @@
 package com.runwithme.runwithme.global.security.provider;
 
-import com.runwithme.runwithme.domain.user.entity.User;
-import com.runwithme.runwithme.domain.user.service.UserService;
-import com.runwithme.runwithme.global.error.CustomException;
-import com.runwithme.runwithme.global.security.model.PrincipalDetails;
-import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.runwithme.runwithme.global.result.ResultCode.BAD_PASSWORD;
-import static com.runwithme.runwithme.global.result.ResultCode.DELETED_USER;
+import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.domain.user.service.UserService;
+import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.security.model.PrincipalDetails;
+
+import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor

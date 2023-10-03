@@ -1,9 +1,30 @@
 package com.runwithme.runwithme.domain.user.controller;
 
-import com.runwithme.runwithme.domain.user.dto.*;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.runwithme.runwithme.domain.user.dto.DuplicatedViewDto;
+import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
+import com.runwithme.runwithme.domain.user.dto.UserLoginDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileImageDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.service.UserService;
 import com.runwithme.runwithme.global.result.ResultCode;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

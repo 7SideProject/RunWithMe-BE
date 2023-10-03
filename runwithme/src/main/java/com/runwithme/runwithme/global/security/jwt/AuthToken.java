@@ -1,15 +1,20 @@
 package com.runwithme.runwithme.global.security.jwt;
 
-import com.runwithme.runwithme.global.error.CustomException;
-import io.jsonwebtoken.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 import java.security.Key;
 import java.util.Date;
 
-import static com.runwithme.runwithme.global.result.ResultCode.*;
+import com.runwithme.runwithme.global.error.CustomException;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor

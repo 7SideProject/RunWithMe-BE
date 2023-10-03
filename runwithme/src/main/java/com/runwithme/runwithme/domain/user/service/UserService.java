@@ -1,13 +1,26 @@
 package com.runwithme.runwithme.domain.user.service;
 
-import com.runwithme.runwithme.domain.user.dto.*;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import com.runwithme.runwithme.domain.user.dto.DuplicatedViewDto;
+import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileImageDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.dto.converter.UserConverter;
+import com.runwithme.runwithme.domain.user.entity.PointType;
 import com.runwithme.runwithme.domain.user.entity.ConnectHistory;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.repository.ConnectHistoryRepository;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
+import com.runwithme.runwithme.global.utils.CacheUtils;
+
 import com.runwithme.runwithme.global.utils.AuthUtils;
 import com.runwithme.runwithme.global.utils.ImageCache;
 import jakarta.transaction.Transactional;
@@ -133,5 +146,13 @@ public class UserService {
 
         connectHistoryRepository.save(connectHistory);
         return true;
+    }
+
+    public void updateUserPoint(Long userSeq, int point, PointType pointType) {
+        User user = userRepository.findBySeq(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
+        switch (pointType){
+            case MINUS -> user.minusPoint(point);
+            case PLUS -> user.plusPoint(point);
+        }
     }
 }

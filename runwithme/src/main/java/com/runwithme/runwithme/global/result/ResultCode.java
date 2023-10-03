@@ -47,6 +47,7 @@ public enum ResultCode {
     CHECK_IN_CHALLENGE_SUCCESS      (200, 304, "현재 챌린지에 가입되어 있는 계정입니다."),
     CHECK_IN_CHALLENGE_FAIL         (200, 305, "현재 챌린지에 가입되지 않은 계정입니다."),
     GET_MY_CHALLENGE_SUCCESS        (200, 306, "가입한 챌린지 조회에 성공하였습니다."),
+    DELETE_MY_CHALLENGE_SUCCESS     (200, 307, "가입한 챌린지 삭제에 성공하였습니다."),
     CREATE_CHALLENGE_SUCCESS        (200, 307, "챌린지 등록에 성공하였습니다."),
     CHALLENGE_NOT_FOUND             (400, -300, "존재하지 않는 챌린지입니다."),
     CHALLENGE_DATE_START_IS_BEFORE_NOW      (400, -301, "챌린지 시작일은 과거일 수 없습니다."),

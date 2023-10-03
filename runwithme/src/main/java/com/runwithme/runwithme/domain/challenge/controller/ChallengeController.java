@@ -1,18 +1,37 @@
 package com.runwithme.runwithme.domain.challenge.controller;
 
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardPostDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
+import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.dto.*;
 import com.runwithme.runwithme.domain.challenge.service.ChallengeService;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -106,12 +125,11 @@ public class ChallengeController {
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
     }
 
-    @Operation(operationId = "getMyChallengeList", summary = "뛸 수 있는 내 챌린지 리스트 조회")
-    @GetMapping("/my/running")
-    @PageableAsQueryParam
-    public ResponseEntity<ResultResponseDto> getMyRunningChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
-        final List<ChallengeResponseDto> pagingResultDto = challengeService.getMyRunningChallengeList(cursorSeq, pageable);
-        return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
+    @Operation(operationId = "getMyChallengeList", summary = "내 챌린지 탈퇴")
+    @DeleteMapping("/my")
+    public ResponseEntity<ResultResponseDto> deleteMyChallenge(@PathVariable(value = "challengeSeq") Long challengeSeq) {
+        challengeService.deleteMyChallenge(challengeSeq);
+        return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_MY_CHALLENGE_SUCCESS));
     }
 
     @Operation(operationId = "", summary = "게시글 신고")
@@ -124,11 +142,5 @@ public class ChallengeController {
         } else {
             return ResponseEntity.ok().body(ResultResponseDto.of(WARN_BOARD_FAIL));
         }
-    }
-
-    @Operation(operationId = "", summary = "챌린지 이미지 조회")
-    @GetMapping(value = "/{challengeSeq}/challenge-image", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<Resource> getChallengeImage(@PathVariable Long userSeq) {
-        return new ResponseEntity<>(challengeService.getChallengeImage(userSeq), HttpStatus.OK);
     }
 }

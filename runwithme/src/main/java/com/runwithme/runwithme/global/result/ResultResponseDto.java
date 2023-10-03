@@ -1,7 +1,9 @@
 package com.runwithme.runwithme.global.result;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Schema(name = "결과 응답 데이터")

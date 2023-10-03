@@ -1,109 +1,115 @@
 package com.runwithme.runwithme.domain.record.service;
 
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
+import com.runwithme.runwithme.domain.challenge.entity.Challenge;
+import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
+import com.runwithme.runwithme.domain.record.dto.RecordWeeklyCountDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
 import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
 import com.runwithme.runwithme.domain.record.repository.RunRecordRepository;
 import com.runwithme.runwithme.global.entity.Image;
-import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-
-import static com.runwithme.runwithme.global.result.ResultCode.RECORD_ALREADY_EXIST;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RecordService {
+	private final RunRecordRepository runRecordRepository;
+	private final ChallengeRepository challengeRepository;
+	private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
+	private final AuthUtils authUtils;
+	private final ImageService imageService;
 
-    private final RunRecordRepository runRecordRepository;
-    private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
+	@Transactional
+	public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, ChallengeImageDto imgFile) throws IOException {
+		final Long userSeq = authUtils.getLoginUserSeq();
 
-    private final AuthUtils authUtils;
-    private final ImageService imageService;
+		final Image savedImage = imageService.save(imgFile.image());
 
-    @Transactional
-    public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, ChallengeImageDto imgFile)  throws IOException {
-        final Long userSeq = authUtils.getLoginUserSeq();
+		if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
+			throw new CustomException(RECORD_ALREADY_EXIST);
+		}
 
-        final Image savedImage = imageService.save(imgFile.image());
+		final RunRecord runRecord = RunRecord.builder()
+			.userSeq(userSeq)
+			.challengeSeq(challengeSeq)
+			.startTime(runRecordPostDto.getStartTime())
+			.endTime(runRecordPostDto.getEndTime())
+			.runningTime(runRecordPostDto.getRunningTime())
+			.runningDistance(runRecordPostDto.getRunningDistance())
+			.image(savedImage)
+			.successYN(runRecordPostDto.isSuccessYN())
+			.weekly(getWeekly(challengeSeq))
+			.build();
+		runRecordRepository.save(runRecord);
 
-        if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
-            throw new CustomException(RECORD_ALREADY_EXIST);
-        }
+		final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
 
-        final RunRecord runRecord = RunRecord.builder()
-                .userSeq(userSeq)
-                .challengeSeq(challengeSeq)
-                .startTime(runRecordPostDto.getStartTime())
-                .endTime(runRecordPostDto.getEndTime())
-                .runningTime(runRecordPostDto.getRunningTime())
-                .runningDistance(runRecordPostDto.getRunningDistance())
-                .image(savedImage).build();
-        runRecordRepository.save(runRecord);
+		myTotals.setTotalTime(myTotals.getTotalTime() + runRecordPostDto.getRunningTime());
+		myTotals.setTotalDistance(myTotals.getTotalDistance() + runRecordPostDto.getRunningDistance());
+	}
 
-        final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+	@Transactional
+	public ChallengeTotalRecord getTotalRecord(Long challengeSeq) {
+		final Long userSeq = authUtils.getLoginUserSeq();
+		return challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+	}
 
-        myTotals.setTotalTime(myTotals.getTotalTime() + runRecordPostDto.getRunningTime());
-        myTotals.setTotalDistance(myTotals.getTotalDistance() + runRecordPostDto.getRunningDistance());
-    }
+	@Transactional
+	public List<RunRecord> getMyRunRecord(Long challengeSeq) {
+		final Long userSeq = authUtils.getLoginUserSeq();
+		return runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+	}
 
-    @Transactional
-    public ChallengeTotalRecord getTotalRecord(Long challengeSeq){
-        final Long userSeq = authUtils.getLoginUserSeq();
+	@Transactional
+	public List<RunRecord> getAllRunRecord(Long challengeSeq) {
+		return runRecordRepository.findAllByChallengeSeq(challengeSeq);
+	}
 
-        final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+	@Transactional
+	public RunRecord getRunRecord(Long runRecordSeq) {
+		return runRecordRepository.findById(runRecordSeq)
+			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+	}
 
-        return myTotals;
-    }
+	@Transactional
+	public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates) {
+		int[] results = runRecordRepository.coordinatesInsertBatch(recordSeq, coordinates);
+		int success = 0;
 
-    @Transactional
-    public List<RunRecord> getMyRunRecord(Long challengeSeq){
-        final Long userSeq = authUtils.getLoginUserSeq();
+		for (int result : results) {
+			if (result == -2) {
+				success++;
+			}
+		}
+		return results.length == success;
+	}
 
-        final List<RunRecord> myRunRecords = runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+	public List<RecordWeeklyCountDto> getWeeklySuccessYCount(Long challengeSeq) {
+		return runRecordRepository.getWeeklySuccessYCount(challengeSeq);
+	}
 
-        return myRunRecords;
-    }
-
-    @Transactional
-    public List<RunRecord> getAllRunRecord(Long challengeSeq){
-        final Long userSeq = authUtils.getLoginUserSeq();
-
-        final List<RunRecord> allRunRecords = runRecordRepository.findAllByChallengeSeq(challengeSeq);
-
-        return allRunRecords;
-    }
-
-    @Transactional
-    public RunRecord getRunRecord(Long runRecordSeq){
-        final Long userSeq = authUtils.getLoginUserSeq();
-
-        final RunRecord runRecord = runRecordRepository.findById(runRecordSeq).get();
-
-        return runRecord;
-    }
-
-    @Transactional
-    public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates) {
-        int[] results = runRecordRepository.coordinatesInsertBatch(recordSeq, coordinates);
-        int success = 0;
-
-        for (int result : results) {
-            if (result == -2) {
-                success++;
-            }
-        }
-        return results.length == success;
-    }
+	public int getWeekly(Long challengeSeq) {
+		Challenge challenge = challengeRepository.findById(challengeSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+		LocalDate challengeStartDate = challenge.getDateStart();
+		int daysdiff = (int) ChronoUnit.DAYS.between(LocalDate.now(), challengeStartDate);
+		return (daysdiff - 1) / 7 + 1;
+	}
 }

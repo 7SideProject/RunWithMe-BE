@@ -1,11 +1,24 @@
 package com.runwithme.runwithme.domain.user.entity;
 
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.global.entity.BaseEntity;
 import com.runwithme.runwithme.global.entity.Image;
-import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -95,5 +108,13 @@ public class User extends BaseEntity {
 
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public void plusPoint(int point){
+        this.point += point;
+    }
+
+    public void minusPoint(int point){
+        this.point -= point;
     }
 }

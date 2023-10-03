@@ -1,14 +1,6 @@
 package com.runwithme.runwithme.global.security.jwt;
 
-import com.runwithme.runwithme.global.error.CustomException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -16,7 +8,17 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static com.runwithme.runwithme.global.result.ResultCode.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+
+import com.runwithme.runwithme.global.error.CustomException;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j

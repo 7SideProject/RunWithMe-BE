@@ -1,9 +1,10 @@
 package com.runwithme.runwithme.global.security.config;
 
-import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 
 @Configuration
 public class JwtConfig {

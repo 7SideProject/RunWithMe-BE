@@ -1,7 +1,10 @@
 package com.runwithme.runwithme.domain.challenge.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.*;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

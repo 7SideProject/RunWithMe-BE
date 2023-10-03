@@ -1,6 +1,25 @@
 package com.runwithme.runwithme.domain.challenge.service;
 
-import com.runwithme.runwithme.domain.challenge.dto.*;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardPostDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeEndDto;
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoard;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoardWarn;
@@ -10,20 +29,24 @@ import com.runwithme.runwithme.domain.challenge.repository.ChallengeBoardWarnRep
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserRepository;
 import com.runwithme.runwithme.domain.user.entity.User;
-import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.dto.PagingResultDto;
 import com.runwithme.runwithme.global.entity.Image;
+import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
@@ -32,12 +55,12 @@ import static com.runwithme.runwithme.global.result.ResultCode.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ChallengeService {
-    private final ChallengeRepository challengeRepository;
-    private final ChallengeBoardRepository challengeBoardRepository;
-    private final ChallengeUserRepository challengeUserRepository;
-    private final ChallengeBoardWarnRepository challengeBoardWarnRepository;
-    private final ImageService imageService;
-    private final AuthUtils authUtils;
+	private final ChallengeRepository challengeRepository;
+	private final ChallengeBoardRepository challengeBoardRepository;
+	private final ChallengeUserRepository challengeUserRepository;
+	private final ChallengeBoardWarnRepository challengeBoardWarnRepository;
+	private final ImageService imageService;
+	private final AuthUtils authUtils;
 
     @Transactional
     public void createBoard(Long challengeSeq, String challengeBoardContent, MultipartFile image) {
@@ -61,11 +84,10 @@ public class ChallengeService {
         return challengeBoardRepository.findAllBoardPage(cursorSeq, userSeq, challengeSeq, pageable).getContent();
     }
 
-    @Transactional
-    public void deleteBoard(Long boardSeq){
-        final User user = authUtils.getLoginUser();
-        challengeBoardRepository.deleteById(boardSeq);
-    }
+	@Transactional
+	public void deleteBoard(Long boardSeq) {
+		challengeBoardRepository.deleteById(boardSeq);
+	}
 
     @Transactional
     public void createChallenge(ChallengeCreateDto challengeCreateDto, MultipartFile image) {
@@ -114,9 +136,9 @@ public class ChallengeService {
         return challengeRepository.findChallengeBySeq(userSeq, challengeSeq);
     }
 
-    @Transactional
-    public boolean joinChallengeUser(Long challengeSeq, String password) {
-        final User user = authUtils.getLoginUser();
+	@Transactional
+	public boolean joinChallengeUser(Long challengeSeq, String password) {
+		final User user = authUtils.getLoginUser();
 
         if (challengeUserRepository.existsByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq)) {
             throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
@@ -157,40 +179,38 @@ public class ChallengeService {
         return challengeRepository.findMyChallengePage(cursorSeq, userSeq, pageable).getContent();
     }
 
-    @Transactional
-    public List<ChallengeResponseDto> getMyRunningChallengeList(Long cursorSeq, Pageable pageable) {
-        final Long userSeq = authUtils.getLoginUserSeq();
-        final LocalDate localDate = LocalDate.now();
-        return challengeRepository.findMyRunningChallengePage(cursorSeq, userSeq, localDate, pageable).getContent();
-    }
+	@Transactional
+	public boolean boardWarn(Long boardSeq) {
+		final User user = authUtils.getLoginUser();
+		final ChallengeBoard challengeBoard = challengeBoardRepository.findById(boardSeq)
+			.orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
 
-    @Transactional
-    public boolean boardWarn(Long boardSeq) {
-        final User user = authUtils.getLoginUser();
-        final ChallengeBoard challengeBoard = challengeBoardRepository.findById(boardSeq)
-                .orElseThrow(()->new CustomException(BOARD_NOT_FOUND));
+		if (challengeBoardWarnRepository.existsByUserAndChallengeBoard(user, challengeBoard)) {
+			throw new CustomException(WARN_BOARD_ALREADY_EXIST);
+		}
 
-        if(challengeBoardWarnRepository.existsByUserAndChallengeBoard(user, challengeBoard)) {
-            throw new CustomException(WARN_BOARD_ALREADY_EXIST);
-        }
+		final ChallengeBoardWarn challengeBoardWarn = new ChallengeBoardWarn(user, challengeBoard);
+		challengeBoardWarnRepository.save(challengeBoardWarn);
 
-        final ChallengeBoardWarn challengeBoardWarn = new ChallengeBoardWarn(user, challengeBoard);
-        challengeBoardWarnRepository.save(challengeBoardWarn);
+		return true;
+	}
 
-        return true;
-    }
+	public Image imageIsEmpty(MultipartFile image) {
+		if (image.isEmpty()) return null;
+		return imageService.save(image);
+	}
 
-    @Transactional
-    public Resource getChallengeImage(Long challengeSeq) {
-        final Challenge challenge = challengeRepository.findById(challengeSeq).get();
-        return imageService.getImage(challenge.getImage().getSeq());
-    }
+	public List<ChallengeEndDto> findByDateEndIsToday() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date today = new Date();
+		return challengeRepository.findByDateEndIsToday(LocalDate.parse(sdf.format(today)));
+	}
 
-    public Image imageIsEmpty(MultipartFile image) {
-        if (image.isEmpty()) {
-            return null;
-        } else {
-            return imageService.save(image);
-        }
-    }
+	public int getChallengeCount(Long challengeSeq) {
+		return challengeRepository.getChallengeCount(challengeSeq);
+	}
+
+	public void deleteMyChallenge(Long challengeSeq) {
+		challengeRepository.deleteMyChallenge(challengeSeq);
+	}
 }

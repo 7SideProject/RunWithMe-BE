@@ -1,11 +1,9 @@
 package com.runwithme.runwithme.domain.user.service;
 
-import com.runwithme.runwithme.domain.user.MockEntityFactory;
-import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
-import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
-import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
-import com.runwithme.runwithme.domain.user.entity.User;
-import com.runwithme.runwithme.domain.user.repository.UserRepository;
+import static org.mockito.ArgumentMatchers.*;
+
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,10 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import com.runwithme.runwithme.domain.user.MockEntityFactory;
+import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
+import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.domain.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("음원 추가 서비스 단위 테스트")

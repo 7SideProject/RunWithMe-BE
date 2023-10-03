@@ -1,13 +1,14 @@
 package com.runwithme.runwithme.global.security.model;
 
-import com.runwithme.runwithme.domain.user.entity.User;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import com.runwithme.runwithme.domain.user.entity.User;
 
 public class PrincipalDetails implements UserDetails, OAuth2User {
 

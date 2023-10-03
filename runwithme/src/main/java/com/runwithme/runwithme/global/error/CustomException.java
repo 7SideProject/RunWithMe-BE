@@ -1,6 +1,7 @@
 package com.runwithme.runwithme.global.error;
 
 import com.runwithme.runwithme.global.result.ResultCode;
+
 import lombok.Getter;
 
 @Getter

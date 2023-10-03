@@ -1,28 +1,29 @@
 package com.runwithme.runwithme.global.security.handler;
 
-import com.runwithme.runwithme.domain.user.entity.User;
-import com.runwithme.runwithme.global.error.CustomException;
-import com.runwithme.runwithme.global.result.ResultCode;
-import com.runwithme.runwithme.global.security.jwt.AuthToken;
-import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
-import com.runwithme.runwithme.global.security.model.PrincipalDetails;
-import com.runwithme.runwithme.global.security.properties.JwtProperties;
-import com.runwithme.runwithme.global.utils.CookieUtils;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.web.util.UriComponentsBuilder;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
-import static com.runwithme.runwithme.global.result.ResultCode.REDIRECT_NOT_FOUND;
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REDIRECT_URI;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.security.jwt.AuthToken;
+import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
+import com.runwithme.runwithme.global.security.model.PrincipalDetails;
+import com.runwithme.runwithme.global.security.properties.JwtProperties;
+import com.runwithme.runwithme.global.utils.CookieUtils;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor

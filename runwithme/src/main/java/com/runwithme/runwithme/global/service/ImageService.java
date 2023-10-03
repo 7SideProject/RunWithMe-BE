@@ -1,24 +1,26 @@
 package com.runwithme.runwithme.global.service;
 
-import com.runwithme.runwithme.global.entity.Image;
-import com.runwithme.runwithme.global.error.CustomException;
-import com.runwithme.runwithme.global.repository.ImageRepository;
-import com.runwithme.runwithme.global.utils.ImageCache;
-import com.runwithme.runwithme.global.utils.MultipartFileUtils;
-import com.runwithme.runwithme.global.utils.S3Utils;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
+import java.io.File;
+import java.util.Optional;
+
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.util.Optional;
+import com.runwithme.runwithme.global.entity.Image;
+import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.repository.ImageRepository;
+import com.runwithme.runwithme.global.utils.ImageCache;
+import com.runwithme.runwithme.global.utils.MultipartFileUtils;
+import com.runwithme.runwithme.global.utils.S3Utils;
 
-import static com.runwithme.runwithme.global.result.ResultCode.*;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

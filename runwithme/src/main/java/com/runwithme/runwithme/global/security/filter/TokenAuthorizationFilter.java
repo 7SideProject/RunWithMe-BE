@@ -1,8 +1,17 @@
 package com.runwithme.runwithme.global.security.filter;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import com.runwithme.runwithme.global.security.jwt.AuthToken;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import com.runwithme.runwithme.global.utils.HeaderUtils;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,19 +1,7 @@
 package com.runwithme.runwithme.global.security.config;
 
-import com.runwithme.runwithme.domain.user.service.RefreshTokenService;
-import com.runwithme.runwithme.global.error.CustomException;
-import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
-import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
-import com.runwithme.runwithme.global.security.handler.CustomAuthenticationFailureHandler;
-import com.runwithme.runwithme.global.security.handler.CustomAuthenticationSuccessHandler;
-import com.runwithme.runwithme.global.security.handler.OAuth2AuthenticationSuccessHandler;
-import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
-import com.runwithme.runwithme.global.security.point.DelegatedAuthenticationEntryPoint;
-import com.runwithme.runwithme.global.security.properties.JwtProperties;
-import com.runwithme.runwithme.global.security.provider.CustomAuthenticationProvider;
-import com.runwithme.runwithme.global.security.repository.CustomAuthorizationRequestRepository;
-import com.runwithme.runwithme.global.security.service.CustomOAuth2UserService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,7 +20,21 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import com.runwithme.runwithme.domain.user.service.RefreshTokenService;
+import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
+import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
+import com.runwithme.runwithme.global.security.handler.CustomAuthenticationFailureHandler;
+import com.runwithme.runwithme.global.security.handler.CustomAuthenticationSuccessHandler;
+import com.runwithme.runwithme.global.security.handler.OAuth2AuthenticationSuccessHandler;
+import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
+import com.runwithme.runwithme.global.security.point.DelegatedAuthenticationEntryPoint;
+import com.runwithme.runwithme.global.security.properties.JwtProperties;
+import com.runwithme.runwithme.global.security.provider.CustomAuthenticationProvider;
+import com.runwithme.runwithme.global.security.repository.CustomAuthorizationRequestRepository;
+import com.runwithme.runwithme.global.security.service.CustomOAuth2UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor

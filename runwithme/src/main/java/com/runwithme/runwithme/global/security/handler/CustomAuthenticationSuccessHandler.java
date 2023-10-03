@@ -1,5 +1,17 @@
 package com.runwithme.runwithme.global.security.handler;
 
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+import org.apache.commons.codec.CharEncoding;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -15,22 +27,12 @@ import com.runwithme.runwithme.global.security.model.PrincipalDetails;
 import com.runwithme.runwithme.global.security.properties.JwtProperties;
 import com.runwithme.runwithme.global.utils.CookieUtils;
 import com.runwithme.runwithme.global.utils.HeaderUtils;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.CharEncoding;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REFRESH_TOKEN;
 
 @Slf4j
 @RequiredArgsConstructor

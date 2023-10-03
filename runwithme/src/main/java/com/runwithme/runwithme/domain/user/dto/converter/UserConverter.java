@@ -1,5 +1,8 @@
 package com.runwithme.runwithme.domain.user.dto.converter;
 
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.entity.Role;
@@ -8,6 +11,7 @@ import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.utils.ImageCache;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.runwithme.runwithme.global.utils.CacheUtils;
 
 public class UserConverter {
 

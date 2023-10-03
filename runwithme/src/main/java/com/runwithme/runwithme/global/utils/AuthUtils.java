@@ -1,13 +1,15 @@
 package com.runwithme.runwithme.global.utils;
 
-import com.runwithme.runwithme.domain.user.entity.User;
-import com.runwithme.runwithme.domain.user.repository.UserRepository;
-import com.runwithme.runwithme.global.error.CustomException;
-import lombok.RequiredArgsConstructor;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import static com.runwithme.runwithme.global.result.ResultCode.USER_NOT_FOUND;
+import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.domain.user.repository.UserRepository;
+import com.runwithme.runwithme.global.error.CustomException;
+
+import lombok.RequiredArgsConstructor;
 
 
 @Component

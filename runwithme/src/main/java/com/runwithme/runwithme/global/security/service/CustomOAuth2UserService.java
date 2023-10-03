@@ -1,18 +1,20 @@
 package com.runwithme.runwithme.global.security.service;
 
-import com.runwithme.runwithme.domain.user.entity.User;
-import com.runwithme.runwithme.domain.user.repository.UserRepository;
-import com.runwithme.runwithme.global.security.model.PrincipalDetails;
-import com.runwithme.runwithme.global.security.provider.ProviderType;
-import com.runwithme.runwithme.global.security.provider.ProviderUserFactory;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.domain.user.repository.UserRepository;
+import com.runwithme.runwithme.global.security.model.PrincipalDetails;
+import com.runwithme.runwithme.global.security.provider.ProviderType;
+import com.runwithme.runwithme.global.security.provider.ProviderUserFactory;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

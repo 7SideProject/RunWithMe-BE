@@ -1,5 +1,12 @@
 package com.runwithme.runwithme.domain.challenge.repository.querydsl;
 
+import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoard.*;
+import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoardWarn.*;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -7,13 +14,8 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
 import com.runwithme.runwithme.domain.challenge.dto.QChallengeBoardResponseDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
-import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoard.challengeBoard;
-import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoardWarn.challengeBoardWarn;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ChallengeBoardRepositoryQuerydslImpl implements ChallengeBoardRepositoryQuerydsl{

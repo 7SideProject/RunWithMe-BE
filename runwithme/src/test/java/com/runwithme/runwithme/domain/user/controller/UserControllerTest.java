@@ -1,10 +1,8 @@
 package com.runwithme.runwithme.domain.user.controller;
 
-import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
-import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
-import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
-import com.runwithme.runwithme.domain.user.service.UserService;
-import com.runwithme.runwithme.utils.JacksonUtils;
+import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,10 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
+import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
+import com.runwithme.runwithme.domain.user.service.UserService;
+import com.runwithme.runwithme.utils.JacksonUtils;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc

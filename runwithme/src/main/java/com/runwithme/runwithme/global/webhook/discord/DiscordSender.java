@@ -1,19 +1,21 @@
 package com.runwithme.runwithme.global.webhook.discord;
 
-import com.nimbusds.jose.shaded.gson.Gson;
-import com.runwithme.runwithme.global.webhook.NotificationSender;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.runwithme.runwithme.global.webhook.discord.DiscordMessage.*;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.nimbusds.jose.shaded.gson.Gson;
+import com.runwithme.runwithme.global.webhook.NotificationSender;
 
-import static com.runwithme.runwithme.global.webhook.discord.DiscordMessage.Embed;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor

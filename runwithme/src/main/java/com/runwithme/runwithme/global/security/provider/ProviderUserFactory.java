@@ -1,8 +1,8 @@
 package com.runwithme.runwithme.global.security.provider;
 
-import org.springframework.security.oauth2.core.user.OAuth2User;
-
 import java.util.Map;
+
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 public class ProviderUserFactory {
     public static OAuth2User build(ProviderType providerType, Map<String, Object> attributes) {

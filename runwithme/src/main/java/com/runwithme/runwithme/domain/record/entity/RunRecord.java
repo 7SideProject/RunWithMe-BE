@@ -1,15 +1,25 @@
 package com.runwithme.runwithme.domain.record.entity;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.runwithme.runwithme.global.entity.Image;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Entity
@@ -51,12 +61,18 @@ public class RunRecord {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "runRecord")
     private List<RecordCoordinate> coordinates;
 
+    @Column(name = "weekly")
+    private int weekly;
+
+    @Column(name = "successYN")
+    private boolean successYN;
+
     @Column(name = "reg_time", nullable = false)
     @CreationTimestamp
     private LocalDate regTime;
 
     @Builder
-    public RunRecord(Long userSeq, Long challengeSeq, String startTime, String endTime, Long runningTime, Long runningDistance, Image image){
+    public RunRecord(Long userSeq, Long challengeSeq, String startTime, String endTime, Long runningTime, Long runningDistance, Image image, int weekly, boolean successYN){
         this.userSeq = userSeq;
         this.challengeSeq = challengeSeq;
         this.startTime = startTime;
@@ -64,5 +80,7 @@ public class RunRecord {
         this.runningTime = runningTime;
         this.runningDistance = runningDistance;
         this.image = image;
+        this.weekly = weekly;
+        this.successYN = successYN;
     }
 }

@@ -1,6 +1,8 @@
 package com.runwithme.runwithme.domain.challenge.repository;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.repository.querydsl.ChallengeRepositoryQuerydsl;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,8 +1,10 @@
 package com.runwithme.runwithme.domain.record.dto;
 
-import lombok.*;
-
 import java.util.List;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -12,4 +14,5 @@ public class RunRecordPostDto {
     private Long runningTime;
     private Long runningDistance;
     private List coordinates;
+    private boolean successYN;
 }

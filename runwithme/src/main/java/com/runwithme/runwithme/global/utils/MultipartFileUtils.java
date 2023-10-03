@@ -1,18 +1,19 @@
 package com.runwithme.runwithme.global.utils;
 
-import com.runwithme.runwithme.global.error.CustomException;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.runwithme.runwithme.global.result.ResultCode.FAILED_CONVERT;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.runwithme.runwithme.global.error.CustomException;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter

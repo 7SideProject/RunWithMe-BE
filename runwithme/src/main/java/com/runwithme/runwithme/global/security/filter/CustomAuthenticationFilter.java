@@ -1,17 +1,19 @@
 package com.runwithme.runwithme.global.security.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.runwithme.runwithme.domain.user.dto.UserLoginDto;
-import com.runwithme.runwithme.global.error.CustomException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.runwithme.runwithme.global.result.ResultCode.*;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.runwithme.runwithme.global.result.ResultCode.HEADER_NO_TOKEN;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.runwithme.runwithme.domain.user.dto.UserLoginDto;
+import com.runwithme.runwithme.global.error.CustomException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
