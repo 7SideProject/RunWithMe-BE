@@ -148,6 +148,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
         return challengeUser.user.seq.isNotNull();
     }
     private BooleanExpression eqCursorSeq(Long cursorSeq) {
-        return cursorSeq == null ? null : challenge.seq.lt(cursorSeq);
+        if (cursorSeq == null) return null;
+        return cursorSeq == 0 ? challenge.seq.gt(cursorSeq) : challenge.seq.lt(cursorSeq);
     }
 }
