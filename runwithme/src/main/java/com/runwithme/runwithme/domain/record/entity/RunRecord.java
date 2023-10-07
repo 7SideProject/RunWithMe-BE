@@ -17,7 +17,7 @@ import java.util.List;
 public class RunRecord {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(columnDefinition = "INT UNSIGNED")
+    @Column
     private Long seq;
 
     @Column(name = "user_seq", nullable = false)

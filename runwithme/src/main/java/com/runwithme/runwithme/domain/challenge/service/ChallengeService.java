@@ -64,11 +64,9 @@ public class ChallengeService {
     }
 
     @Transactional
-    public PagingResultDto<ChallengeBoardResponseDto> getBoardList(Long cursorSeq, Long challengeSeq, Pageable pageable){
+    public List<ChallengeBoardResponseDto> getBoardList(Long cursorSeq, Long challengeSeq, Pageable pageable){
         final Long userSeq = authUtils.getLoginUserSeq();
-
-        final Page<ChallengeBoardResponseDto> allBoards = challengeBoardRepository.findAllBoardPage(cursorSeq, userSeq, challengeSeq, pageable);
-        return new PagingResultDto<>(allBoards.getContent());
+        return challengeBoardRepository.findAllBoardPage(cursorSeq, userSeq, challengeSeq, pageable).getContent();
     }
 
     @Transactional
@@ -95,6 +93,7 @@ public class ChallengeService {
                 .timeEnd(challengeCreateDto.getTimeEnd())
                 .password(challengeCreateDto.getPassword())
                 .cost(challengeCreateDto.getCost())
+                .nowMember(1L)
                 .maxMember(challengeCreateDto.getMaxMember())
                 .build();
 
@@ -120,6 +119,7 @@ public class ChallengeService {
             challengeUserRepository.save(new ChallengeUser(user, challenge));
             return true;
         }
+
         return false;
     }
 
@@ -133,26 +133,22 @@ public class ChallengeService {
     }
 
     @Transactional
-    public PagingResultDto getAllChallengeList(Long cursorSeq, Pageable pageable) {
+    public List<ChallengeResponseDto> getAllChallengeList(Long cursorSeq, Pageable pageable) {
         final Long userSeq = authUtils.getLoginUserSeq();
-        final Page<ChallengeResponseDto> challenges = challengeRepository.findAllChallengePage(cursorSeq, userSeq, pageable);
-        return new PagingResultDto<>(challenges.getContent());
+        return challengeRepository.findAllChallengePage(cursorSeq, userSeq, pageable).getContent();
     }
 
     @Transactional
     public List<ChallengeResponseDto> getRecruitChallengeList(Long cursorSeq, Pageable pageable) {
         final Long userSeq = authUtils.getLoginUserSeq();
         final LocalDate localDate = LocalDate.now();
-        final Page<ChallengeResponseDto> challenges = challengeRepository.findRecruitChallengePage(cursorSeq, userSeq, localDate, pageable);
-//        return new PagingResultDto<>(challenges.getContent());
-        return challenges.getContent();
+        return challengeRepository.findRecruitChallengePage(cursorSeq, userSeq, localDate, pageable).getContent();
     }
 
     @Transactional
-    public PagingResultDto getMyChallengeList(Long cursorSeq, Pageable pageable) {
+    public List<ChallengeResponseDto> getMyChallengeList(Long cursorSeq, Pageable pageable) {
         final Long userSeq = authUtils.getLoginUserSeq();
-        final Page<ChallengeResponseDto> challenges = challengeRepository.findMyChallengePage(cursorSeq, userSeq, pageable);
-        return new PagingResultDto<>(challenges.getContent());
+        return challengeRepository.findMyChallengePage(cursorSeq, userSeq, pageable).getContent();
     }
 
     @Transactional

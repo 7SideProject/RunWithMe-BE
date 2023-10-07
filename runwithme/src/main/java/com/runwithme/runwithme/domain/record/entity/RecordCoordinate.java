@@ -10,8 +10,8 @@ public class RecordCoordinate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "INT UNSIGNED")
-    private Long Seq;
+    @Column
+    private Long seq;
 
     @JoinColumn(name = "run_record_seq")
     @ManyToOne(fetch = FetchType.LAZY)

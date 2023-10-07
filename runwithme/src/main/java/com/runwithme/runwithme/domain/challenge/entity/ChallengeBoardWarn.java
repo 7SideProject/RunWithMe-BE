@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeBoardWarn {
     @Id
-    @Column(columnDefinition = "INT UNSIGNED")
+    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 

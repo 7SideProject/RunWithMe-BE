@@ -1,52 +1,35 @@
 package com.runwithme.runwithme.domain.challenge.repository.querydsl;
 
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
-import com.runwithme.runwithme.domain.challenge.dto.QChallengeResponseDto;
-import lombok.RequiredArgsConstructor;
+import static com.runwithme.runwithme.domain.challenge.entity.QChallenge.*;
+import static com.runwithme.runwithme.domain.challenge.entity.QChallengeUser.*;
+import static com.runwithme.runwithme.domain.user.entity.QUser.*;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import static com.runwithme.runwithme.domain.challenge.entity.QChallenge.challenge;
-import static com.runwithme.runwithme.domain.challenge.entity.QChallengeUser.challengeUser;
+import lombok.RequiredArgsConstructor;
+
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
+import com.runwithme.runwithme.domain.challenge.dto.QChallengeResponseDto;
 
 @RequiredArgsConstructor
 public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuerydsl{
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq){
-        return Optional.ofNullable(jpaQueryFactory.select(new QChallengeResponseDto(
-                challenge.seq,
-                challenge.manager.seq,
-                challenge.manager.nickname,
-                challenge.image.seq,
-                challenge.name,
-                challenge.goalDays,
-                challenge.goalType,
-                challenge.goalAmount,
-                challenge.timeStart,
-                challenge.timeEnd,
-                challenge.nowMember,
-                challenge.maxMember,
-                challenge.cost,
-                isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
-            )
-        ).from(challenge)
-                .where(challenge.seq.eq(challengeSeq))
-                .fetchOne());
-    }
     @Override
-    public Page<ChallengeResponseDto> findAllChallengePage(Long cursorSeq, Long userSeq, Pageable pageable){
-        QueryResults<ChallengeResponseDto> result = jpaQueryFactory.select(new QChallengeResponseDto(
+    public Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq){
+        return Optional.ofNullable(jpaQueryFactory
+                .select(new QChallengeResponseDto(
                         challenge.seq,
                         challenge.manager.seq,
                         challenge.manager.nickname,
@@ -60,9 +43,36 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         challenge.nowMember,
                         challenge.maxMember,
                         challenge.cost,
-                        isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
-                        )
-                ).from(challenge)
+                        isExistChallengeUser(userSeq)
+                ))
+                .from(challenge)
+                .leftJoin(challengeUser)
+                .on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
+                .where(challenge.seq.eq(challengeSeq))
+                .fetchOne());
+    }
+    @Override
+    public Page<ChallengeResponseDto> findAllChallengePage(Long cursorSeq, Long userSeq, Pageable pageable){
+        QueryResults<ChallengeResponseDto> result = jpaQueryFactory
+                .select(new QChallengeResponseDto(
+                        challenge.seq,
+                        challenge.manager.seq,
+                        challenge.manager.nickname,
+                        challenge.image.seq,
+                        challenge.name,
+                        challenge.goalDays,
+                        challenge.goalType,
+                        challenge.goalAmount,
+                        challenge.timeStart,
+                        challenge.timeEnd,
+                        challenge.nowMember,
+                        challenge.maxMember,
+                        challenge.cost,
+                        isExistChallengeUser(userSeq)
+                ))
+                .from(challenge)
+                .leftJoin(challengeUser)
+                .on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
                 .where(eqCursorSeq(cursorSeq))
                 .orderBy(challenge.seq.desc())
                 .limit(pageable.getPageSize())
@@ -71,36 +81,38 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
     }
     @Override
     public Page<ChallengeResponseDto> findRecruitChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable){
-        QueryResults<ChallengeResponseDto> result = jpaQueryFactory.select(new QChallengeResponseDto(
-                                challenge.seq,
-                                challenge.manager.seq,
-                                challenge.manager.nickname,
-                                challenge.image.seq,
-                                challenge.name,
-                                challenge.goalDays,
-                                challenge.goalType,
-                                challenge.goalAmount,
-                                challenge.timeStart,
-                                challenge.timeEnd,
-                                challenge.nowMember,
-                                challenge.maxMember,
-                                challenge.cost,
-                                isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
-                        )
-                ).from(challenge)
-                .where(
-                        challenge.timeStart.after(nowTime).and
-                                (challenge.nowMember.lt(challenge.maxMember)),
+        QueryResults<ChallengeResponseDto> result = jpaQueryFactory
+                .select(new QChallengeResponseDto(
+                            challenge.seq,
+                            challenge.manager.seq,
+                            challenge.manager.nickname,
+                            challenge.image.seq,
+                            challenge.name,
+                            challenge.goalDays,
+                            challenge.goalType,
+                            challenge.goalAmount,
+                            challenge.timeStart,
+                            challenge.timeEnd,
+                            challenge.nowMember,
+                            challenge.maxMember,
+                            challenge.cost,
+                            isExistChallengeUser(userSeq)
+                ))
+                .from(challenge)
+                .leftJoin(challengeUser)
+                .on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
+                .where(challenge.timeStart.after(nowTime)
+                                .and(challenge.nowMember.lt(challenge.maxMember)),
                         eqCursorSeq(cursorSeq))
                 .orderBy(challenge.seq.desc())
                 .limit(pageable.getPageSize())
                 .fetchResults();
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
-
     @Override
     public Page<ChallengeResponseDto> findMyChallengePage(Long cursorSeq, Long userSeq, Pageable pageable){
-        QueryResults<ChallengeResponseDto> result = jpaQueryFactory.select(new QChallengeResponseDto(
+        QueryResults<ChallengeResponseDto> result = jpaQueryFactory
+                .select(new QChallengeResponseDto(
                         challengeUser.challenge.seq,
                         challengeUser.challenge.manager.seq,
                         challengeUser.challenge.manager.nickname,
@@ -114,9 +126,9 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         challengeUser.challenge.nowMember,
                         challengeUser.challenge.maxMember,
                         challengeUser.challenge.cost,
-                        isExistChallengeUserWhereChallengeEqAndUserEq(userSeq)
-                        )
-                ).from(challengeUser)
+                        isExistChallengeUser(userSeq)
+                ))
+                .from(challengeUser)
                 .where(challengeUser.user.seq.eq(userSeq))
                 .orderBy(challengeUser.challenge.seq.desc())
                 .offset(pageable.getOffset())
@@ -124,16 +136,17 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                 .fetchResults();
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
-
-
-
     private BooleanExpression isExistChallengeUserWhereChallengeEqAndUserEq(Long userSeq){
         return JPAExpressions
                 .selectFrom(challengeUser)
                 .where(challengeUser.challenge.seq.eq(challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
                 .exists();
     }
+    public BooleanExpression isExistChallengeUser(Long userSeq){
+        if (userSeq == null) return null;
 
+        return challengeUser.user.seq.isNotNull();
+    }
     private BooleanExpression eqCursorSeq(Long cursorSeq) {
         return cursorSeq == null ? null : challenge.seq.lt(cursorSeq);
     }

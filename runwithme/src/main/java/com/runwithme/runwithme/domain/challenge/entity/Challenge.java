@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Challenge {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(columnDefinition = "INT UNSIGNED")
+    @Column
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -79,5 +79,9 @@ public class Challenge {
         this.cost = cost;
         this.nowMember = nowMember;
         this.maxMember = maxMember;
+    }
+
+    public void setNowMemberPlus() {
+        this.nowMember++;
     }
 }
