@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class ChallengeBoard {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(columnDefinition = "INT UNSIGNED")
+    @Column
     private Long seq;
 
     @Column(name = "challenge_seq")

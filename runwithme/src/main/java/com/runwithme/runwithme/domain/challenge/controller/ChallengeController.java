@@ -45,7 +45,7 @@ public class ChallengeController {
     @GetMapping("/{challengeSeq}/board")
     @PageableAsQueryParam
     public ResponseEntity<ResultResponseDto> getBoardList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @PathVariable(value = "challengeSeq") Long challengeSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
-        final PagingResultDto<ChallengeBoardResponseDto> pagingResultDto = challengeService.getBoardList(cursorSeq, challengeSeq, pageable);
+        final List<ChallengeBoardResponseDto> pagingResultDto = challengeService.getBoardList(cursorSeq, challengeSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_BOARD_SUCCESS, pagingResultDto));
     }
 
@@ -89,7 +89,7 @@ public class ChallengeController {
     @GetMapping("/all")
     @PageableAsQueryParam
     public ResponseEntity<ResultResponseDto> getAllChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
-        final PagingResultDto<ChallengeResponseDto> pagingResultDto = challengeService.getAllChallengeList(cursorSeq, pageable);
+        final List<ChallengeResponseDto> pagingResultDto = challengeService.getAllChallengeList(cursorSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, pagingResultDto));
     }
 
@@ -105,7 +105,7 @@ public class ChallengeController {
     @GetMapping("/my")
     @PageableAsQueryParam
     public ResponseEntity<ResultResponseDto> getMyChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
-        final PagingResultDto<ChallengeResponseDto> pagingResultDto = challengeService.getMyChallengeList(cursorSeq, pageable);
+        final List<ChallengeResponseDto> pagingResultDto = challengeService.getMyChallengeList(cursorSeq, pageable);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
     }
 

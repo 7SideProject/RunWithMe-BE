@@ -15,15 +15,15 @@ public class ChallengeUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "challenge_user_seq", columnDefinition = "INT UNSIGNED")
+    @Column(name = "challenge_user_seq")
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_seq", columnDefinition = "UNSIGNED")
+    @JoinColumn(name = "user_seq")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "challenge_seq", columnDefinition = "INT UNSIGNED")
+    @JoinColumn(name = "challenge_seq")
     private Challenge challenge;
 
     @Builder

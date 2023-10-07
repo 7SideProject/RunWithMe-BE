@@ -1,11 +1,12 @@
 package com.runwithme.runwithme.domain.challenge.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
-import com.runwithme.runwithme.global.entity.Image;
-import lombok.*;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import com.querydsl.core.annotations.QueryProjection;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,7 +24,6 @@ public class ChallengeResponseDto {
     private Long nowMember;
     private Long maxMember;
     private Long cost;
-
     private boolean challengeUserFlag;
 
     @QueryProjection
