@@ -98,11 +98,17 @@ public class ChallengeService {
                 .build();
 
         challengeRepository.save(challenge);
+
+        challengeUserRepository.save(new ChallengeUser(user, challenge));
     }
 
     @Transactional
     public Optional<ChallengeResponseDto> getChallengeData(Long challengeSeq) {
         final Long userSeq = authUtils.getLoginUserSeq();
+
+        if (!challengeRepository.existsById(challengeSeq)) {
+            throw new CustomException(CHALLENGE_NOT_FOUND);
+        }
 
         return challengeRepository.findChallengeBySeq(userSeq, challengeSeq);
     }
