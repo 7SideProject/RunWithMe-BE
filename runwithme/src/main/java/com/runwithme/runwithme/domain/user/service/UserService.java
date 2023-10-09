@@ -6,6 +6,7 @@ import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
+import com.runwithme.runwithme.global.utils.AuthUtils;
 import com.runwithme.runwithme.global.utils.CacheUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+
+import java.util.Objects;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
@@ -24,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageService imageService;
+    private final AuthUtils authUtils;
 
     public UserProfileViewDto join(UserCreateDto dto) {
         if (userRepository.existsByEmail(dto.email())) {
@@ -39,13 +43,15 @@ public class UserService {
     }
 
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
-        findUser.setProfile(dto);
-        return UserConverter.toViewDto(findUser);
+        User user = findByUserSeq(userSeq);
+
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        user.setProfile(dto);
+        return UserConverter.toViewDto(user);
     }
 
     public UserProfileViewDto getUserProfile(Long userSeq) {
-        User findUser = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
+        User findUser = findByUserSeq(userSeq);
         return UserConverter.toViewDto(findUser);
     }
 
@@ -58,20 +64,29 @@ public class UserService {
     }
 
     public Resource getUserImage(Long userSeq) {
-        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
+        User user = findByUserSeq(userSeq);
         return imageService.getImage(user.getImage().getSeq());
     }
 
     public void changeImage(Long userSeq, UserProfileImageDto dto) {
-        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
-
+        User user = findByUserSeq(userSeq);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
         if (!isDefaultImage(user)) {
             imageService.delete(user.getImage().getSeq());
         }
         user.changeImage(imageService.save(dto.image()));
     }
 
+    private User findByUserSeq(Long userSeq) {
+        return userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
+    }
+
     private boolean isDefaultImage(User user) {
         return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), CacheUtils.get("defaultImage").getSeq());
+    }
+
+    private boolean isCreatedUser(User createdUser) {
+        User loginUser = authUtils.getLoginUser();
+        return Objects.equals(loginUser.getSeq(), createdUser.getSeq());
     }
 }

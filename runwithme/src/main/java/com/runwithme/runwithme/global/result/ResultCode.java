@@ -26,6 +26,7 @@ public enum ResultCode {
     BAD_PASSWORD                    (400, -107, "잘못된 패스워드입니다."),
     UNAUTHORIZED_USER               (400, -108, "권한 없는 사용자입니다."),
     REDIRECT_NOT_FOUND              (400, -109, "리디렉션 URI를 포함해야 합니다"),
+    NOT_RESOURCE_OWNER              (400, -110, "리소스를 생성한 유저가 아닙니다."),
 
     // Record
     CREATE_RECORD_SUCCESS           (200, 200, "기록 등록에 성공하였습니다."),
