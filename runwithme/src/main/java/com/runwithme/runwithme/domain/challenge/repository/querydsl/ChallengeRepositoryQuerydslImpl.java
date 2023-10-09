@@ -38,8 +38,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         challenge.goalDays,
                         challenge.goalType,
                         challenge.goalAmount,
-                        challenge.timeStart,
-                        challenge.timeEnd,
+                        challenge.dateStart,
+                        challenge.dateEnd,
                         challenge.nowMember,
                         challenge.maxMember,
                         challenge.cost,
@@ -63,8 +63,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         challenge.goalDays,
                         challenge.goalType,
                         challenge.goalAmount,
-                        challenge.timeStart,
-                        challenge.timeEnd,
+                        challenge.dateStart,
+                        challenge.dateEnd,
                         challenge.nowMember,
                         challenge.maxMember,
                         challenge.cost,
@@ -91,8 +91,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                             challenge.goalDays,
                             challenge.goalType,
                             challenge.goalAmount,
-                            challenge.timeStart,
-                            challenge.timeEnd,
+                            challenge.dateStart,
+                            challenge.dateEnd,
                             challenge.nowMember,
                             challenge.maxMember,
                             challenge.cost,
@@ -101,7 +101,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                 .from(challenge)
                 .leftJoin(challengeUser)
                 .on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
-                .where(challenge.timeStart.after(nowTime)
+                .where(challenge.dateStart.after(nowTime)
                                 .and(challenge.nowMember.lt(challenge.maxMember)),
                         eqCursorSeq(cursorSeq))
                 .orderBy(challenge.seq.desc())
@@ -121,8 +121,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                         challengeUser.challenge.goalDays,
                         challengeUser.challenge.goalType,
                         challengeUser.challenge.goalAmount,
-                        challengeUser.challenge.timeStart,
-                        challengeUser.challenge.timeEnd,
+                        challengeUser.challenge.dateStart,
+                        challengeUser.challenge.dateEnd,
                         challengeUser.challenge.nowMember,
                         challengeUser.challenge.maxMember,
                         challengeUser.challenge.cost,

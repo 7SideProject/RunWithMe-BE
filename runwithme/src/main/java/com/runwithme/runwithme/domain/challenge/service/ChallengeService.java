@@ -89,8 +89,8 @@ public class ChallengeService {
                 .goalDays(challengeCreateDto.getGoalDays())
                 .goalType(challengeCreateDto.getGoalType())
                 .goalAmount(challengeCreateDto.getGoalAmount())
-                .timeStart(challengeCreateDto.getTimeStart())
-                .timeEnd(challengeCreateDto.getTimeEnd())
+                .dateStart(challengeCreateDto.getDateStart())
+                .dateEnd(challengeCreateDto.getDateEnd())
                 .password(challengeCreateDto.getPassword())
                 .cost(challengeCreateDto.getCost())
                 .nowMember(1L)
@@ -121,7 +121,7 @@ public class ChallengeService {
             throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
         }
         final Challenge challenge = challengeRepository.findById(challengeSeq).get();
-        if (Objects.equals(challenge.getPassword(), password)) {
+        if (challenge.getPassword() == password) {
             challengeUserRepository.save(new ChallengeUser(user, challenge));
             return true;
         }
@@ -132,8 +132,8 @@ public class ChallengeService {
     @Transactional
     public boolean isChallengeUser(Long challengeSeq) {
         final Long userSeq = authUtils.getLoginUserSeq();
-        if (challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)) {
-            throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
+        if (!challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)) {
+            return false;
         }
         return true;
     }

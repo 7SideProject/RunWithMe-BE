@@ -1,7 +1,6 @@
 package com.runwithme.runwithme.domain.challenge.dto;
 
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -16,8 +15,8 @@ public class ChallengeCreateDto {
     private String goalType;
     private Long goalAmount;
 
-    private LocalDate timeStart;
-    private LocalDate timeEnd;
+    private LocalDate dateStart;
+    private LocalDate dateEnd;
 
     private String password;
     private Long cost;

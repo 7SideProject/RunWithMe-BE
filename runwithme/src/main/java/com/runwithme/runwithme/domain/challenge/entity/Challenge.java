@@ -43,12 +43,12 @@ public class Challenge {
     @Column(name = "goal_amount")
     private Long goalAmount;
 
-    @Column(name = "time_start")
-    private LocalDate timeStart;
+    @Column(name = "date_start")
+    private LocalDate dateStart;
 
-    @Column(name = "time_end")
-    private LocalDate timeEnd;
-    @Column(name = "password", length = 10)
+    @Column(name = "date_end")
+    private LocalDate dateEnd;
+    @Column(name = "password", length = 10, nullable = false)
     private String password;
 
     @Column(name = "cost")
@@ -65,7 +65,7 @@ public class Challenge {
     private LocalDateTime regTime;
 
     @Builder
-    public Challenge(User manager, Image image, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDate timeStart, LocalDate timeEnd, String password, Long cost, Long nowMember, Long maxMember) {
+    public Challenge(User manager, Image image, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, String password, Long cost, Long nowMember, Long maxMember) {
         this.manager = manager;
         this.image = image;
         this.name = name;
@@ -73,8 +73,8 @@ public class Challenge {
         this.goalDays = goalDays;
         this.goalType = goalType;
         this.goalAmount = goalAmount;
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
         this.password = password;
         this.cost = cost;
         this.nowMember = nowMember;
