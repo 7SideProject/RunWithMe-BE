@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserConverter {
 
+    private static final int DEFAULT_USER_POINT = 1500;
+
     public static User toEntity(UserCreateDto dto) {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         Image defaultImage = ImageCache.get(ImageCache.DEFAULT_PROFILE);
@@ -23,7 +25,7 @@ public class UserConverter {
                 .weight(dto.weight())
                 .height(dto.height())
                 .role(Role.USER)
-                .point(0)
+                .point(DEFAULT_USER_POINT)
                 .build();
     }
 
