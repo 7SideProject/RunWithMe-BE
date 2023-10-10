@@ -48,7 +48,7 @@ public class Challenge {
 
     @Column(name = "date_end")
     private LocalDate dateEnd;
-    @Column(name = "password", length = 10, nullable = false)
+    @Column(name = "password", length = 10)
     private String password;
 
     @Column(name = "cost")
