@@ -87,4 +87,10 @@ public class UserController {
         userService.changeImage(userSeq, dto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping(value = "/{userSeq}")
+    public ResponseEntity<ResultResponseDto> deleteUser(@PathVariable Long userSeq) {
+        userService.delete(userSeq);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
+    }
 }

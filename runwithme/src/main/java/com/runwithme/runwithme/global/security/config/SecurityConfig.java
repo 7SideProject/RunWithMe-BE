@@ -42,7 +42,7 @@ public class SecurityConfig {
     private final String[] PERMIT_URL_PATHS = {
             /* SWAGGER */
             "/favicon.ico",
-            "/error",
+//            "/error",
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/v3/api-docs/**",
