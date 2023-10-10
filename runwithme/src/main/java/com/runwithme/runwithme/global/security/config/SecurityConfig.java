@@ -16,6 +16,7 @@ import com.runwithme.runwithme.global.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -53,8 +54,11 @@ public class SecurityConfig {
             "/users/join",
             "/users/duplicate-email",
             "/users/duplicate-nickname",
-            "/users/**/profile-image",
             "/token"
+    };
+
+    private final String[] PERMIT_GET_URL_PATHS = {
+            "/users/**",
     };
 
     private final AuthTokenFactory authTokenFactory;
@@ -88,6 +92,7 @@ public class SecurityConfig {
                         .successHandler(oAuth2AuthenticationSuccessHandler()))
                 .authorizeHttpRequests()
                 .requestMatchers(PERMIT_URL_PATHS).permitAll()
+                .requestMatchers(HttpMethod.GET, PERMIT_GET_URL_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
