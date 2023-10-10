@@ -101,8 +101,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                 .from(challenge)
                 .leftJoin(challengeUser)
                 .on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
-                .where(challenge.dateStart.after(nowTime)
-                                .and(challenge.nowMember.lt(challenge.maxMember)),
+                .where(challenge.dateStart.after(nowTime),
                         eqCursorSeq(cursorSeq))
                 .orderBy(challenge.seq.desc())
                 .limit(pageable.getPageSize())
