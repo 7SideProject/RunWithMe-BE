@@ -7,7 +7,7 @@ import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
-import com.runwithme.runwithme.global.utils.CacheUtils;
+import com.runwithme.runwithme.global.utils.ImageCache;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +82,7 @@ public class UserService {
     }
 
     private boolean isDefaultImage(User user) {
-        return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), CacheUtils.get("defaultImage").getSeq());
+        return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), ImageCache.get(ImageCache.DEFAULT_PROFILE).getSeq());
     }
 
     private boolean isCreatedUser(User createdUser) {

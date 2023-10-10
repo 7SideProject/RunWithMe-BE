@@ -3,7 +3,7 @@ package com.runwithme.runwithme.global.service;
 import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.repository.ImageRepository;
-import com.runwithme.runwithme.global.utils.CacheUtils;
+import com.runwithme.runwithme.global.utils.ImageCache;
 import com.runwithme.runwithme.global.utils.MultipartFileUtils;
 import com.runwithme.runwithme.global.utils.S3Utils;
 import jakarta.transaction.Transactional;
@@ -26,26 +26,33 @@ import static com.runwithme.runwithme.global.result.ResultCode.*;
 @RequiredArgsConstructor
 public class ImageService {
 
+    private final String DEFAULT_PROFILE_SAVED_NAME = "default.jpg";
+    private final String DEFAULT_CHALLENGE_SAVED_NAME = "defaultChallenge.jpg";
+
+
     private final ImageRepository imageRepository;
 
     private final S3Utils s3Utils;
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        Optional<Image> optionalImage = imageRepository.findById(1L);
+        ImageCache.put(ImageCache.DEFAULT_PROFILE, getDefaultImage(DEFAULT_PROFILE_SAVED_NAME));
+        ImageCache.put(ImageCache.DEFAULT_CHALLENGE, getDefaultImage(DEFAULT_CHALLENGE_SAVED_NAME));
+    }
+
+    private Image getDefaultImage(String name) {
+        Optional<Image> optionalImage = imageRepository.findBySavedName(name);
+        return optionalImage.orElseGet(() -> saveDefaultImage(name));
+    }
+
+    private Image saveDefaultImage(String name) {
         Image image;
-
-        if (optionalImage.isEmpty()) {
-            Image defaultImage = Image.builder()
-                    .originalName("defaultImage")
-                    .savedName("default.jpg")
-                    .build();
-            image = imageRepository.save(defaultImage);
-        } else {
-            image = optionalImage.get();
-        }
-
-        CacheUtils.put("defaultImage", image);
+        Image defaultImage = Image.builder()
+                .originalName(name)
+                .savedName(name)
+                .build();
+        image = imageRepository.save(defaultImage);
+        return image;
     }
 
     public Image save(MultipartFile multipartFile) {

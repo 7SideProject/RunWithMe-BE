@@ -5,7 +5,11 @@ import com.runwithme.runwithme.global.entity.Image;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CacheUtils {
+public class ImageCache {
+
+    public static final String DEFAULT_PROFILE = "defaultImage";
+    public static final String DEFAULT_CHALLENGE = "defaultChallengeImage";
+
 
     private static final Map<String, Image> imageCache = new ConcurrentHashMap<>();
 
