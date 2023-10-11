@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
@@ -37,10 +38,24 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
                 "/users/join",
                 "/users/duplicate-email",
                 "/users/duplicate-nickname",
-                "/users/**/profile-image",
                 "/token"
         };
-        return Arrays.stream(PERMIT_URL_PATHS)
+
+        final String[] PERMIT_GET_URL_PATHS = {
+                "/users/**",
+        };
+
+        return isMatchedUrl(request, PERMIT_URL_PATHS)
+                ||
+                isMatchedUrlAndGetMethod(request, PERMIT_GET_URL_PATHS);
+    }
+
+    private static boolean isMatchedUrlAndGetMethod(HttpServletRequest request, String[] PATHS) {
+        return isMatchedUrl(request, PATHS) && HttpMethod.GET.matches(request.getMethod());
+    }
+
+    private static boolean isMatchedUrl(HttpServletRequest request, String[] PATHS) {
+        return Arrays.stream(PATHS)
                 .anyMatch(e -> new AntPathMatcher().match(e, request.getServletPath()));
     }
 

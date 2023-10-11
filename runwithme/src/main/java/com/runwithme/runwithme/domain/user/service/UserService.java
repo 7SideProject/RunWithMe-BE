@@ -7,7 +7,7 @@ import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
-import com.runwithme.runwithme.global.utils.CacheUtils;
+import com.runwithme.runwithme.global.utils.ImageCache;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,20 +39,23 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        return user;
     }
 
     public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
         User user = findByUserSeq(userSeq);
-
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
         if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
         user.setProfile(dto);
         return UserConverter.toViewDto(user);
     }
 
     public UserProfileViewDto getUserProfile(Long userSeq) {
-        User findUser = findByUserSeq(userSeq);
-        return UserConverter.toViewDto(findUser);
+        User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        return UserConverter.toViewDto(user);
     }
 
     public DuplicatedViewDto isDuplicatedEmail(String email) {
@@ -65,11 +68,13 @@ public class UserService {
 
     public Resource getUserImage(Long userSeq) {
         User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
         return imageService.getImage(user.getImage().getSeq());
     }
 
     public void changeImage(Long userSeq, UserProfileImageDto dto) {
         User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
         if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
         if (!isDefaultImage(user)) {
             imageService.delete(user.getImage().getSeq());
@@ -78,15 +83,23 @@ public class UserService {
     }
 
     private User findByUserSeq(Long userSeq) {
-        return userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
+        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        return user;
     }
 
     private boolean isDefaultImage(User user) {
-        return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), CacheUtils.get("defaultImage").getSeq());
+        return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), ImageCache.get(ImageCache.DEFAULT_PROFILE).getSeq());
     }
 
     private boolean isCreatedUser(User createdUser) {
         User loginUser = authUtils.getLoginUser();
         return Objects.equals(loginUser.getSeq(), createdUser.getSeq());
+    }
+
+    public void delete(Long userSeq) {
+        User user = findByUserSeq(userSeq);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        user.delete();
     }
 }
