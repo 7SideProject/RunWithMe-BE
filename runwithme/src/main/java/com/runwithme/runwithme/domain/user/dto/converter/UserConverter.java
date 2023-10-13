@@ -5,15 +5,17 @@ import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.entity.Role;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.global.entity.Image;
-import com.runwithme.runwithme.global.utils.CacheUtils;
+import com.runwithme.runwithme.global.utils.ImageCache;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserConverter {
 
+    private static final int DEFAULT_USER_POINT = 1500;
+
     public static User toEntity(UserCreateDto dto) {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        Image defaultImage = CacheUtils.get("defaultImage");
+        Image defaultImage = ImageCache.get(ImageCache.DEFAULT_PROFILE);
 
         return User.builder()
                 .image(defaultImage)
@@ -23,7 +25,7 @@ public class UserConverter {
                 .weight(dto.weight())
                 .height(dto.height())
                 .role(Role.USER)
-                .point(0)
+                .point(DEFAULT_USER_POINT)
                 .build();
     }
 

@@ -15,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class UserController {
             @ApiResponse(responseCode = "201", content = {@Content(schema = @Schema(implementation = UserProfileViewDto.class))}),
             @ApiResponse(responseCode = "400", description = "잘못된 파라미터입니다.")
     })
-    public ResponseEntity<ResultResponseDto> join(@RequestBody UserCreateDto dto) {
+    public ResponseEntity<ResultResponseDto> join(@Validated @RequestBody UserCreateDto dto) {
         UserProfileViewDto response = userService.join(dto);
         log.info("Join user {}", response.seq());
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, response), HttpStatus.CREATED);
@@ -85,5 +86,11 @@ public class UserController {
     public ResponseEntity<Void> changeImage(@PathVariable Long userSeq, @ModelAttribute UserProfileImageDto dto) {
         userService.changeImage(userSeq, dto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping(value = "/{userSeq}")
+    public ResponseEntity<ResultResponseDto> deleteUser(@PathVariable Long userSeq) {
+        userService.delete(userSeq);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
     }
 }
