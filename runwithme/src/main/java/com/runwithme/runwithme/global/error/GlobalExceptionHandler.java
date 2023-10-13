@@ -77,26 +77,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return params.toString();
     }
 
-    protected String getResultMessage(final Iterator<ConstraintViolation<?>> violationIterator) {
-        final StringBuilder resultMessageBuilder = new StringBuilder();
+    protected Map<String, StringBuilder> getResultMessage(final Iterator<ConstraintViolation<?>> violationIterator) {
+        final Map<String, StringBuilder> resultMessage = new HashMap<>();
         while (violationIterator.hasNext() == true) {
             final ConstraintViolation<?> constraintViolation = violationIterator.next();
-            resultMessageBuilder
-                    .append(getPropertyName(constraintViolation.getPropertyPath().toString())) // 유효성 검사가 실패한 속성
-                    .append("의 ")
-                    .append(constraintViolation.getMessage()) // 유효성 검사 실패 시 메시지
-                    .append(" 잘못 들어온 값 : ")
-                    .append(constraintViolation.getInvalidValue()); // 유효하지 않은 값
+            final StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder
+                    .append(constraintViolation.getMessage())
+                    .append(" ( 잘못된 값 : ")
+                    .append(constraintViolation.getInvalidValue())
+                    .append(" )");
 
-            if (violationIterator.hasNext() == true) {
-                resultMessageBuilder.append(", ");
-            }
+            resultMessage.put(getPropertyName(constraintViolation.getPropertyPath().toString()), messageBuilder);
         }
 
-        return resultMessageBuilder.toString();
+        return resultMessage;
     }
 
     protected String getPropertyName(String propertyPath) {
-        return propertyPath.substring(propertyPath.lastIndexOf('.') + 1); // 전체 속성 경로에서 속성 이름만 가져온다.
+        return propertyPath.substring(propertyPath.lastIndexOf('.') + 1);
     }
 }
