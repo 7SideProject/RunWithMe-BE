@@ -1,25 +1,19 @@
 package com.runwithme.runwithme.domain.challenge.controller;
 
 import com.runwithme.runwithme.domain.challenge.dto.*;
-import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.service.ChallengeService;
-import com.runwithme.runwithme.global.dto.PagingResultDto;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,7 +67,7 @@ public class ChallengeController {
 
     @Operation(operationId = "joinChallengeUser", summary = "챌린지 가입")
     @PostMapping("/{challengeSeq}/join")
-    public ResponseEntity<ResultResponseDto> joinChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq, @Parameter(description = "password", name = "password") String password) {
+    public ResponseEntity<ResultResponseDto> joinChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq, @RequestParam(name = "password") String password) {
         final boolean success = challengeService.joinChallengeUser(challengeSeq, password);
         return ResponseEntity.ok().body(ResultResponseDto.of(success ? JOIN_CHALLENGE_SUCCESS : JOIN_CHALLENGE_FAIL));
     }
