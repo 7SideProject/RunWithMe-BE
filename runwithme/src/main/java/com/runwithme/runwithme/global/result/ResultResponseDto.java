@@ -3,7 +3,6 @@ package com.runwithme.runwithme.global.result;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import static com.runwithme.runwithme.global.result.ResultCode.VALID_PARAMETER_FAIL;
 
 @Schema(name = "결과 응답 데이터")
 @Getter
