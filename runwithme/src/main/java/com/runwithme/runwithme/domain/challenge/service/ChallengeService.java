@@ -78,6 +78,15 @@ public class ChallengeService {
     @Transactional
     public void createChallenge(ChallengeCreateDto challengeCreateDto, MultipartFile image) {
         final User user = authUtils.getLoginUser();
+        final LocalDate nowDate = LocalDate.now();
+
+        if (challengeCreateDto.getDateStart().isBefore(nowDate)){
+            throw new CustomException(CHALLENGE_DATE_START_IS_BEFORE_NOW);
+        }
+
+        if (challengeCreateDto.getDateEnd().isBefore(challengeCreateDto.getDateStart())){
+            throw new CustomException(CHALLENGE_DATE_END_IS_BEFORE_DATE_START);
+        }
 
         final Image savedImage = imageIsEmpty(image);
 
@@ -121,12 +130,11 @@ public class ChallengeService {
             throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
         }
         final Challenge challenge = challengeRepository.findById(challengeSeq).get();
-        if (challenge.getPassword() == password) {
-            challengeUserRepository.save(new ChallengeUser(user, challenge));
-            return true;
+        if (!challenge.getPassword().equals(password)){
+            throw new CustomException(CHALLENGE_JOIN_PASSWORD_FAIL);
         }
-
-        return false;
+        challengeUserRepository.save(new ChallengeUser(user, challenge));
+        return true;
     }
 
     @Transactional

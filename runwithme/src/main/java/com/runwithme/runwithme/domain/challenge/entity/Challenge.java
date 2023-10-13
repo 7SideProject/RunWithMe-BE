@@ -3,6 +3,8 @@ package com.runwithme.runwithme.domain.challenge.entity;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.global.entity.Image;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,34 +30,38 @@ public class Challenge {
     @JoinColumn(name = "image_seq", nullable = true)
     private Image image;
 
-    @Column(name = "name", length = 30)
+    @Column(name = "name", length = 30, nullable = false)
     private String name;
 
     @Column(name = "description", length = 200)
     private String description;
-
+    @Min(value = 1, message = "최소값은 1 입니다.")
+    @Max(value = 7, message = "최대값은 7 입니다.")
     @Column(name = "goal_days")
     private Long goalDays;
 
     @Column(name = "goal_type", length = 10)
-    private String goalType;
+    private GoalType goalType;
 
     @Column(name = "goal_amount")
     private Long goalAmount;
 
-    @Column(name = "date_start")
+    @Column(name = "date_start", nullable = false)
     private LocalDate dateStart;
 
-    @Column(name = "date_end")
+    @Column(name = "date_end", nullable = false)
     private LocalDate dateEnd;
     @Column(name = "password", length = 10)
     private String password;
-
-    @Column(name = "cost")
+    @Min(value = 500, message = "최소값은 500 입니다.")
+    @Max(value = 10000, message = "최대값은 10000 입니다.")
+    @Column(name = "cost", nullable = false)
     private Long cost;
-    @Column(name = "now_member")
+    @Column(name = "now_member", nullable = false)
     private Long nowMember;
-    @Column(name = "max_member")
+    @Min(value = 2, message = "최소값은 2 입니다.")
+    @Max(value = 20, message = "최대값은 20 입니다.")
+    @Column(name = "max_member", nullable = false)
     private Long maxMember;
 
     @Column(name = "check_yn", nullable = false)
@@ -65,7 +71,7 @@ public class Challenge {
     private LocalDateTime regTime;
 
     @Builder
-    public Challenge(User manager, Image image, String name, String description, Long goalDays, String goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, String password, Long cost, Long nowMember, Long maxMember) {
+    public Challenge(User manager, Image image, String name, String description, Long goalDays, GoalType goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, String password, Long cost, Long nowMember, Long maxMember) {
         this.manager = manager;
         this.image = image;
         this.name = name;
