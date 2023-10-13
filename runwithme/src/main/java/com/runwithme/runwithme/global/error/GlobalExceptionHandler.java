@@ -8,7 +8,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import static com.runwithme.runwithme.global.result.ResultCode.VALID_PARAMETER_FAIL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +44,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ConstraintViolationException.class})
     protected ResponseEntity<ResultResponseDto> validExceptionHandler(ConstraintViolationException e) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ResultResponseDto.of(VALID_PARAMETER_FAIL, getResultMessage(e.getConstraintViolations().iterator())));
+                .status(ResultCode.CHALLENGE_PARAMETER_FAIL.getStatus())
+                .body(ResultResponseDto.of(ResultCode.CHALLENGE_PARAMETER_FAIL, getResultMessage(e.getConstraintViolations().iterator())));
     }
-    
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();

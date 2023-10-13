@@ -51,6 +51,7 @@ public enum ResultCode {
     CHALLENGE_DATE_END_IS_BEFORE_DATE_START        (400, -302, "챌린지 종료일은 시작일 이후부터 가능합니다."),
     CHALLENGE_JOIN_ALREADY_EXIST    (400, -303, "이미 가입한 챌린지 입니다."),
     CHALLENGE_JOIN_PASSWORD_FAIL    (400, -304, "패스워드가 틀렸습니다."),
+    CHALLENGE_PARAMETER_FAIL            (400, -305, "잘못된 파라미터 입니다."),
 
     // Board
     CREATE_BOARD_SUCCESS            (200, 400, "게시글 등록에 성공하였습니다."),
@@ -76,10 +77,6 @@ public enum ResultCode {
     INVALID_JWT_TOKEN               (400, -603, "JWT Token이 유효하지 않습니다."),
     EXPIRED_JWT_TOKEN               (400, -604, "JWT Token이 만료되었습니다."),
     UNSUPPORTED_JWT_TOKEN           (400, -605, "지원되지 않는 Token입니다."),
-
-
-    // Global
-    VALID_PARAMETER_FAIL            (400, -700, "잘못된 파라미터 값입니다."),
     ;
     private final int status;
     private final int code;
