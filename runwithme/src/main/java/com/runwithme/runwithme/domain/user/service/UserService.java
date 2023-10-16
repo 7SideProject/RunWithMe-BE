@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -101,5 +103,12 @@ public class UserService {
         User user = findByUserSeq(userSeq);
         if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
         user.delete();
+    }
+
+    public void changePassword(Long userSeq, UserChangePasswordDto dto) {
+        User user = findByUserSeq(userSeq);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        user.changePassword(encoder.encode(dto.password()));
     }
 }

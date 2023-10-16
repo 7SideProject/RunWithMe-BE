@@ -92,4 +92,8 @@ public class User extends BaseEntity {
                 .point(0)
                 .build();
     }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }
