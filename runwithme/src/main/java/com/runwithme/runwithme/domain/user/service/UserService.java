@@ -2,7 +2,9 @@ package com.runwithme.runwithme.domain.user.service;
 
 import com.runwithme.runwithme.domain.user.dto.*;
 import com.runwithme.runwithme.domain.user.dto.converter.UserConverter;
+import com.runwithme.runwithme.domain.user.entity.ConnectHistory;
 import com.runwithme.runwithme.domain.user.entity.User;
+import com.runwithme.runwithme.domain.user.repository.ConnectHistoryRepository;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
@@ -17,6 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
@@ -30,6 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ImageService imageService;
     private final AuthUtils authUtils;
+    private final ConnectHistoryRepository connectHistoryRepository;
 
     public UserProfileViewDto join(UserCreateDto dto) {
         if (userRepository.existsByEmail(dto.email())) {
@@ -110,5 +116,21 @@ public class UserService {
         if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         user.changePassword(encoder.encode(dto.password()));
+    }
+
+    public boolean connect(Long userSeq) {
+        boolean alreadyConnect = connectHistoryRepository.existsByConnectDateTimeIsAfterAndUserSeq(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT), userSeq);
+        if (alreadyConnect) return false;
+
+        User user = findByUserSeq(userSeq);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+
+        ConnectHistory connectHistory = ConnectHistory.builder()
+                .user(user)
+                .connectDateTime(LocalDateTime.now())
+                .build();
+
+        connectHistoryRepository.save(connectHistory);
+        return true;
     }
 }

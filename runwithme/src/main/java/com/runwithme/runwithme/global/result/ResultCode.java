@@ -16,6 +16,7 @@ public enum ResultCode {
     // User
     LOGIN_SUCCESS                   (200, 100, "로그인에 성공하였습니다."),
     USER_REQUEST_SUCCESS            (200, 101, "요청을 성공적으로 수행했습니다."),
+    ALREADY_CONNECT                 (200, 102, "오늘 접속한 이력이 있습니다."),
     INVALID_PARAMETER_FAIL          (400, -100, "잘못된 파라미터입니다."),
     USER_NOT_FOUND                  (400, -101, "존재하지 않는 유저입니다."),
     SEQ_NOT_FOUND                   (400, -102, "해당 SEQ를 가진 유저가 존재하지 않습니다."),
