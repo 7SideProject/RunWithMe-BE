@@ -46,12 +46,14 @@ public enum ResultCode {
     CHECK_IN_CHALLENGE_SUCCESS      (200, 304, "현재 챌린지에 가입되어 있는 계정입니다."),
     CHECK_IN_CHALLENGE_FAIL         (200, 305, "현재 챌린지에 가입되지 않은 계정입니다."),
     GET_MY_CHALLENGE_SUCCESS        (200, 306, "가입한 챌린지 조회에 성공하였습니다."),
+    CREATE_CHALLENGE_SUCCESS        (200, 307, "챌린지 등록에 성공하였습니다."),
     CHALLENGE_NOT_FOUND             (400, -300, "존재하지 않는 챌린지입니다."),
     CHALLENGE_DATE_START_IS_BEFORE_NOW      (400, -301, "챌린지 시작일은 과거일 수 없습니다."),
     CHALLENGE_DATE_END_IS_BEFORE_DATE_START        (400, -302, "챌린지 종료일은 시작일보다 빠를 수 없습니다."),
     CHALLENGE_JOIN_ALREADY_EXIST    (400, -303, "이미 가입한 챌린지 입니다."),
     CHALLENGE_JOIN_PASSWORD_FAIL    (400, -304, "패스워드가 틀렸습니다."),
     CHALLENGE_PARAMETER_FAIL            (400, -305, "잘못된 파라미터 입니다."),
+    CREATE_CHALLENGE_FAIL           (400, -306, "챌린지 등록에 실패하였습니다."),
 
     // Board
     CREATE_BOARD_SUCCESS            (200, 400, "게시글 등록에 성공하였습니다."),
@@ -60,10 +62,8 @@ public enum ResultCode {
     DELETE_BOARD_SUCCESS            (200, 403, "게시글 삭제에 성공하였습니다."),
     WARN_BOARD_SUCCESS              (200, 404, "게시글 신고에 성공하였습니다."),
     WARN_BOARD_FAIL                 (200, 405, "게시글 신고에 실패하였습니다."),
-    CREATE_CHALLENGE_SUCCESS        (200, 406, "챌린지 등록에 성공하였습니다."),
     BOARD_NOT_FOUND                 (400, -400, "존재하지 않는 게시글 입니다."),
     WARN_BOARD_ALREADY_EXIST        (400, -401, "이미 신고한 게시글 입니다."),
-    CREATE_CHALLENGE_FAIL           (400, -402, "챌린지 등록에 실패하였습니다."),
 
 
     // Image
