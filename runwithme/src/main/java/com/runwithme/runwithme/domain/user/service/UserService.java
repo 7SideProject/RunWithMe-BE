@@ -123,6 +123,7 @@ public class UserService {
         if (alreadyConnect) return false;
 
         User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
         if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
 
         ConnectHistory connectHistory = ConnectHistory.builder()

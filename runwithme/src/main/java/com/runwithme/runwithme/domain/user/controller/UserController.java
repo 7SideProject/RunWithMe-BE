@@ -103,7 +103,6 @@ public class UserController {
     @PostMapping(value = "/{userSeq}/connect")
     public ResponseEntity<ResultResponseDto> connect(@PathVariable Long userSeq) {
         boolean isSuccess = userService.connect(userSeq);
-        if (isSuccess) return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
-        else return new ResponseEntity<>(ResultResponseDto.of(ResultCode.ALREADY_CONNECT), HttpStatus.OK);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, new UserConnectViewDto(isSuccess)), HttpStatus.OK);
     }
 }
