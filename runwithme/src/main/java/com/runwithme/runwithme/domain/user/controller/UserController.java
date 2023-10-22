@@ -93,4 +93,16 @@ public class UserController {
         userService.delete(userSeq);
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
     }
+
+    @PutMapping(value = "/{userSeq}/password")
+    public ResponseEntity<ResultResponseDto> changePassword(@PathVariable Long userSeq, @RequestBody UserChangePasswordDto dto) {
+        userService.changePassword(userSeq, dto);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{userSeq}/connect")
+    public ResponseEntity<ResultResponseDto> connect(@PathVariable Long userSeq) {
+        boolean isSuccess = userService.connect(userSeq);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, new UserConnectViewDto(isSuccess)), HttpStatus.OK);
+    }
 }
