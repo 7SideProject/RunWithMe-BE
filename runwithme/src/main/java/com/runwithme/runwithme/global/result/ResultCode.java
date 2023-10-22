@@ -18,16 +18,16 @@ public enum ResultCode {
     USER_REQUEST_SUCCESS            (200, 101, "요청을 성공적으로 수행했습니다."),
     ALREADY_CONNECT                 (200, 102, "오늘 접속한 이력이 있습니다."),
     INVALID_PARAMETER_FAIL          (400, -100, "잘못된 파라미터입니다."),
-    USER_NOT_FOUND                  (400, -101, "존재하지 않는 유저입니다."),
-    SEQ_NOT_FOUND                   (400, -102, "해당 SEQ를 가진 유저가 존재하지 않습니다."),
+    USER_NOT_FOUND                  (401, -101, "존재하지 않는 유저입니다."),
+    SEQ_NOT_FOUND                   (404, -102, "해당 SEQ를 가진 유저가 존재하지 않습니다."),
     EMAIL_EXISTS                    (400, -103, "이미 존재하는 이메일입니다."),
-    UNAUTHORIZED                    (400, -104, "인증에 실패했습니다."),
-    INTERNAL_SERVER_ERROR           (400, -105, "서버 오류입니다."),
+    UNAUTHORIZED                    (401, -104, "인증에 실패했습니다."),
+    INTERNAL_SERVER_ERROR           (500, -105, "서버 오류입니다."),
     DELETED_USER                    (400, -106, "삭제된 회원입니다."),
-    BAD_PASSWORD                    (400, -107, "잘못된 패스워드입니다."),
-    UNAUTHORIZED_USER               (400, -108, "권한 없는 사용자입니다."),
+    BAD_PASSWORD                    (401, -107, "잘못된 패스워드입니다."),
+    UNAUTHORIZED_USER               (403, -108, "권한 없는 사용자입니다."),
     REDIRECT_NOT_FOUND              (400, -109, "리디렉션 URI를 포함해야 합니다"),
-    NOT_RESOURCE_OWNER              (400, -110, "리소스를 생성한 유저가 아닙니다."),
+    NOT_RESOURCE_OWNER              (403, -110, "리소스를 생성한 유저가 아닙니다."),
 
     // Record
     CREATE_RECORD_SUCCESS           (200, 200, "기록 등록에 성공하였습니다."),
@@ -64,16 +64,16 @@ public enum ResultCode {
 
 
     // Image
-    IMAGE_NOT_FOUND                 (400, -500, "이미지를 찾을 수 없습니다."),
+    IMAGE_NOT_FOUND                 (404, -500, "이미지를 찾을 수 없습니다."),
     FAILED_CONVERT                  (400, -501, "잘못된 파일입니다."),
 
     // Auth
-    FAILED_GENERATE_TOKEN           (400, -600, "토큰을 생성할 수 없습니다."),
-    HEADER_NO_TOKEN                 (400, -601, "헤더에 토큰이 존재하지 않습니다."),
-    INVALID_JWT_SIGNATURE           (400, -602, "시그니처가 유효하지 않습니다."),
-    INVALID_JWT_TOKEN               (400, -603, "JWT Token이 유효하지 않습니다."),
-    EXPIRED_JWT_TOKEN               (400, -604, "JWT Token이 만료되었습니다."),
-    UNSUPPORTED_JWT_TOKEN           (400, -605, "지원되지 않는 Token입니다."),
+    FAILED_GENERATE_TOKEN           (401, -600, "토큰을 생성할 수 없습니다."),
+    HEADER_NO_TOKEN                 (401, -601, "헤더에 토큰이 존재하지 않습니다."),
+    INVALID_JWT_SIGNATURE           (401, -602, "시그니처가 유효하지 않습니다."),
+    INVALID_JWT_TOKEN               (401, -603, "JWT Token이 유효하지 않습니다."),
+    EXPIRED_JWT_TOKEN               (401, -604, "JWT Token이 만료되었습니다."),
+    UNSUPPORTED_JWT_TOKEN           (401, -605, "지원되지 않는 Token입니다."),
     ;
 
     private final int status;

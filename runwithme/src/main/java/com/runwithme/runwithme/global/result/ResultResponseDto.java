@@ -34,7 +34,7 @@ public class ResultResponseDto {
 
     //전송할 데이터가 없는 경우
     public static ResultResponseDto of(ResultCode resultCode) {
-        return new ResultResponseDto(resultCode, "");
+        return new ResultResponseDto(resultCode, null);
     }
 
     public static ResultResponseDto of(ResultCode resultCode, String message) {
