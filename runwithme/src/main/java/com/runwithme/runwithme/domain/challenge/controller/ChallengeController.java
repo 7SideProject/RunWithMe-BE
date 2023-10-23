@@ -8,8 +8,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,6 +106,14 @@ public class ChallengeController {
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
     }
 
+    @Operation(operationId = "getMyChallengeList", summary = "뛸 수 있는 내 챌린지 리스트 조회")
+    @GetMapping("/my/running")
+    @PageableAsQueryParam
+    public ResponseEntity<ResultResponseDto> getMyRunningChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true)@PageableDefault Pageable pageable) {
+        final List<ChallengeResponseDto> pagingResultDto = challengeService.getMyRunningChallengeList(cursorSeq, pageable);
+        return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
+    }
+
     @Operation(operationId = "", summary = "게시글 신고")
     @PostMapping("/warn/{boardSeq}")
     public ResponseEntity<ResultResponseDto> boardWarn(@PathVariable(value = "boardSeq") Long boardSeq) {
@@ -113,5 +124,11 @@ public class ChallengeController {
         } else {
             return ResponseEntity.ok().body(ResultResponseDto.of(WARN_BOARD_FAIL));
         }
+    }
+
+    @Operation(operationId = "", summary = "챌린지 이미지 조회")
+    @GetMapping(value = "/{challengeSeq}/challenge-image", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<Resource> getChallengeImage(@PathVariable Long userSeq) {
+        return new ResponseEntity<>(challengeService.getChallengeImage(userSeq), HttpStatus.OK);
     }
 }

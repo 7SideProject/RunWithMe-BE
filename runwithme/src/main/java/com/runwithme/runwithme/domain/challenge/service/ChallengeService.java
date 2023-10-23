@@ -10,26 +10,20 @@ import com.runwithme.runwithme.domain.challenge.repository.ChallengeBoardWarnRep
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserRepository;
 import com.runwithme.runwithme.domain.user.entity.User;
-import com.runwithme.runwithme.domain.user.repository.UserRepository;
-import com.runwithme.runwithme.global.dto.PagingResultDto;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.entity.Image;
-import com.runwithme.runwithme.global.repository.ImageRepository;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
@@ -43,8 +37,6 @@ public class ChallengeService {
     private final ChallengeUserRepository challengeUserRepository;
     private final ChallengeBoardWarnRepository challengeBoardWarnRepository;
     private final ImageService imageService;
-    private final ImageRepository imageRepository;
-
     private final AuthUtils authUtils;
 
     @Transactional
@@ -166,6 +158,13 @@ public class ChallengeService {
     }
 
     @Transactional
+    public List<ChallengeResponseDto> getMyRunningChallengeList(Long cursorSeq, Pageable pageable) {
+        final Long userSeq = authUtils.getLoginUserSeq();
+        final LocalDate localDate = LocalDate.now();
+        return challengeRepository.findMyRunningChallengePage(cursorSeq, userSeq, localDate, pageable).getContent();
+    }
+
+    @Transactional
     public boolean boardWarn(Long boardSeq) {
         final User user = authUtils.getLoginUser();
         final ChallengeBoard challengeBoard = challengeBoardRepository.findById(boardSeq)
@@ -179,6 +178,12 @@ public class ChallengeService {
         challengeBoardWarnRepository.save(challengeBoardWarn);
 
         return true;
+    }
+
+    @Transactional
+    public Resource getChallengeImage(Long challengeSeq) {
+        final Challenge challenge = challengeRepository.findById(challengeSeq).get();
+        return imageService.getImage(challenge.getImage().getSeq());
     }
 
     public Image imageIsEmpty(MultipartFile image) {
