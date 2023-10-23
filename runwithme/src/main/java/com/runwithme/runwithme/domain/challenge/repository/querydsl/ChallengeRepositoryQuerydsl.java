@@ -15,4 +15,5 @@ public interface ChallengeRepositoryQuerydsl {
     Page<ChallengeResponseDto> findAllChallengePage(Long cursorSeq, Long userSeq, Pageable pageable);
     Page<ChallengeResponseDto> findRecruitChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable);
     Page<ChallengeResponseDto> findMyChallengePage(Long cursorSeq, Long userSeq, Pageable pageable);
+    Page<ChallengeResponseDto> findMyRunningChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable);
 }

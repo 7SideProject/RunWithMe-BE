@@ -2,7 +2,7 @@ package com.runwithme.runwithme.domain.challenge.repository.querydsl;
 
 import static com.runwithme.runwithme.domain.challenge.entity.QChallenge.*;
 import static com.runwithme.runwithme.domain.challenge.entity.QChallengeUser.*;
-import static com.runwithme.runwithme.domain.user.entity.QUser.*;
+import static com.runwithme.runwithme.domain.record.entity.QRunRecord.*;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -135,6 +135,43 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
                 .where(challengeUser.user.seq.eq(userSeq))
                 .orderBy(challengeUser.challenge.seq.desc())
                 .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+    }
+    @Override
+    public Page<ChallengeResponseDto> findMyRunningChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable){
+        QueryResults<ChallengeResponseDto> result = jpaQueryFactory
+                .select(new QChallengeResponseDto(
+                        challengeUser.challenge.seq,
+                        challengeUser.challenge.manager.seq,
+                        challengeUser.challenge.manager.nickname,
+                        challengeUser.challenge.description,
+                        challengeUser.challenge.image.seq,
+                        challengeUser.challenge.name,
+                        challengeUser.challenge.goalDays,
+                        challengeUser.challenge.goalType,
+                        challengeUser.challenge.goalAmount,
+                        challengeUser.challenge.dateStart,
+                        challengeUser.challenge.dateEnd,
+                        challengeUser.challenge.nowMember,
+                        challengeUser.challenge.maxMember,
+                        challengeUser.challenge.cost,
+                        isExistChallengeUser(userSeq)
+                ))
+                .from(challengeUser)
+                .leftJoin(runRecord)
+                .on(
+                        runRecord.challengeSeq.eq(challengeUser.challenge.seq)
+                                .and(runRecord.userSeq.eq(userSeq))
+                                .and(runRecord.regTime.eq(nowTime))
+                )
+                .where(
+                        challengeUser.user.seq.eq(userSeq)
+                                .and(runRecord.seq.isNull())
+                        , eqCursorSeq(cursorSeq)
+                )
+                .orderBy(challengeUser.challenge.seq.desc())
                 .limit(pageable.getPageSize())
                 .fetchResults();
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
