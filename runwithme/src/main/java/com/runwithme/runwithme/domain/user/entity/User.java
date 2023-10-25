@@ -1,5 +1,7 @@
 package com.runwithme.runwithme.domain.user.entity;
 
+import java.time.LocalDateTime;
+
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
@@ -60,6 +62,9 @@ public class User extends BaseEntity {
 	@Column(name = "user_point",
 		nullable = false)
 	private int point;
+
+//	@Column(name = "reg_time")
+//	private LocalDateTime regTime;
 
 	@Builder
 	public User(Long seq, Image image, Role role, String email, String nickname, String password, int height, int weight, int point) {

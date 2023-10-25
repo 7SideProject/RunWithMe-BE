@@ -100,7 +100,6 @@ public class ChallengeService {
 			.dateEnd(challengeCreateDto.getDateEnd())
 			.password(challengeCreateDto.getPassword())
 			.cost(challengeCreateDto.getCost())
-			.nowMember(1L)
 			.maxMember(challengeCreateDto.getMaxMember())
 			.build();
 

@@ -22,6 +22,4 @@ public interface ChallengeRepositoryQuerydsl {
 	List<ChallengeEndDto> findByDateEndIsToday(LocalDate today);
 
 	int getChallengeCount(Long challengeSeq);
-
-	void deleteMyChallenge(Long challengeSeq);
 }

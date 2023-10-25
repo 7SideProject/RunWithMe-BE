@@ -36,6 +36,10 @@ public class RunRecord {
     @Column(name = "challenge_seq", nullable = false)
     private Long challengeSeq;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_seq")
+    private Image image;
+
     @Column(name = "start_time")
     private String startTime;
 
@@ -48,31 +52,28 @@ public class RunRecord {
     @Column(name = "running_distance")
     private Long runningDistance;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_seq")
-    private Image image;
+    @Column(name = "avgSpeed")
+    private Long avgSpeed;
 
     @Column(name = "calorie")
     private Long calorie;
 
-    @Column(name = "avgSpeed")
-    private Long avgSpeed;
-
+    // ERD에 lat, lng으로 나눠져 있는데 어떻게 사용하신다는지 몰라 일단 남겨 둠 - TY
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "runRecord")
     private List<RecordCoordinate> coordinates;
 
     @Column(name = "weekly")
     private int weekly;
 
-    @Column(name = "successYN")
-    private boolean successYN;
+    @Column(name = "success_yn")
+    private char successYn;
 
     @Column(name = "reg_time", nullable = false)
     @CreationTimestamp
     private LocalDate regTime;
 
     @Builder
-    public RunRecord(Long userSeq, Long challengeSeq, String startTime, String endTime, Long runningTime, Long runningDistance, Image image, int weekly, boolean successYN){
+    public RunRecord(Long userSeq, Long challengeSeq, String startTime, String endTime, Long runningTime, Long runningDistance, Image image, int weekly, char successYn){
         this.userSeq = userSeq;
         this.challengeSeq = challengeSeq;
         this.startTime = startTime;
@@ -81,6 +82,6 @@ public class RunRecord {
         this.runningDistance = runningDistance;
         this.image = image;
         this.weekly = weekly;
-        this.successYN = successYN;
+        this.successYn = successYn;
     }
 }

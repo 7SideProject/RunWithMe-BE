@@ -50,7 +50,7 @@ public class RunRecordRepositoryQuerydslImpl implements RunRecordRepositoryQuery
 				runRecord.count()))
 			.from(runRecord)
 			.where(runRecord.challengeSeq.eq(challengeSeq)
-				.and(runRecord.successYN))
+				.and(runRecord.successYn.eq('Y')))
 			.groupBy(runRecord.userSeq, runRecord.weekly)
 			.orderBy(runRecord.userSeq.asc())
 			.fetch();
