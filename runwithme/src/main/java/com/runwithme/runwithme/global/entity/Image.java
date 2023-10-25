@@ -13,21 +13,21 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Image extends BaseEntity {
+	@Id
+	@GeneratedValue
+	@Column(name = "image_seq")
+	private Long seq;
 
-    @Id @GeneratedValue
-    @Column(name = "image_seq")
-    private Long seq;
+	@Column(name = "image_original_name", nullable = false)
+	private String originalName;
 
-    @Column(name = "image_original_name", nullable = false)
-    private String originalName;
+	@Column(name = "image_saved_name", unique = true, nullable = false)
+	private String savedName;
 
-    @Column(name = "image_saved_name", unique = true, nullable = false)
-    private String savedName;
-
-    @Builder
-    public Image(Long seq, String originalName, String savedName) {
-        this.seq = seq;
-        this.originalName = originalName;
-        this.savedName = savedName;
-    }
+	@Builder
+	public Image(Long seq, String originalName, String savedName) {
+		this.seq = seq;
+		this.originalName = originalName;
+		this.savedName = savedName;
+	}
 }

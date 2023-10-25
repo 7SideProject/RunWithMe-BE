@@ -10,5 +10,5 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class PagingResultDto<T> {
-    private List<T> result;
+	private List<T> result;
 }

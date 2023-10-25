@@ -8,11 +8,11 @@ import com.runwithme.runwithme.domain.user.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmail(String email);
+	Optional<User> findByEmail(String email);
 
-    boolean existsByEmail(String email);
+	boolean existsByEmail(String email);
 
-    boolean existsByNickname(String nickname);
+	boolean existsByNickname(String nickname);
 
-    Optional<User> findBySeq(Long seq);
+	Optional<User> findBySeq(Long seq);
 }

@@ -18,13 +18,12 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class RunRecordRepositoryQuerydslImpl implements RunRecordRepositoryQuerydsl {
-
 	private final JdbcTemplate jdbcTemplate;
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
 	public int[] coordinatesInsertBatch(Long recordSeq, List<CoordinateDto> coordinates) {
-		int[] result = jdbcTemplate.batchUpdate(
+		return jdbcTemplate.batchUpdate(
 			"insert into t_record_coordinate(seq, latitude, longitude) " + "values(?, ?, ?)",
 			new BatchPreparedStatementSetter() {
 				@Override
@@ -40,8 +39,6 @@ public class RunRecordRepositoryQuerydslImpl implements RunRecordRepositoryQuery
 				}
 			}
 		);
-
-		return result;
 	}
 
 	@Override

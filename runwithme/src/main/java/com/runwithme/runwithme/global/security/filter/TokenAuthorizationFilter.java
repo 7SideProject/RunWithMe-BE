@@ -3,6 +3,7 @@ package com.runwithme.runwithme.global.security.filter;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
@@ -17,67 +18,59 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 public class TokenAuthorizationFilter extends OncePerRequestFilter {
-    private final AuthTokenFactory tokenFactory;
+	private final AuthTokenFactory tokenFactory;
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String[] PERMIT_URL_PATHS = {
-                /* SWAGGER */
-                "/favicon.ico",
-                "/error",
-                "/swagger-ui/**",
-                "/swagger-resources/**",
-                "/v3/api-docs/**",
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		String[] PERMIT_URL_PATHS = {
+			/* SWAGGER */
+			"/favicon.ico",
+			"/error",
+			"/swagger-ui/**",
+			"/swagger-resources/**",
+			"/v3/api-docs/**",
 
-                /* ACTUATOR */
-                "/management/**",
+			/* ACTUATOR */
+			"/management/**",
 
-                /* USER */
-                "/users/join",
-                "/users/duplicate-email",
-                "/users/duplicate-nickname",
-                "/token"
-        };
+			/* USER */
+			"/users/join",
+			"/users/duplicate-email",
+			"/users/duplicate-nickname",
+			"/token"
+		};
 
-        final String[] PERMIT_GET_URL_PATHS = {
-                "/users/**",
-        };
+		final String[] PERMIT_GET_URL_PATHS = {
+			"/users/**",
+		};
 
-        return isMatchedUrl(request, PERMIT_URL_PATHS)
-                ||
-                isMatchedUrlAndGetMethod(request, PERMIT_GET_URL_PATHS);
-    }
+		return isMatchedUrl(request, PERMIT_URL_PATHS)
+			||
+			isMatchedUrlAndGetMethod(request, PERMIT_GET_URL_PATHS);
+	}
 
-    private static boolean isMatchedUrlAndGetMethod(HttpServletRequest request, String[] PATHS) {
-        return isMatchedUrl(request, PATHS) && HttpMethod.GET.matches(request.getMethod());
-    }
+	private static boolean isMatchedUrlAndGetMethod(HttpServletRequest request, String[] PATHS) {
+		return isMatchedUrl(request, PATHS) && HttpMethod.GET.matches(request.getMethod());
+	}
 
-    private static boolean isMatchedUrl(HttpServletRequest request, String[] PATHS) {
-        return Arrays.stream(PATHS)
-                .anyMatch(e -> new AntPathMatcher().match(e, request.getServletPath()));
-    }
+	private static boolean isMatchedUrl(HttpServletRequest request, String[] PATHS) {
+		return Arrays.stream(PATHS)
+			.anyMatch(e -> new AntPathMatcher().match(e, request.getServletPath()));
+	}
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String tokenStr = HeaderUtils.getAccessToken(request);
-        AuthToken token = tokenFactory.convertAuthToken(tokenStr);
-        if (token.validate()) {
-            Authentication authentication = tokenFactory.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        chain.doFilter(request, response);
-    }
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+		String tokenStr = HeaderUtils.getAccessToken(request);
+		AuthToken token = tokenFactory.convertAuthToken(tokenStr);
+		if (token.validate()) {
+			Authentication authentication = tokenFactory.getAuthentication(token);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		}
+		chain.doFilter(request, response);
+	}
 
 
 }

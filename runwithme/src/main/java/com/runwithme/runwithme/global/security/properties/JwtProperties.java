@@ -11,10 +11,9 @@ import lombok.Setter;
 @Component
 @ConfigurationProperties("jwt")
 public class JwtProperties {
+	public String secret;
 
-    public String secret;
+	public int accessTokenExpiry;
 
-    public int accessTokenExpiry;
-
-    public int refreshTokenExpiry;
+	public int refreshTokenExpiry;
 }

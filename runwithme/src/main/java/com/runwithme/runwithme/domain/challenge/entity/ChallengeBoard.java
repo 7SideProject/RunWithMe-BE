@@ -24,34 +24,34 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeBoard {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column
-    private Long seq;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column
+	private Long seq;
 
-    @Column(name = "challenge_seq")
-    private Long challengeSeq;
+	@Column(name = "challenge_seq")
+	private Long challengeSeq;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_seq")
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_seq")
+	private User user;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "image_seq", nullable = true)
-    private Image image;
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "image_seq")
+	private Image image;
 
-    @Column(name = "challenge_board_content", length = 255)
-    private String challengeBoardContent;
+	@Column(name = "challenge_board_content")
+	private String challengeBoardContent;
 
-    @Column(name = "challenge_board_reg_time")
-    private LocalDateTime challengeBoardRegTime;
+	@Column(name = "challenge_board_reg_time")
+	private LocalDateTime challengeBoardRegTime;
 
-    @Builder
-    public ChallengeBoard(User user, Long challengeSeq, Image image, String challengeBoardContent, LocalDateTime challengeBoardRegTime){
-        this.user = user;
-        this.challengeSeq = challengeSeq;
-        this.image = image;
-        this.challengeBoardContent = challengeBoardContent;
-        this.challengeBoardRegTime = challengeBoardRegTime;
-    }
+	@Builder
+	public ChallengeBoard(User user, Long challengeSeq, Image image, String challengeBoardContent, LocalDateTime challengeBoardRegTime) {
+		this.user = user;
+		this.challengeSeq = challengeSeq;
+		this.image = image;
+		this.challengeBoardContent = challengeBoardContent;
+		this.challengeBoardRegTime = challengeBoardRegTime;
+	}
 }

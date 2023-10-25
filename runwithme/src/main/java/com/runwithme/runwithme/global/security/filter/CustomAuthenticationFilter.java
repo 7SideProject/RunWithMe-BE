@@ -18,28 +18,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+	@Override
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+		UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(request);
+		setDetails(request, authenticationToken);
+		Authentication authenticate;
+		try {
+			authenticate = this.getAuthenticationManager().authenticate(authenticationToken);
+		} catch (Exception e) {
+			request.setAttribute("exception", e);
+			throw e;
+		}
+		return authenticate;
+	}
 
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(request);
-        setDetails(request, authenticationToken);
-        Authentication authenticate;
-        try {
-            authenticate = this.getAuthenticationManager().authenticate(authenticationToken);
-        } catch (Exception e) {
-            request.setAttribute("exception", e);
-            throw e;
-        }
-        return authenticate;
-    }
-
-    private static UsernamePasswordAuthenticationToken getAuthenticationToken(HttpServletRequest request) {
-        try {
-            UserLoginDto dto = new ObjectMapper().readValue(request.getInputStream(), UserLoginDto.class);
-            log.debug("CustomAuthenticationFilter :: email : {}, password : {}", dto.email(), dto.password());
-            return new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
-        } catch (Exception e) {
-            throw new CustomException(HEADER_NO_TOKEN);
-        }
-    }
+	private static UsernamePasswordAuthenticationToken getAuthenticationToken(HttpServletRequest request) {
+		try {
+			UserLoginDto dto = new ObjectMapper().readValue(request.getInputStream(), UserLoginDto.class);
+			log.debug("CustomAuthenticationFilter :: email : {}, password : {}", dto.email(), dto.password());
+			return new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
+		} catch (Exception e) {
+			throw new CustomException(HEADER_NO_TOKEN);
+		}
+	}
 }

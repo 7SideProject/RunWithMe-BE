@@ -33,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/challenge")
 @Slf4j
 public class RecordController {
-
     private final RecordService recordService;
 
     //    @ApiOperation(value = "기록 등록")
@@ -80,7 +79,7 @@ public class RecordController {
     // 기록 seq로 상세조회
     @Operation(operationId = "getRecord", summary = "기록 상세조회")
     @GetMapping("/{challengeSeq}/record/{runRecordSeq}")
-    public ResponseEntity<ResultResponseDto> getRunRecord(@PathVariable(value = "challengeSeq") Long challengeSeq, @PathVariable(value = "runRecordSeq") Long runRecordSeq) {
+    public ResponseEntity<ResultResponseDto> getRunRecord(@PathVariable(value = "runRecordSeq") Long runRecordSeq) {
         final RunRecord runRecord = recordService.getRunRecord(runRecordSeq);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ONE_RECORD_SUCCESS, runRecord));
     }

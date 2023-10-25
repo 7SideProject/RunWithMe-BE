@@ -6,15 +6,15 @@ import lombok.Getter;
 
 @Getter
 public class CustomException extends CommonException {
-    private final ResultCode resultCode;
+	private final ResultCode resultCode;
 
-    public CustomException(ResultCode resultCode) {
-        super(resultCode.getMessage());
-        this.resultCode = resultCode;
-    }
+	public CustomException(ResultCode resultCode) {
+		super(resultCode.getMessage());
+		this.resultCode = resultCode;
+	}
 
-    @Override
-    public ResultCode getResultCode() {
-        return this.resultCode;
-    }
+	@Override
+	public ResultCode getResultCode() {
+		return this.resultCode;
+	}
 }

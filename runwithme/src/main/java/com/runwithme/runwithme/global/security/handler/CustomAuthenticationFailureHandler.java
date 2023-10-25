@@ -24,25 +24,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
+	@Override
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
+		response.setCharacterEncoding(CharEncoding.UTF_8);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		setResponseBody(response);
+	}
 
-    @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
-        response.setCharacterEncoding(CharEncoding.UTF_8);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        setResponseBody(response);
-    }
-
-    private void setResponseBody(HttpServletResponse response) {
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
-        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        String responseBody;
-        try {
-            responseBody = om.writerWithDefaultPrettyPrinter().writeValueAsString(ResultResponseDto.of(ResultCode.UNAUTHORIZED));
-            PrintWriter writer = response.getWriter();
-            writer.write(responseBody);
-        } catch (Exception e) {
-            throw new CustomException(SEQ_NOT_FOUND);
-        }
-    }
+	private void setResponseBody(HttpServletResponse response) {
+		ObjectMapper om = new ObjectMapper();
+		om.registerModule(new JavaTimeModule());
+		om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		String responseBody;
+		try {
+			responseBody = om.writerWithDefaultPrettyPrinter().writeValueAsString(ResultResponseDto.of(ResultCode.UNAUTHORIZED));
+			PrintWriter writer = response.getWriter();
+			writer.write(responseBody);
+		} catch (Exception e) {
+			throw new CustomException(SEQ_NOT_FOUND);
+		}
+	}
 }

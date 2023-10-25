@@ -19,33 +19,32 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
+	private final PasswordEncoder encoder;
 
-    private final PasswordEncoder encoder;
+	@Resource
+	private UserService userService;
 
-    @Resource
-    private UserService userService;
+	@Override
+	public Authentication authenticate(Authentication authentication) {
+		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
-    @Override
-    public Authentication authenticate(Authentication authentication) {
-        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+		String email = (String) token.getPrincipal();
+		String password = (String) token.getCredentials();
 
-        String email = (String) token.getPrincipal();
-        String password = (String) token.getCredentials();
+		User user = userService.findByEmail(email);
+		PrincipalDetails principal = new PrincipalDetails(user, null);
 
-        User user = userService.findByEmail(email);
-        PrincipalDetails principal = new PrincipalDetails(user, null);
+		if (!encoder.matches(password, user.getPassword())) {
+			throw new CustomException(BAD_PASSWORD);
+		}
 
-        if (!encoder.matches(password, user.getPassword())) {
-            throw new CustomException(BAD_PASSWORD);
-        }
+		if (user.isDeleted()) throw new CustomException(DELETED_USER);
 
-        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+		return new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
+	}
 
-        return new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
-    }
-
-    @Override
-    public boolean supports(Class<?> authentication) {
-        return authentication.equals(UsernamePasswordAuthenticationToken.class);
-    }
+	@Override
+	public boolean supports(Class<?> authentication) {
+		return authentication.equals(UsernamePasswordAuthenticationToken.class);
+	}
 }

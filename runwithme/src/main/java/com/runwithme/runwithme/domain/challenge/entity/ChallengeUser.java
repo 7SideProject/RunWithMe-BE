@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,23 +21,22 @@ import lombok.NoArgsConstructor;
 @Table(name = "challenge_user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeUser {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "challenge_user_seq")
+	private Long seq;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "challenge_user_seq")
-    private Long seq;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_seq")
+	private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_seq")
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "challenge_seq")
+	private Challenge challenge;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "challenge_seq")
-    private Challenge challenge;
-
-    @Builder
-    public ChallengeUser(User user, Challenge challenge){
-        this.user = user;
-        this.challenge = challenge;
-    }
+	@Builder
+	public ChallengeUser(User user, Challenge challenge) {
+		this.user = user;
+		this.challenge = challenge;
+	}
 }

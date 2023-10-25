@@ -19,31 +19,30 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class S3Utils {
+	private final AmazonS3 amazonS3Client;
 
-    private final AmazonS3 amazonS3Client;
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucket;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+	public String upload(File file, String fileType, String fileName) {
+		amazonS3Client.putObject(new PutObjectRequest(bucket, fullPath(fileType, fileName), file).withCannedAcl(CannedAccessControlList.PublicRead));
 
-    public String upload(File file, String fileType, String fileName) {
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fullPath(fileType, fileName), file).withCannedAcl(CannedAccessControlList.PublicRead));
+		file.delete();
 
-        file.delete();
+		return amazonS3Client.getUrl(bucket, fullPath(fileType, fileName)).toString();
+	}
 
-        return amazonS3Client.getUrl(bucket, fullPath(fileType, fileName)).toString();
-    }
+	public Resource download(String fileType, String fileName) {
+		S3ObjectInputStream ois = amazonS3Client.getObject(bucket, fullPath(fileType, fileName)).getObjectContent();
 
-    public Resource download(String fileType, String fileName) {
-        S3ObjectInputStream ois = amazonS3Client.getObject(bucket, fullPath(fileType, fileName)).getObjectContent();
+		return new InputStreamResource(ois);
+	}
 
-        return new InputStreamResource(ois);
-    }
+	public void delete(String fileType, String fileName) {
+		amazonS3Client.deleteObject(bucket, fullPath(fileType, fileName));
+	}
 
-    public void delete(String fileType, String fileName) {
-        amazonS3Client.deleteObject(bucket, fullPath(fileType, fileName));
-    }
-
-    private String fullPath(String fileType, String fileName) {
-        return fileType + "/" + fileName;
-    }
+	private String fullPath(String fileType, String fileName) {
+		return fileType + "/" + fileName;
+	}
 }

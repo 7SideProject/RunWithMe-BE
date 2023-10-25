@@ -26,35 +26,34 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class RefreshTokenService {
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final UserRepository userRepository;
+	private final AuthTokenFactory tokenFactory;
+	private final JwtProperties properties;
 
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
-    private final AuthTokenFactory tokenFactory;
-    private final JwtProperties properties;
+	public void save(RefreshTokenDto dto) {
+		RefreshToken entity = RefreshToken.builder()
+			.name(dto.tokenName())
+			.userEmail(dto.userEmail())
+			.expiredDateTime(dto.expiredDatetime())
+			.build();
 
-    public void save(RefreshTokenDto dto) {
-        RefreshToken entity = RefreshToken.builder()
-                .name(dto.tokenName())
-                .userEmail(dto.userEmail())
-                .expiredDateTime(dto.expiredDatetime())
-                .build();
+		refreshTokenRepository.save(entity);
+	}
 
-        refreshTokenRepository.save(entity);
-    }
+	public AuthToken reIssue(RefreshTokenIssueDto dto) {
+		RefreshToken token = refreshTokenRepository.findById(dto.refreshToken()).orElseThrow(() -> new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN));
+		AuthToken authToken = tokenFactory.convertAuthToken(token.getName());
+		if (authToken.validate()) {
+			User user = userRepository.findByEmail(token.getUserEmail()).orElseThrow(() -> new CustomException(ResultCode.USER_NOT_FOUND));
+			return tokenFactory.createAuthToken(user.getEmail(), user.getRole().toString(), new Date(System.currentTimeMillis() + properties.accessTokenExpiry));
+		} else {
+			throw new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN);
+		}
+	}
 
-    public AuthToken reIssue(RefreshTokenIssueDto dto) {
-        RefreshToken token = refreshTokenRepository.findById(dto.refreshToken()).orElseThrow(() -> new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN));
-        AuthToken authToken = tokenFactory.convertAuthToken(token.getName());
-        if (authToken.validate()) {
-            User user = userRepository.findByEmail(token.getUserEmail()).orElseThrow(() -> new CustomException(ResultCode.USER_NOT_FOUND));
-            return tokenFactory.createAuthToken(user.getEmail(), user.getRole().toString(), new Date(System.currentTimeMillis() + properties.accessTokenExpiry));
-        } else {
-            throw new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN);
-        }
-    }
-
-    private boolean isExpired(LocalDateTime expiredDatetime) {
-        LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(expiredDatetime);
-    }
+	private boolean isExpired(LocalDateTime expiredDatetime) {
+		LocalDateTime now = LocalDateTime.now();
+		return now.isAfter(expiredDatetime);
+	}
 }

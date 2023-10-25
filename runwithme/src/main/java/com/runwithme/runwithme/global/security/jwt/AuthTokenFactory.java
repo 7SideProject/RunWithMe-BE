@@ -23,41 +23,41 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AuthTokenFactory {
-    private final Key key;
-    private static final String AUTHORITIES_KEY = "role";
+	private final Key key;
+	private static final String AUTHORITIES_KEY = "role";
 
-    public AuthTokenFactory(String secret) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
-    }
+	public AuthTokenFactory(String secret) {
+		this.key = Keys.hmacShaKeyFor(secret.getBytes());
+	}
 
-    public AuthToken createAuthToken(String id, Date expiry) {
-        return new AuthToken(id, expiry, key);
-    }
+	public AuthToken createAuthToken(String id, Date expiry) {
+		return new AuthToken(id, expiry, key);
+	}
 
-    public AuthToken createAuthToken(String id, String role, Date expiry) {
-        return new AuthToken(id, role, expiry, key);
-    }
+	public AuthToken createAuthToken(String id, String role, Date expiry) {
+		return new AuthToken(id, role, expiry, key);
+	}
 
-    public AuthToken convertAuthToken(String token) {
-        return new AuthToken(token, key);
-    }
+	public AuthToken convertAuthToken(String token) {
+		return new AuthToken(token, key);
+	}
 
-    public Authentication getAuthentication(AuthToken authToken) {
+	public Authentication getAuthentication(AuthToken authToken) {
 
-        if (authToken.validate()) {
+		if (authToken.validate()) {
 
-            Claims claims = authToken.getTokenClaims();
-            Collection<? extends GrantedAuthority> authorities =
-                    Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
+			Claims claims = authToken.getTokenClaims();
+			Collection<? extends GrantedAuthority> authorities =
+				Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
+					.map(SimpleGrantedAuthority::new)
+					.collect(Collectors.toList());
 
-            log.debug("claims subject := [{}]", claims.getSubject());
-            User principal = new User(claims.getSubject(), "", authorities);
+			log.debug("claims subject := [{}]", claims.getSubject());
+			User principal = new User(claims.getSubject(), "", authorities);
 
-            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
-        } else {
-            throw new CustomException(FAILED_GENERATE_TOKEN);
-        }
-    }
+			return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+		} else {
+			throw new CustomException(FAILED_GENERATE_TOKEN);
+		}
+	}
 }

@@ -1,13 +1,14 @@
 package com.runwithme.runwithme.global.repository;
 
-import com.runwithme.runwithme.global.entity.Image;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.runwithme.runwithme.global.entity.Image;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-    Optional<Image> findBySavedName(String name);
+	Optional<Image> findBySavedName(String name);
 }

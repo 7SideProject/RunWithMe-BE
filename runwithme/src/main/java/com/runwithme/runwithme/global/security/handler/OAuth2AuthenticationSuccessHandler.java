@@ -29,47 +29,47 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final AuthTokenFactory authTokenFactory;
-    private final JwtProperties properties;
+	private final AuthTokenFactory authTokenFactory;
+	private final JwtProperties properties;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        getRedirectStrategy().sendRedirect(request, response, determineTargetUrl(request, response, authentication));
-    }
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+		getRedirectStrategy().sendRedirect(request, response, determineTargetUrl(request, response, authentication));
+	}
 
-    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI)
-                .map(Cookie::getValue);
+	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+		Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI)
+			.map(Cookie::getValue);
 
-        if (redirectUri.isEmpty()) {
-            throw new CustomException(REDIRECT_NOT_FOUND);
-        }
+		if (redirectUri.isEmpty()) {
+			throw new CustomException(REDIRECT_NOT_FOUND);
+		}
 
-        String targetUri = redirectUri.orElse(getDefaultTargetUrl());
+		String targetUri = redirectUri.orElse(getDefaultTargetUrl());
 
-        return uriBuild(authentication, targetUri);
-    }
+		return uriBuild(authentication, targetUri);
+	}
 
-    private String uriBuild(Authentication authentication, String targetUri) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(targetUri);
+	private String uriBuild(Authentication authentication, String targetUri) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(targetUri);
 
-        User user = getUser(authentication);
+		User user = getUser(authentication);
 
-        builder.queryParam("status", user.getRoleStatus());
-        builder.queryParam("token", createToken(authentication));
+		builder.queryParam("status", user.getRoleStatus());
+		builder.queryParam("token", createToken(authentication));
 
-        return builder.build().toString();
-    }
+		return builder.build().toString();
+	}
 
-    private String createToken(Authentication authentication) {
-        User user = getUser(authentication);
+	private String createToken(Authentication authentication) {
+		User user = getUser(authentication);
 
-        AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRoleValue(), new Date(System.currentTimeMillis() + properties.accessTokenExpiry));
+		AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRoleValue(), new Date(System.currentTimeMillis() + properties.accessTokenExpiry));
 
-        return accessToken.getToken();
-    }
+		return accessToken.getToken();
+	}
 
-    private User getUser(Authentication authentication) {
-        return ((PrincipalDetails) authentication.getPrincipal()).getUser();
-    }
+	private User getUser(Authentication authentication) {
+		return ((PrincipalDetails) authentication.getPrincipal()).getUser();
+	}
 }

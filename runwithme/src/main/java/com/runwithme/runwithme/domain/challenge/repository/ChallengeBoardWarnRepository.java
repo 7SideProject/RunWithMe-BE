@@ -7,5 +7,5 @@ import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoardWarn;
 import com.runwithme.runwithme.domain.user.entity.User;
 
 public interface ChallengeBoardWarnRepository extends JpaRepository<ChallengeBoardWarn, Long> {
-    boolean existsByUserAndChallengeBoard(User user, ChallengeBoard challengeBoard);
+	boolean existsByUserAndChallengeBoard(User user, ChallengeBoard challengeBoard);
 }

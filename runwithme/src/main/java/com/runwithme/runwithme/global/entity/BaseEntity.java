@@ -23,55 +23,55 @@ import lombok.Getter;
 @MappedSuperclass
 @Getter
 public class BaseEntity {
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createDate;
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createDate;
 
-    @LastModifiedDate
-    private LocalDateTime updateDate;
+	@LastModifiedDate
+	private LocalDateTime updateDate;
 
-    @CreatedBy
-    private String createMember;
+	@CreatedBy
+	private String createMember;
 
-    @LastModifiedBy
-    private String updateMember;
+	@LastModifiedBy
+	private String updateMember;
 
-    @Enumerated(EnumType.STRING)
-    private DeleteState isDeleted;
+	@Enumerated(EnumType.STRING)
+	private DeleteState isDeleted;
 
-    @PrePersist
-    public void prePersist() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	@PrePersist
+	public void prePersist() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        createDate = LocalDateTime.now();
-        updateDate = LocalDateTime.now();
+		createDate = LocalDateTime.now();
+		updateDate = LocalDateTime.now();
 
-        if (authentication != null) {
-            createMember = authentication.getName();
-            updateMember = authentication.getName();
-        }
-    }
+		if (authentication != null) {
+			createMember = authentication.getName();
+			updateMember = authentication.getName();
+		}
+	}
 
-    @PreUpdate
-    public void preUpdate() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	@PreUpdate
+	public void preUpdate() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        updateDate = LocalDateTime.now();
+		updateDate = LocalDateTime.now();
 
-        if (authentication != null) {
-            updateMember = authentication.getName();
-        }
-    }
+		if (authentication != null) {
+			updateMember = authentication.getName();
+		}
+	}
 
-    public BaseEntity() {
-        this.isDeleted = DeleteState.N;
-    }
+	public BaseEntity() {
+		this.isDeleted = DeleteState.N;
+	}
 
-    public void delete() {
-        this.isDeleted = DeleteState.Y;
-    }
+	public void delete() {
+		this.isDeleted = DeleteState.Y;
+	}
 
-    public boolean isDeleted() {
-        return this.isDeleted.equals(DeleteState.Y);
-    }
+	public boolean isDeleted() {
+		return this.isDeleted.equals(DeleteState.Y);
+	}
 }

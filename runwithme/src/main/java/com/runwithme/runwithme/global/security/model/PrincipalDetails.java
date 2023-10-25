@@ -11,62 +11,62 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import com.runwithme.runwithme.domain.user.entity.User;
 
 public class PrincipalDetails implements UserDetails, OAuth2User {
+	private final User user;
+	private final Map<String, Object> attributes;
 
-    private final User user;
-    private final Map<String, Object> attributes;
+	public PrincipalDetails(User user, Map<String, Object> attributes) {
+		this.user = user;
+		this.attributes = attributes;
+	}
 
-    public PrincipalDetails(User user, Map<String, Object> attributes) {
-        this.user = user;
-        this.attributes = attributes;
-    }
+	public User getUser() {
+		return this.user;
+	}
 
-    public User getUser() {
-        return this.user; }
+	@Override
+	public Map<String, Object> getAttributes() {
+		return this.attributes;
+	}
 
-    @Override
-    public Map<String, Object> getAttributes() {
-        return this.attributes;
-    }
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(user::getRoleValue);
+		return authorities;
+	}
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(user::getRoleValue);
-        return authorities;
-    }
+	@Override
+	public String getPassword() {
+		return null;
+	}
 
-    @Override
-    public String getPassword() {
-        return null;
-    }
+	@Override
+	public String getUsername() {
+		return user.getEmail();
+	}
 
-    @Override
-    public String getUsername() {
-        return user.getEmail();
-    }
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public String getName() {
-        return user.getEmail();
-    }
+	@Override
+	public String getName() {
+		return user.getEmail();
+	}
 }

@@ -21,39 +21,39 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DiscordSender implements NotificationSender {
 
-    @Value("#{new Boolean('${notification.discord.enabled}')}")
-    private boolean enabled;
+	@Value("#{new Boolean('${notification.discord.enabled}')}")
+	private boolean enabled;
 
-    @Value("${notification.discord.webhook-id}")
-    private String webhookId;
+	@Value("${notification.discord.webhook-id}")
+	private String webhookId;
 
-    @Value("${notification.discord.webhook-token}")
-    private String webhookToken;
+	@Value("${notification.discord.webhook-token}")
+	private String webhookToken;
 
-    @Override
-    public void send(Exception e, String uri, String params) {
-        if (!enabled) return;
+	@Override
+	public void send(Exception e, String uri, String params) {
+		if (!enabled) return;
 
-        Embed embed = new Embed(
-        "Error",
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-            16515072
-        );
-        embed.addExceptionInfo(e, uri, params);
+		Embed embed = new Embed(
+			"Error",
+			LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+			16515072
+		);
+		embed.addExceptionInfo(e, uri, params);
 
-        DiscordMessage message = new DiscordMessage(embed);
-        String payload = new Gson().toJson(message);
+		DiscordMessage message = new DiscordMessage(embed);
+		String payload = new Gson().toJson(message);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-type", MediaType.APPLICATION_JSON_VALUE);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-type", MediaType.APPLICATION_JSON_VALUE);
 
-        String requestUri = "https://discord.com/api/webhooks/%s/%s".formatted(webhookId, webhookToken);
-        HttpEntity<String> entity = new HttpEntity<>(payload, headers);
+		String requestUri = "https://discord.com/api/webhooks/%s/%s".formatted(webhookId, webhookToken);
+		HttpEntity<String> entity = new HttpEntity<>(payload, headers);
 
-        new RestTemplate().postForEntity(
-                requestUri,
-                entity,
-                String.class
-        );
-    }
+		new RestTemplate().postForEntity(
+			requestUri,
+			entity,
+			String.class
+		);
+	}
 }

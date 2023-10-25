@@ -17,16 +17,15 @@ import jakarta.servlet.http.HttpServletResponse;
 @Order(0)
 @Component
 public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoint {
+	private final HandlerExceptionResolver resolver;
 
-    private final HandlerExceptionResolver resolver;
+	public DelegatedAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+		this.resolver = resolver;
+	}
 
-    public DelegatedAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
-        this.resolver = resolver;
-    }
-
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
-        resolver.resolveException(request, response, null, request.getAttribute("exception") == null ?
-                new CustomException(HEADER_NO_TOKEN) : (Exception) request.getAttribute("exception"));
-    }
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
+		resolver.resolveException(request, response, null, request.getAttribute("exception") == null ?
+			new CustomException(HEADER_NO_TOKEN) : (Exception) request.getAttribute("exception"));
+	}
 }

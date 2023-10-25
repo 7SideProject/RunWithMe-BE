@@ -22,17 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/token")
 @RequiredArgsConstructor
 public class RefreshTokenController {
+	private final RefreshTokenService refreshTokenService;
 
-    private final RefreshTokenService refreshTokenService;
-
-    @PostMapping
-    public ResponseEntity<Void> reIssue(@ModelAttribute RefreshTokenIssueDto dto, HttpServletResponse response) {
-        if (StringUtils.equals(dto.grantType(), "refresh_token")) {
-            AuthToken accessToken = refreshTokenService.reIssue(dto);
-            HeaderUtils.setAccessToken(response, accessToken.getToken());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
+	@PostMapping
+	public ResponseEntity<Void> reIssue(@ModelAttribute RefreshTokenIssueDto dto, HttpServletResponse response) {
+		if (StringUtils.equals(dto.grantType(), "refresh_token")) {
+			AuthToken accessToken = refreshTokenService.reIssue(dto);
+			HeaderUtils.setAccessToken(response, accessToken.getToken());
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
 }

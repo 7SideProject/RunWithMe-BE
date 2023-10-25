@@ -18,51 +18,50 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 public class MultipartFileUtils {
+	private final MultipartFile multipartFile;
 
-    private final MultipartFile multipartFile;
+	private final String originalFileName;
 
-    private final String originalFileName;
+	private final String uuidFileName;
 
-    private final String uuidFileName;
+	public MultipartFileUtils(MultipartFile multipartFile) {
+		this.multipartFile = multipartFile;
 
-    public MultipartFileUtils(MultipartFile multipartFile) {
-        this.multipartFile = multipartFile;
+		this.originalFileName = multipartFile.getOriginalFilename();
 
-        this.originalFileName = multipartFile.getOriginalFilename();
+		this.uuidFileName = makeUuidFileName(multipartFile);
+	}
 
-        this.uuidFileName = makeUuidFileName(multipartFile);
-    }
+	public Optional<File> convertToFile() {
+		File convertFile = new File(uuidFileName);
+		try {
+			if (convertFile.createNewFile()) {
+				try (FileOutputStream fos = new FileOutputStream(convertFile)) {
+					fos.write(multipartFile.getBytes());
+				}
+				return Optional.of(convertFile);
+			}
+		} catch (Exception e) {
+			throw new CustomException(FAILED_CONVERT);
+		}
+		return Optional.empty();
+	}
 
-    public Optional<File> convertToFile() {
-        File convertFile = new File(uuidFileName);
-        try {
-            if (convertFile.createNewFile()) {
-                try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                    fos.write(multipartFile.getBytes());
-                }
-                return Optional.of(convertFile);
-            }
-        } catch (Exception e) {
-            throw new CustomException(FAILED_CONVERT);
-        }
-        return Optional.empty();
-    }
+	public String getFileType() {
 
-    public String getFileType() {
+		String contentType = multipartFile.getContentType();
 
-        String contentType = multipartFile.getContentType();
+		int index = contentType.indexOf("/");
 
-        int index = contentType.indexOf("/");
+		return contentType.substring(0, index);
+	}
 
-        return contentType.substring(0, index);
-    }
+	private static String makeUuidFileName(MultipartFile file) {
+		// 랜덤 UUID값을 서버에 저장한다.
+		String uuid = String.valueOf(UUID.randomUUID());
 
-    private static String makeUuidFileName(MultipartFile file) {
-        // 랜덤 UUID값을 서버에 저장한다.
-        String uuid = String.valueOf(UUID.randomUUID());
+		String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
 
-        String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-
-        return uuid + "." + extension;
-    }
+		return uuid + "." + extension;
+	}
 }

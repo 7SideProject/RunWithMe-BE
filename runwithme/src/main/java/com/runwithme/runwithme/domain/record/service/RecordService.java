@@ -109,7 +109,7 @@ public class RecordService {
 	public int getWeekly(Long challengeSeq) {
 		Challenge challenge = challengeRepository.findById(challengeSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 		LocalDate challengeStartDate = challenge.getDateStart();
-		int daysdiff = (int) ChronoUnit.DAYS.between(LocalDate.now(), challengeStartDate);
-		return (daysdiff - 1) / 7 + 1;
+		int diff = (int) ChronoUnit.DAYS.between(LocalDate.now(), challengeStartDate);
+		return (diff - 1) / 7 + 1;
 	}
 }

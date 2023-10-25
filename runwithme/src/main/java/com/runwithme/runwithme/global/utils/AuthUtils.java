@@ -16,17 +16,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthUtils {
 
-    private final UserRepository userRepository;
+	private final UserRepository userRepository;
 
-    public User getLoginUser() {
-        final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
-        return userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-    }
+	public User getLoginUser() {
+		final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+		return userRepository.findByEmail(userEmail)
+			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+	}
 
-    public Long getLoginUserSeq() {
-        final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
-        return userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND)).getSeq();
-    }
+	public Long getLoginUserSeq() {
+		final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+		return userRepository.findByEmail(userEmail)
+			.orElseThrow(() -> new CustomException(USER_NOT_FOUND)).getSeq();
+	}
 }

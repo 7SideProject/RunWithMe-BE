@@ -14,21 +14,20 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
+	@Id
+	@Column(name = "rt_name")
+	private String name;
 
-    @Id
-    @Column(name = "rt_name")
-    private String name;
+	@Column(name = "rt_user_email")
+	private String userEmail;
 
-    @Column(name = "rt_user_email")
-    private String userEmail;
+	@Column(name = "rt_expired_datetime")
+	private LocalDateTime expiredDateTime;
 
-    @Column(name = "rt_expired_datetime")
-    private LocalDateTime expiredDateTime;
-
-    @Builder
-    public RefreshToken(String name, String userEmail, LocalDateTime expiredDateTime) {
-        this.name = name;
-        this.userEmail = userEmail;
-        this.expiredDateTime = expiredDateTime;
-    }
+	@Builder
+	public RefreshToken(String name, String userEmail, LocalDateTime expiredDateTime) {
+		this.name = name;
+		this.userEmail = userEmail;
+		this.expiredDateTime = expiredDateTime;
+	}
 }

@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
 
 public interface ChallengeBoardRepositoryQuerydsl {
-    Page<ChallengeBoardResponseDto> findAllBoardPage(Long cursorSeq, Long userSeq, Long challengeSeq, Pageable pageable);
+	Page<ChallengeBoardResponseDto> findAllBoardPage(Long cursorSeq, Long userSeq, Long challengeSeq, Pageable pageable);
 }

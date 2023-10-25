@@ -15,7 +15,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "t_record_coordinate")
 public class RecordCoordinate {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column

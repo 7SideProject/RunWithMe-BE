@@ -40,123 +40,122 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EnableWebSecurity(debug = true)
 public class SecurityConfig {
-
-    private final String[] PERMIT_URL_PATHS = {
-            /* SWAGGER */
-            "/favicon.ico",
+	private final String[] PERMIT_URL_PATHS = {
+		/* SWAGGER */
+		"/favicon.ico",
 //            "/error",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/v3/api-docs/**",
+		"/swagger-ui/**",
+		"/swagger-resources/**",
+		"/v3/api-docs/**",
 
-            /* ACTUATOR */
-            "/management/**",
+		/* ACTUATOR */
+		"/management/**",
 
-            /* USER */
-            "/users/join",
-            "/users/duplicate-email",
-            "/users/duplicate-nickname",
-            "/token"
-    };
+		/* USER */
+		"/users/join",
+		"/users/duplicate-email",
+		"/users/duplicate-nickname",
+		"/token"
+	};
 
-    private final String[] PERMIT_GET_URL_PATHS = {
-            "/users/**",
-    };
+	private final String[] PERMIT_GET_URL_PATHS = {
+		"/users/**",
+	};
 
-    private final AuthTokenFactory authTokenFactory;
+	private final AuthTokenFactory authTokenFactory;
 
-    private final JwtProperties properties;
+	private final JwtProperties properties;
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+	private final CustomOAuth2UserService customOAuth2UserService;
 
-    private final DelegatedAuthenticationEntryPoint authEntryPoint;
+	private final DelegatedAuthenticationEntryPoint authEntryPoint;
 
-    private final RefreshTokenService refreshTokenService;
+	private final RefreshTokenService refreshTokenService;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf().disable()
-                .cors().configurationSource(corsConfigurationSource())
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(authorizationEndpointConfig ->
-                                authorizationEndpointConfig.baseUri("/oauth2/authorization")
-                                        .authorizationRequestRepository(authorizationRequestRepository()))
-                        .userInfoEndpoint(
-                                userInfoEndpointConfig ->
-                                        userInfoEndpointConfig.userService(customOAuth2UserService)
-                        )
-                        .successHandler(oAuth2AuthenticationSuccessHandler()))
-                .authorizeHttpRequests()
-                .requestMatchers(PERMIT_URL_PATHS).permitAll()
-                .requestMatchers(HttpMethod.GET, PERMIT_GET_URL_PATHS).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
-                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		return http
+			.csrf().disable()
+			.cors().configurationSource(corsConfigurationSource())
+			.and()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.formLogin().disable()
+			.httpBasic().disable()
+			.oauth2Login(oauth2 -> oauth2
+				.authorizationEndpoint(authorizationEndpointConfig ->
+					authorizationEndpointConfig.baseUri("/oauth2/authorization")
+						.authorizationRequestRepository(authorizationRequestRepository()))
+				.userInfoEndpoint(
+					userInfoEndpointConfig ->
+						userInfoEndpointConfig.userService(customOAuth2UserService)
+				)
+				.successHandler(oAuth2AuthenticationSuccessHandler()))
+			.authorizeHttpRequests()
+			.requestMatchers(PERMIT_URL_PATHS).permitAll()
+			.requestMatchers(HttpMethod.GET, PERMIT_GET_URL_PATHS).permitAll()
+			.anyRequest().authenticated()
+			.and()
+			.exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
+			.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+			.build();
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
 
-    @Bean
-    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
-        return new CustomAuthorizationRequestRepository();
-    }
+	@Bean
+	public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
+		return new CustomAuthorizationRequestRepository();
+	}
 
-    @Bean
-    public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-        return new OAuth2AuthenticationSuccessHandler(authTokenFactory, properties);
-    }
+	@Bean
+	public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+		return new OAuth2AuthenticationSuccessHandler(authTokenFactory, properties);
+	}
 
-    @Bean
-    public CustomAuthenticationFilter customAuthenticationFilter() throws CustomException {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
+	@Bean
+	public CustomAuthenticationFilter customAuthenticationFilter() throws CustomException {
+		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
 
-        customAuthenticationFilter.setFilterProcessesUrl("/users/login");
-        customAuthenticationFilter.setAuthenticationManager(authenticationManager());
-        customAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(authTokenFactory, properties, refreshTokenService));
-        customAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
+		customAuthenticationFilter.setFilterProcessesUrl("/users/login");
+		customAuthenticationFilter.setAuthenticationManager(authenticationManager());
+		customAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(authTokenFactory, properties, refreshTokenService));
+		customAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 
-        return customAuthenticationFilter;
-    }
+		return customAuthenticationFilter;
+	}
 
-    @Bean
-    public CustomAuthenticationProvider customAuthenticationProvider() {
-        return new CustomAuthenticationProvider(passwordEncoder());
-    }
+	@Bean
+	public CustomAuthenticationProvider customAuthenticationProvider() {
+		return new CustomAuthenticationProvider(passwordEncoder());
+	}
 
-    @Bean
-    public TokenAuthorizationFilter tokenAuthorizationFilter() {
-        return new TokenAuthorizationFilter(authTokenFactory);
-    }
+	@Bean
+	public TokenAuthorizationFilter tokenAuthorizationFilter() {
+		return new TokenAuthorizationFilter(authTokenFactory);
+	}
 
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(customAuthenticationProvider());
-    }
+	@Bean
+	public AuthenticationManager authenticationManager() {
+		return new ProviderManager(customAuthenticationProvider());
+	}
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("HEAD", "POST", "GET", "DELETE", "PUT"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+		configuration.setAllowedOriginPatterns(List.of("*"));
+		configuration.setAllowedMethods(List.of("HEAD", "POST", "GET", "DELETE", "PUT"));
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
 
-        return source;
-    }
+		return source;
+	}
 }

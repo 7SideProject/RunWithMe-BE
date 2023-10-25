@@ -9,14 +9,13 @@ import com.runwithme.runwithme.global.webhook.discord.DiscordSender;
 
 @Configuration
 public class HttpConfiguration {
+	@Bean
+	public NotificationSender notificationSender() {
+		return new DiscordSender();
+	}
 
-    @Bean
-    public NotificationSender notificationSender() {
-        return new DiscordSender();
-    }
-
-    @Bean
-    public NotificationManager notificationManager() {
-        return new NotificationManager(notificationSender());
-    }
+	@Bean
+	public NotificationManager notificationManager() {
+		return new NotificationManager(notificationSender());
+	}
 }

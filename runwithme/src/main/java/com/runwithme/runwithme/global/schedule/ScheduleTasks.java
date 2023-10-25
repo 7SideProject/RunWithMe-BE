@@ -81,7 +81,7 @@ public class ScheduleTasks {
 				userService.updateUserPoint(successUserSeq, earnPoint, PointType.PLUS);
 			}
 		}
-		
+
 		System.out.printf("현재 시간: %s, Scheduler 작동 완료\n", ima);
 	}
 }
