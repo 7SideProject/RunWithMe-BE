@@ -68,7 +68,8 @@ public class ChallengeService {
 	}
 
 	@Transactional
-	public void deleteBoard(Long boardSeq) {
+	public void deleteBoard(Long challengeSeq, Long boardSeq) {
+		challengeRepository.findById(challengeSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 		challengeBoardRepository.deleteById(boardSeq);
 	}
 
@@ -192,7 +193,10 @@ public class ChallengeService {
 		return challengeRepository.getChallengeCount(challengeSeq);
 	}
 
+	@Transactional
 	public void deleteMyChallenge(Long challengeSeq) {
-		challengeRepository.deleteMyChallenge(challengeSeq);
+		final Challenge challenge = challengeRepository.findById(challengeSeq)
+			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+		challenge.deleteChallenge();
 	}
 }

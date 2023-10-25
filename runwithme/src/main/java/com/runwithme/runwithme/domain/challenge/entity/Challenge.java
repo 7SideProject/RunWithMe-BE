@@ -77,6 +77,9 @@ public class Challenge {
 	@Column(name = "max_member", nullable = false)
 	private Long maxMember;
 
+	@Column(name = "delete_yn")
+	private char deleteYN;
+
 	@Builder
 	public Challenge(User manager, Image image, String name, String description, Long goalDays, GoalType goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, String password, Long cost, Long nowMember, Long maxMember) {
 		this.manager = manager;
@@ -92,5 +95,9 @@ public class Challenge {
 		this.cost = cost;
 		this.nowMember = nowMember;
 		this.maxMember = maxMember;
+	}
+
+	public void deleteChallenge() {
+		this.deleteYN = 'Y';
 	}
 }
