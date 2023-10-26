@@ -31,6 +31,7 @@ import static com.runwithme.runwithme.global.result.ResultCode.*;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+    private static final int USER_CONNECT_POINT = 100;
 
     private final UserRepository userRepository;
     private final ImageService imageService;
@@ -125,6 +126,8 @@ public class UserService {
         User user = findByUserSeq(userSeq);
         if (user.isDeleted()) throw new CustomException(DELETED_USER);
         if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+
+        user.addPoint(USER_CONNECT_POINT);
 
         ConnectHistory connectHistory = ConnectHistory.builder()
                 .user(user)

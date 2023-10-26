@@ -85,6 +85,14 @@ public class User extends BaseEntity {
         this.image = image;
     }
 
+    public void addPoint(int point) {
+        this.point += point;
+    }
+
+    public void subtractPoint(int point) {
+        this.point -= point;
+    }
+
     public static User create(OAuth2User oAuth2User) {
         return User.builder()
                 .role(Role.TEMP_USER)
