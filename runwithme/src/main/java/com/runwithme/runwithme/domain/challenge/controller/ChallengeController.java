@@ -114,11 +114,16 @@ public class ChallengeController {
 		return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
 	}
 
-	@Operation(operationId = "deleteMyChallenge", summary = "내 챌린지 탈퇴, delete_yn 의 값을 'Y'로 변경")
+	@Operation(operationId = "deleteMyChallenge", summary = "내 챌린지 탈퇴, 해체라면 delete_yn 의 값을 'Y'로 변경")
 	@DeleteMapping("/{challengeSeq}")
 	public ResponseEntity<ResultResponseDto> deleteMyChallenge(@PathVariable(value = "challengeSeq") Long challengeSeq) {
-		challengeService.deleteMyChallenge(challengeSeq);
-		return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_MY_CHALLENGE_SUCCESS));
+		final boolean flag = challengeService.deleteMyChallenge(challengeSeq);
+
+		if (flag) {
+			return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_MY_CHALLENGE_SUCCESS));
+		} else {
+			return ResponseEntity.ok().body(ResultResponseDto.of(WITHDREW_CHALLENGE_SUCCESS));
+		}
 	}
 
 	@Operation(summary = "게시글 신고")
