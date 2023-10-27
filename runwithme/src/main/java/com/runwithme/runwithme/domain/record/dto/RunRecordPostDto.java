@@ -14,5 +14,5 @@ public class RunRecordPostDto {
     private Long runningTime;
     private Long runningDistance;
     private List coordinates;
-    private boolean successYN;
+    private char successYn;
 }

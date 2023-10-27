@@ -68,7 +68,8 @@ public class ChallengeService {
 	}
 
 	@Transactional
-	public void deleteBoard(Long boardSeq) {
+	public void deleteBoard(Long challengeSeq, Long boardSeq) {
+		challengeRepository.findById(challengeSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 		challengeBoardRepository.deleteById(boardSeq);
 	}
 
@@ -99,7 +100,6 @@ public class ChallengeService {
 			.dateEnd(challengeCreateDto.getDateEnd())
 			.password(challengeCreateDto.getPassword())
 			.cost(challengeCreateDto.getCost())
-			.nowMember(1L)
 			.maxMember(challengeCreateDto.getMaxMember())
 			.build();
 
@@ -127,7 +127,11 @@ public class ChallengeService {
 			throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
 		}
 		final Challenge challenge = challengeRepository.findById(challengeSeq)
-			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(CHALLENGE_NOT_FOUND));
+
+		if (challenge.getDeleteYn() == 'Y') {
+			throw new CustomException(CHALLENGE_NOT_FOUND);
+		}
 
 		if (!challenge.getPassword().equals(password)) {
 			throw new CustomException(CHALLENGE_JOIN_PASSWORD_FAIL);
@@ -192,7 +196,24 @@ public class ChallengeService {
 		return challengeRepository.getChallengeCount(challengeSeq);
 	}
 
-	public void deleteMyChallenge(Long challengeSeq) {
-		challengeRepository.deleteMyChallenge(challengeSeq);
+	@Transactional
+	public boolean deleteMyChallenge(Long challengeSeq) {
+		final Long userSeq = authUtils.getLoginUserSeq();
+
+		if (!challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)) {
+			throw new CustomException(CHALLENGE_NOT_JOIN);
+		}
+
+		final Challenge challenge = challengeRepository.findById(challengeSeq)
+			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+		boolean flag = false;
+		if (challenge.getManager().getSeq().equals(userSeq)){
+			challenge.deleteChallenge();
+			flag = true;
+		}
+
+		challengeUserRepository.deleteByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+		return flag;
 	}
 }

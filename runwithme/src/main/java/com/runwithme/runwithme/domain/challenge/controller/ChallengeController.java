@@ -57,8 +57,8 @@ public class ChallengeController {
 
 	@Operation(operationId = "deleteBoard", summary = "게시글 삭제")
 	@DeleteMapping("/{challengeSeq}/board/{boardSeq}")
-	public ResponseEntity<ResultResponseDto> deleteBoard(@PathVariable(value = "boardSeq") Long boardSeq) {
-		challengeService.deleteBoard(boardSeq);
+	public ResponseEntity<ResultResponseDto> deleteBoard(@PathVariable(value = "boardSeq") Long boardSeq, @PathVariable Long challengeSeq) {
+		challengeService.deleteBoard(challengeSeq, boardSeq);
 		return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_BOARD_SUCCESS));
 	}
 
@@ -114,14 +114,19 @@ public class ChallengeController {
 		return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_CHALLENGE_SUCCESS, pagingResultDto));
 	}
 
-	@Operation(operationId = "getMyChallengeList", summary = "내 챌린지 탈퇴")
-	@DeleteMapping("/my")
+	@Operation(operationId = "deleteMyChallenge", summary = "내 챌린지 탈퇴, 해체라면 delete_yn 의 값을 'Y'로 변경")
+	@DeleteMapping("/{challengeSeq}")
 	public ResponseEntity<ResultResponseDto> deleteMyChallenge(@PathVariable(value = "challengeSeq") Long challengeSeq) {
-		challengeService.deleteMyChallenge(challengeSeq);
-		return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_MY_CHALLENGE_SUCCESS));
+		final boolean flag = challengeService.deleteMyChallenge(challengeSeq);
+
+		if (flag) {
+			return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_MY_CHALLENGE_SUCCESS));
+		} else {
+			return ResponseEntity.ok().body(ResultResponseDto.of(WITHDREW_CHALLENGE_SUCCESS));
+		}
 	}
 
-	@Operation(operationId = "", summary = "게시글 신고")
+	@Operation(summary = "게시글 신고")
 	@PostMapping("/warn/{boardSeq}")
 	public ResponseEntity<ResultResponseDto> boardWarn(@PathVariable(value = "boardSeq") Long boardSeq) {
 		final boolean success = challengeService.boardWarn(boardSeq);

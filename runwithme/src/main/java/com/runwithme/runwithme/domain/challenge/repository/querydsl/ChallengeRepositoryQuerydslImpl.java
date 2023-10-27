@@ -34,16 +34,15 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.select(new QChallengeResponseDto(
 				challenge.seq,
 				challenge.manager.seq,
+				challenge.image.seq,
 				challenge.manager.nickname,
 				challenge.description,
-				challenge.image.seq,
 				challenge.name,
 				challenge.goalDays,
 				challenge.goalType,
 				challenge.goalAmount,
 				challenge.dateStart,
 				challenge.dateEnd,
-				challenge.nowMember,
 				challenge.maxMember,
 				challenge.cost,
 				isExistChallengeUser(userSeq)
@@ -61,16 +60,15 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.select(new QChallengeResponseDto(
 				challenge.seq,
 				challenge.manager.seq,
+				challenge.image.seq,
 				challenge.manager.nickname,
 				challenge.description,
-				challenge.image.seq,
 				challenge.name,
 				challenge.goalDays,
 				challenge.goalType,
 				challenge.goalAmount,
 				challenge.dateStart,
 				challenge.dateEnd,
-				challenge.nowMember,
 				challenge.maxMember,
 				challenge.cost,
 				isExistChallengeUser(userSeq)
@@ -91,16 +89,15 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.select(new QChallengeResponseDto(
 				challenge.seq,
 				challenge.manager.seq,
+				challenge.image.seq,
 				challenge.manager.nickname,
 				challenge.description,
-				challenge.image.seq,
 				challenge.name,
 				challenge.goalDays,
 				challenge.goalType,
 				challenge.goalAmount,
 				challenge.dateStart,
 				challenge.dateEnd,
-				challenge.nowMember,
 				challenge.maxMember,
 				challenge.cost,
 				isExistChallengeUser(userSeq)
@@ -122,16 +119,15 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.select(new QChallengeResponseDto(
 				challengeUser.challenge.seq,
 				challengeUser.challenge.manager.seq,
+				challengeUser.challenge.image.seq,
 				challengeUser.challenge.manager.nickname,
 				challengeUser.challenge.description,
-				challengeUser.challenge.image.seq,
 				challengeUser.challenge.name,
 				challengeUser.challenge.goalDays,
 				challengeUser.challenge.goalType,
 				challengeUser.challenge.goalAmount,
 				challengeUser.challenge.dateStart,
 				challengeUser.challenge.dateEnd,
-				challengeUser.challenge.nowMember,
 				challengeUser.challenge.maxMember,
 				challengeUser.challenge.cost,
 				isExistChallengeUser(userSeq)
@@ -143,13 +139,6 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.limit(pageable.getPageSize())
 			.fetchResults();
 		return new PageImpl<>(result.getResults(), pageable, result.getTotal());
-	}
-
-	private BooleanExpression isExistChallengeUserWhereChallengeEqAndUserEq(Long userSeq) {
-		return JPAExpressions
-			.selectFrom(challengeUser)
-			.where(challengeUser.challenge.seq.eq(challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
-			.exists();
 	}
 
 	public BooleanExpression isExistChallengeUser(Long userSeq) {
@@ -184,9 +173,5 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.from(challenge)
 			.where(challenge.seq.eq(challengeSeq))
 			.fetchCount();
-	}
-
-	public void deleteMyChallenge(Long challengeSeq) {
-		challengeUser.user.seq.isNotNull();
 	}
 }

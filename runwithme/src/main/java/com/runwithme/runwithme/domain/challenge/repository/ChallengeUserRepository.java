@@ -6,4 +6,6 @@ import com.runwithme.runwithme.domain.challenge.entity.ChallengeUser;
 
 public interface ChallengeUserRepository extends JpaRepository<ChallengeUser, Long> {
 	boolean existsByUserSeqAndChallengeSeq(Long userSeq, Long challengeSeq);
+	void deleteByUserSeqAndChallengeSeq(Long userSeq, Long challengeSeq);
+
 }

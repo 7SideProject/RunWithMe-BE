@@ -55,7 +55,7 @@ public class RecordService {
 			.runningTime(runRecordPostDto.getRunningTime())
 			.runningDistance(runRecordPostDto.getRunningDistance())
 			.image(savedImage)
-			.successYN(runRecordPostDto.isSuccessYN())
+			.successYn(runRecordPostDto.getSuccessYn())
 			.weekly(getWeekly(challengeSeq))
 			.build();
 		runRecordRepository.save(runRecord);
