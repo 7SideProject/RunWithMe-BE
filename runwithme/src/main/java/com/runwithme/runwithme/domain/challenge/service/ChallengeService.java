@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,6 +101,7 @@ public class ChallengeService {
 			.dateEnd(challengeCreateDto.getDateEnd())
 			.password(challengeCreateDto.getPassword())
 			.cost(challengeCreateDto.getCost())
+			.nowMember(1L)
 			.maxMember(challengeCreateDto.getMaxMember())
 			.build();
 
@@ -166,6 +168,13 @@ public class ChallengeService {
 	}
 
 	@Transactional
+	public List<ChallengeResponseDto> getMyRunningChallengeList(Long cursorSeq, Pageable pageable) {
+		final Long userSeq = authUtils.getLoginUserSeq();
+		final LocalDate localDate = LocalDate.now();
+		return challengeRepository.findMyRunningChallengePage(cursorSeq, userSeq, localDate, pageable).getContent();
+	}
+
+	@Transactional
 	public boolean boardWarn(Long boardSeq) {
 		final User user = authUtils.getLoginUser();
 		final ChallengeBoard challengeBoard = challengeBoardRepository.findById(boardSeq)
@@ -184,6 +193,12 @@ public class ChallengeService {
 	public Image imageIsEmpty(MultipartFile image) {
 		if (image.isEmpty()) return null;
 		return imageService.save(image);
+	}
+	@Transactional
+	public Resource getChallengeImage(Long challengeSeq) {
+		final Challenge challenge = challengeRepository.findById(challengeSeq)
+				.orElseThrow(() -> new CustomException(CHALLENGE_NOT_FOUND));
+		return imageService.getImage(challenge.getImage().getSeq());
 	}
 
 	public List<ChallengeEndDto> findByDateEndIsToday() {
