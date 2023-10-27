@@ -151,9 +151,9 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				.select(new QChallengeResponseDto(
 						challengeUser.challenge.seq,
 						challengeUser.challenge.manager.seq,
+						challengeUser.challenge.image.seq,
 						challengeUser.challenge.manager.nickname,
 						challengeUser.challenge.description,
-						challengeUser.challenge.image.seq,
 						challengeUser.challenge.name,
 						challengeUser.challenge.goalDays,
 						challengeUser.challenge.goalType,
