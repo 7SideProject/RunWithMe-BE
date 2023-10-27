@@ -81,7 +81,7 @@ public class ChallengeController {
 
 	@Operation(operationId = "joinChallengeUser", summary = "챌린지 가입")
 	@PostMapping("/{challengeSeq}/join")
-	public ResponseEntity<ResultResponseDto> joinChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq, @RequestParam(name = "password") String password) {
+	public ResponseEntity<ResultResponseDto> joinChallengeUser(@PathVariable(value = "challengeSeq") Long challengeSeq, @RequestParam(name = "password", required = false) String password) {
 		final boolean success = challengeService.joinChallengeUser(challengeSeq, password);
 		return ResponseEntity.ok().body(ResultResponseDto.of(success ? JOIN_CHALLENGE_SUCCESS : JOIN_CHALLENGE_FAIL));
 	}
@@ -152,7 +152,7 @@ public class ChallengeController {
 
 	@Operation(operationId = "", summary = "챌린지 이미지 조회")
 	@GetMapping(value = "/{challengeSeq}/challenge-image", produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<Resource> getChallengeImage(@PathVariable Long challengeSeq) {
+	public ResponseEntity<Resource> getChallengeImage(@PathVariable(value = "challengeSeq") Long challengeSeq) {
 		return new ResponseEntity<>(challengeService.getChallengeImage(challengeSeq), HttpStatus.OK);
 	}
 }

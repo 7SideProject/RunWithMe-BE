@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.runwithme.runwithme.global.utils.ImageCache;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -191,7 +192,9 @@ public class ChallengeService {
 	}
 
 	public Image imageIsEmpty(MultipartFile image) {
-		if (image.isEmpty()) return null;
+		if (image.isEmpty()) {
+			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);
+		}
 		return imageService.save(image);
 	}
 	@Transactional

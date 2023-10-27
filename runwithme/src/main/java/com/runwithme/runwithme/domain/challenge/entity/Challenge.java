@@ -36,7 +36,7 @@ public class Challenge {
 	@JoinColumn(name = "manager_seq")
 	private User manager;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "image_seq")
 	private Image image;
 
