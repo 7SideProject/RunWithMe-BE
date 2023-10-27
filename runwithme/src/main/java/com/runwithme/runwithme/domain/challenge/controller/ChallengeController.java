@@ -152,7 +152,7 @@ public class ChallengeController {
 
 	@Operation(operationId = "", summary = "챌린지 이미지 조회")
 	@GetMapping(value = "/{challengeSeq}/challenge-image", produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<Resource> getChallengeImage(@PathVariable Long userSeq) {
-		return new ResponseEntity<>(challengeService.getChallengeImage(userSeq), HttpStatus.OK);
+	public ResponseEntity<Resource> getChallengeImage(@PathVariable Long challengeSeq) {
+		return new ResponseEntity<>(challengeService.getChallengeImage(challengeSeq), HttpStatus.OK);
 	}
 }
