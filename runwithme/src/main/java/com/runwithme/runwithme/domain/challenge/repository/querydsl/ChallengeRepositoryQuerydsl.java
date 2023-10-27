@@ -19,6 +19,8 @@ public interface ChallengeRepositoryQuerydsl {
 
 	Page<ChallengeResponseDto> findMyChallengePage(Long cursorSeq, Long userSeq, Pageable pageable);
 
+	Page<ChallengeResponseDto> findMyRunningChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable);
+
 	List<ChallengeEndDto> findByDateEndIsToday(LocalDate today);
 
 	int getChallengeCount(Long challengeSeq);
