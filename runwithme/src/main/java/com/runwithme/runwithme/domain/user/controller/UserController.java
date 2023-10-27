@@ -1,6 +1,7 @@
 package com.runwithme.runwithme.domain.user.controller;
 
 import com.runwithme.runwithme.domain.user.dto.*;
+import com.runwithme.runwithme.domain.user.facade.UserFacade;
 import com.runwithme.runwithme.domain.user.service.UserService;
 import com.runwithme.runwithme.global.result.ResultCode;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserFacade userFacade;
 
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "회원가입", description = "이메일 회원가입 API입니다.")
@@ -104,5 +106,11 @@ public class UserController {
     public ResponseEntity<ResultResponseDto> connect(@PathVariable Long userSeq) {
         boolean isSuccess = userService.connect(userSeq);
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, new UserConnectViewDto(isSuccess)), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{userSeq}/total-record")
+    public ResponseEntity<ResultResponseDto> getUserTotalRecord(@PathVariable Long userSeq) {
+        UserTotalRecordViewDto userTotalRecord = userFacade.getUserTotalRecord(userSeq);
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userTotalRecord), HttpStatus.OK);
     }
 }

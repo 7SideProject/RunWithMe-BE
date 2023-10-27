@@ -1,6 +1,7 @@
 package com.runwithme.runwithme.domain.record.service;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
+import com.runwithme.runwithme.domain.record.dto.ChallengeTotalRecordResponseDto;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
@@ -105,5 +106,27 @@ public class RecordService {
             }
         }
         return results.length == success;
+    }
+
+    public ChallengeTotalRecordResponseDto getUserTotalRecord(Long userSeq) {
+        List<ChallengeTotalRecord> userTotalRecord = challengeTotalRecordRepository.findByUserSeq(userSeq);
+
+        long totalTime = 0;
+        long totalDistance = 0;
+        long totalCalorie = 0;
+        long totalLongestTime = 0;
+        long totalLongestDistance = 0;
+        long totalSpeed = 0;
+        for (ChallengeTotalRecord record : userTotalRecord) {
+            totalTime += record.getTotalTime();
+            totalDistance += record.getTotalDistance();
+            totalCalorie += record.getTotalCalorie();
+            totalLongestTime = Math.max(totalLongestTime, record.getTotalLongestTime());
+            totalLongestDistance = Math.max(totalLongestDistance, record.getTotalLongestDistance());
+            totalSpeed += record.getTotalAvgSpeed();
+        }
+        long totalAvgSpeed = userTotalRecord.isEmpty() ? 0 : totalSpeed / userTotalRecord.size();
+
+        return new ChallengeTotalRecordResponseDto(totalTime, totalDistance, totalCalorie, totalLongestTime, totalLongestDistance, totalAvgSpeed);
     }
 }
