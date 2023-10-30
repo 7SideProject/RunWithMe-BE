@@ -5,6 +5,7 @@ import static com.runwithme.runwithme.global.result.ResultCode.*;
 import java.util.List;
 import java.util.Optional;
 
+import com.runwithme.runwithme.domain.challenge.dto.ChallengeDetailResponseDto;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
@@ -75,7 +76,7 @@ public class ChallengeController {
 	@Operation(operationId = "getChallengeData", summary = "챌린지 상세 조회")
 	@GetMapping("/{challengeSeq}")
 	public ResponseEntity<ResultResponseDto> getChallengeData(@PathVariable(value = "challengeSeq") Long challengeSeq) {
-		final Optional<ChallengeResponseDto> challenge = challengeService.getChallengeData(challengeSeq);
+		final ChallengeDetailResponseDto challenge = challengeService.getChallengeData(challengeSeq);
 		return ResponseEntity.ok().body(ResultResponseDto.of(GET_ONE_CHALLENGE_SUCCESS, challenge));
 	}
 

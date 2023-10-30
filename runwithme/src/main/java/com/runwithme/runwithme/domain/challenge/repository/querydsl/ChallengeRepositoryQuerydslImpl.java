@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.runwithme.runwithme.domain.challenge.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +16,7 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeEndDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
-import com.runwithme.runwithme.domain.challenge.dto.QChallengeEndDto;
-import com.runwithme.runwithme.domain.challenge.dto.QChallengeResponseDto;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,9 +27,9 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public Optional<ChallengeResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq) {
+	public Optional<ChallengeDetailResponseDto> findChallengeBySeq(Long userSeq, Long challengeSeq, LocalDate nowTime) {
 		return Optional.ofNullable(jpaQueryFactory
-			.select(new QChallengeResponseDto(
+			.select(new QChallengeDetailResponseDto(
 				challenge.seq,
 				challenge.manager.seq,
 				challenge.image.seq,
@@ -46,12 +44,20 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				challenge.nowMember,
 				challenge.maxMember,
 				challenge.cost,
-				isExistChallengeUser(userSeq)
+				challenge.deleteYn,
+				isExistChallengeUser(userSeq),
+				isExistRunRecord(userSeq)
 			))
 			.from(challenge)
 			.leftJoin(challengeUser)
 			.on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
-			.where(challenge.seq.eq(challengeSeq))
+			.leftJoin(runRecord)
+			.on(
+					runRecord.challengeSeq.eq(challenge.seq)
+							.and(runRecord.userSeq.eq(userSeq))
+							.and(runRecord.regTime.eq(nowTime))
+			)
+			.where(challenge.seq.eq(challengeSeq).and(challenge.deleteYn.eq('N')))
 			.fetchOne());
 	}
 
@@ -78,7 +84,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.from(challenge)
 			.leftJoin(challengeUser)
 			.on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
-			.where(eqCursorSeq(cursorSeq))
+			.where(challenge.deleteYn.eq('N'), eqCursorSeq(cursorSeq))
 			.orderBy(challenge.seq.desc())
 			.limit(pageable.getPageSize())
 			.fetchResults();
@@ -108,7 +114,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.from(challenge)
 			.leftJoin(challengeUser)
 			.on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
-			.where(challenge.dateStart.after(nowTime),
+			.where(challenge.deleteYn.eq('N').and(challenge.dateStart.after(nowTime)),
 				eqCursorSeq(cursorSeq))
 			.orderBy(challenge.seq.desc())
 			.limit(pageable.getPageSize())
@@ -137,7 +143,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				isExistChallengeUser(userSeq)
 			))
 			.from(challengeUser)
-			.where(challengeUser.user.seq.eq(userSeq))
+			.where(challengeUser.user.seq.eq(userSeq).and(challengeUser.challenge.deleteYn.eq('N')))
 			.orderBy(challengeUser.challenge.seq.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -174,6 +180,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				)
 				.where(
 						challengeUser.user.seq.eq(userSeq)
+								.and(challengeUser.challenge.deleteYn.eq('N'))
 								.and(runRecord.seq.isNull())
 						, eqCursorSeq(cursorSeq)
 				)
@@ -186,6 +193,11 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 	public BooleanExpression isExistChallengeUser(Long userSeq) {
 		if (userSeq == null) return null;
 		return challengeUser.user.seq.isNotNull();
+	}
+
+	public BooleanExpression isExistRunRecord(Long userSeq) {
+		if (userSeq == null) return null;
+		return runRecord.seq.isNull();
 	}
 
 	private BooleanExpression eqCursorSeq(Long cursorSeq) {

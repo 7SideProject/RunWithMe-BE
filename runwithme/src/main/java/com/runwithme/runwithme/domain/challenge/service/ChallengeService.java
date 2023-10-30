@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.runwithme.runwithme.domain.challenge.dto.*;
 import com.runwithme.runwithme.global.utils.ImageCache;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeBoardResponseDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeCreateDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeEndDto;
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoard;
 import com.runwithme.runwithme.domain.challenge.entity.ChallengeBoardWarn;
@@ -104,6 +101,7 @@ public class ChallengeService {
 			.cost(challengeCreateDto.getCost())
 			.nowMember(1L)
 			.maxMember(challengeCreateDto.getMaxMember())
+			.deleteYn('N')
 			.build();
 
 		challengeRepository.save(challenge);
@@ -112,14 +110,17 @@ public class ChallengeService {
 	}
 
 	@Transactional
-	public Optional<ChallengeResponseDto> getChallengeData(Long challengeSeq) {
+	public ChallengeDetailResponseDto getChallengeData(Long challengeSeq) {
 		final Long userSeq = authUtils.getLoginUserSeq();
+		final LocalDate localDate = LocalDate.now();
+		final ChallengeDetailResponseDto challenge = challengeRepository.findChallengeBySeq(userSeq, challengeSeq, localDate)
+				.orElseThrow(() -> new CustomException(CHALLENGE_NOT_FOUND));
 
-		if (!challengeRepository.existsById(challengeSeq)) {
+		if (challenge.getDeleteYn() == 'Y') {
 			throw new CustomException(CHALLENGE_NOT_FOUND);
 		}
 
-		return challengeRepository.findChallengeBySeq(userSeq, challengeSeq);
+		return challenge;
 	}
 
 	@Transactional
@@ -139,7 +140,18 @@ public class ChallengeService {
 		if (!challenge.getPassword().equals(password)) {
 			throw new CustomException(CHALLENGE_JOIN_PASSWORD_FAIL);
 		}
+
+		if (user.getPoint() < challenge.getCost()) {
+			throw new CustomException(CHALLENGE_JOIN_NOT_ENOUGH_POINT);
+		}
+
+		if (challenge.getNowMember() >= challenge.getMaxMember()) {
+			throw new CustomException(CHALLENGE_JOIN_MAX_MEMBER);
+		}
+
 		challengeUserRepository.save(new ChallengeUser(user, challenge));
+		challenge.plusNowMember();
+//		user.minusPoint(challenge.getCost().intValue());
 		return true;
 	}
 
@@ -228,10 +240,12 @@ public class ChallengeService {
 		boolean flag = false;
 		if (challenge.getManager().getSeq().equals(userSeq)){
 			challenge.deleteChallenge();
+			challenge.minusNowMember();
 			flag = true;
 		}
 
 		challengeUserRepository.deleteByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+		challenge.minusNowMember();
 		return flag;
 	}
 }
