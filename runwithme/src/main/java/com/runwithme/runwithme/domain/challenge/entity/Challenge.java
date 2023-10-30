@@ -86,7 +86,7 @@ public class Challenge {
 	private LocalDateTime regTime;
 
 	@Builder
-	public Challenge(User manager, Image image, String name, String description, Long goalDays, GoalType goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, String password, Long cost, Long nowMember, Long maxMember) {
+	public Challenge(User manager, Image image, String name, String description, Long goalDays, GoalType goalType, Long goalAmount, LocalDate dateStart, LocalDate dateEnd, String password, Long cost, Long nowMember, Long maxMember, char deleteYn) {
 		this.manager = manager;
 		this.image = image;
 		this.name = name;
@@ -100,8 +100,10 @@ public class Challenge {
 		this.cost = cost;
 		this.nowMember = nowMember;
 		this.maxMember = maxMember;
+		this.deleteYn = deleteYn;
 	}
-
+	public void plusNowMember() { this.nowMember += 1; }
+	public void minusNowMember() { this.nowMember -= 1; }
 	public void deleteChallenge() {
 		this.deleteYn = 'Y';
 	}
