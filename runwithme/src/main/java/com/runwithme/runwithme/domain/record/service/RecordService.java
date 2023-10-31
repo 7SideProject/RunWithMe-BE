@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
+import com.runwithme.runwithme.domain.record.dto.ChallengeTotalRecordResponseDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
-import com.runwithme.runwithme.domain.record.dto.ChallengeTotalRecordResponseDto;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RecordWeeklyCountDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
