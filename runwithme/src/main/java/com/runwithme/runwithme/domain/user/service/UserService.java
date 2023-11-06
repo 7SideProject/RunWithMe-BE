@@ -128,6 +128,13 @@ public class UserService {
         user.changePassword(encoder.encode(dto.password()));
     }
 
+    public void changePassword(String userEmail, UserChangePasswordDto dto) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        user.changePassword(encoder.encode(dto.password()));
+    }
+
     public boolean connect(Long userSeq) {
         boolean alreadyConnect = connectHistoryRepository.existsByConnectDateTimeIsAfterAndUserSeq(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT), userSeq);
         if (alreadyConnect) return false;

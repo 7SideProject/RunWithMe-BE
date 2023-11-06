@@ -115,9 +115,15 @@ public class UserController {
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/{userSeq}/password")
-    public ResponseEntity<ResultResponseDto> changePassword(@PathVariable Long userSeq, @RequestBody UserChangePasswordDto dto) {
-        userService.changePassword(userSeq, dto);
+//    @PutMapping(value = "/{userSeq}/password")
+//    public ResponseEntity<ResultResponseDto> changePassword(@PathVariable Long userSeq, @RequestBody UserChangePasswordDto dto) {
+//        userService.changePassword(userSeq, dto);
+//        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
+//    }
+
+    @PutMapping(value = "/{userEmail}/password")
+    public ResponseEntity<ResultResponseDto> changePassword(@PathVariable String userEmail, @RequestBody UserChangePasswordDto dto) {
+        userService.changePassword(userEmail, dto);
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS), HttpStatus.OK);
     }
 
