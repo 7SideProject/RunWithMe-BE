@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
 import com.runwithme.runwithme.domain.record.dto.ChallengeTotalRecordResponseDto;
@@ -25,6 +26,7 @@ import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
 import com.runwithme.runwithme.global.utils.AuthUtils;
+import com.runwithme.runwithme.global.utils.ImageCache;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,10 +41,10 @@ public class RecordService {
 	private final ImageService imageService;
 
 	@Transactional
-	public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, ChallengeImageDto imgFile) throws IOException {
+	public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, MultipartFile image) {
 		final Long userSeq = authUtils.getLoginUserSeq();
 
-		final Image savedImage = imageService.save(imgFile.image());
+		final Image savedImage = imageIsEmpty(image);
 
 		if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
 			throw new CustomException(RECORD_ALREADY_EXIST);
@@ -101,6 +103,13 @@ public class RecordService {
 			}
 		}
 		return results.length == success;
+	}
+
+	public Image imageIsEmpty(MultipartFile image) {
+		if (image.isEmpty()) {
+			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);
+		}
+		return imageService.save(image);
 	}
 
 	public List<RecordWeeklyCountDto> getWeeklySuccessYCount(Long challengeSeq) {

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
@@ -38,18 +40,9 @@ public class RecordController {
     //    @ApiOperation(value = "기록 등록")
     @Operation(operationId = "createRunRecord", summary = "기록 등록", description = "기록을 등록한다")
     @PostMapping("/{challengeSeq}/record")
-    public ResponseEntity<ResultResponseDto> createRunRecord(
-            @PathVariable(value = "challengeSeq") Long challengeSeq,
-            @RequestBody RunRecordPostDto runRecordPostDto,
-            @Parameter(name = "file", description = "업로드 사진 데이터")
-            @RequestParam(name = "file") ChallengeImageDto imgFile
-    ){
-        try {
-            recordService.createRunRecord(challengeSeq, runRecordPostDto, imgFile);
-            return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_RECORD_SUCCESS));
-        } catch (IOException e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ResultResponseDto> createRunRecord(@PathVariable(value = "challengeSeq") Long challengeSeq, @RequestPart(value = "runRecordPostDto") RunRecordPostDto runRecordPostDto, @RequestPart(value = "image", required = false) MultipartFile image){
+        recordService.createRunRecord(challengeSeq, runRecordPostDto, image);
+        return ResponseEntity.ok().body(ResultResponseDto.of(CREATE_RECORD_SUCCESS));
     }
 
     //    @ApiOperation(value = "챌린지내 내 기록 누적 수치")
