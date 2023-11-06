@@ -39,104 +39,116 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-	private final UserRepository userRepository;
-	private final ImageService imageService;
-	private final AuthUtils authUtils;
-	private final ConnectHistoryRepository connectHistoryRepository;
 
-	public UserProfileViewDto join(UserCreateDto dto) {
-		if (userRepository.existsByEmail(dto.email())) {
-			throw new CustomException(EMAIL_EXISTS);
-		}
+    private static final int USER_CONNECT_POINT = 100;
 
-		User joinUser = UserConverter.toEntity(dto);
-		return UserConverter.toViewDto(userRepository.save(joinUser));
-	}
+    private final UserRepository userRepository;
+    private final ImageService imageService;
+    private final AuthUtils authUtils;
+    private final ConnectHistoryRepository connectHistoryRepository;
 
-	public User findByEmail(String email) {
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-		if (user.isDeleted()) throw new CustomException(DELETED_USER);
-		return user;
-	}
+    public UserProfileViewDto join(UserCreateDto dto) {
+        if (userRepository.existsByEmail(dto.email())) {
+            throw new CustomException(EMAIL_EXISTS);
+        }
 
-	public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
-		User user = findByUserSeq(userSeq);
-		if (user.isDeleted()) throw new CustomException(DELETED_USER);
-		if (isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
-		user.setProfile(dto);
-		return UserConverter.toViewDto(user);
-	}
+        User joinUser = UserConverter.toEntity(dto);
+        return UserConverter.toViewDto(userRepository.save(joinUser));
+    }
 
-	public UserProfileViewDto getUserProfile(Long userSeq) {
-		User user = findByUserSeq(userSeq);
-		if (user.isDeleted()) throw new CustomException(DELETED_USER);
-		return UserConverter.toViewDto(user);
-	}
+    public User findByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        return user;
+    }
 
-	public DuplicatedViewDto isDuplicatedEmail(String email) {
-		return new DuplicatedViewDto(userRepository.existsByEmail(email));
-	}
+    public UserProfileViewDto setUserProfile(Long userSeq, UserProfileDto dto) {
+        User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        user.setProfile(dto);
+        return UserConverter.toViewDto(user);
+    }
 
-	public DuplicatedViewDto isDuplicatedNickname(String nickname) {
-		return new DuplicatedViewDto(userRepository.existsByNickname(nickname));
-	}
+    public UserProfileViewDto getUserProfile(Long userSeq) {
+        User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        return UserConverter.toViewDto(user);
+    }
 
-	public Resource getUserImage(Long userSeq) {
-		User user = findByUserSeq(userSeq);
-		if (user.isDeleted()) throw new CustomException(DELETED_USER);
-		return imageService.getImage(user.getImage().getSeq());
-	}
+    public DuplicatedViewDto isDuplicatedEmail(String email) {
+        return new DuplicatedViewDto(userRepository.existsByEmail(email));
+    }
 
-	public void changeImage(Long userSeq, UserProfileImageDto dto) {
-		User user = findByUserSeq(userSeq);
-		if (user.isDeleted()) throw new CustomException(DELETED_USER);
-		if (isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
-		if (!isDefaultImage(user)) {
-			imageService.delete(user.getImage().getSeq());
-		}
-		user.changeImage(imageService.save(dto.image()));
-	}
+    public DuplicatedViewDto isDuplicatedNickname(String nickname) {
+        return new DuplicatedViewDto(userRepository.existsByNickname(nickname));
+    }
 
-	private User findByUserSeq(Long userSeq) {
-		User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
-		if (user.isDeleted()) throw new CustomException(DELETED_USER);
-		return user;
-	}
+    public Resource getUserImage(Long userSeq) {
+        User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        return imageService.getImage(user.getImage().getSeq());
+    }
 
-	private boolean isDefaultImage(User user) {
-		return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), ImageCache.get(ImageCache.DEFAULT_PROFILE).getSeq());
-	}
+    public void changeImage(Long userSeq, UserProfileImageDto dto) {
+        User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        if (!isDefaultImage(user)) {
+            imageService.delete(user.getImage().getSeq());
+        }
+        user.changeImage(imageService.save(dto.image()));
+    }
 
-	private boolean isCreatedUser(User createdUser) {
-		User loginUser = authUtils.getLoginUser();
-		return !Objects.equals(loginUser.getSeq(), createdUser.getSeq());
-	}
+    private User findByUserSeq(Long userSeq) {
+        User user = userRepository.findById(userSeq).orElseThrow(() -> new CustomException(SEQ_NOT_FOUND));
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        return user;
+    }
 
-	public void delete(Long userSeq) {
-		User user = findByUserSeq(userSeq);
-		if (isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
-		user.delete();
-	}
+    private boolean isDefaultImage(User user) {
+        return ObjectUtils.nullSafeEquals(user.getImage().getSeq(), ImageCache.get(ImageCache.DEFAULT_PROFILE).getSeq());
+    }
 
-	public void changePassword(Long userSeq, UserChangePasswordDto dto) {
-		User user = findByUserSeq(userSeq);
-		if (isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
-		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		user.changePassword(encoder.encode(dto.password()));
-	}
+    private boolean isCreatedUser(User createdUser) {
+        User loginUser = authUtils.getLoginUser();
+        return Objects.equals(loginUser.getSeq(), createdUser.getSeq());
+    }
 
-	public boolean connect(Long userSeq) {
-		boolean alreadyConnect = connectHistoryRepository.existsByConnectDateTimeIsAfterAndUserSeq(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT), userSeq);
-		if (alreadyConnect) return false;
+    public void delete(Long userSeq) {
+        User user = findByUserSeq(userSeq);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        user.delete();
+    }
 
-		User user = findByUserSeq(userSeq);
-		if (user.isDeleted()) throw new CustomException(DELETED_USER);
-		if (isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+    public void changePassword(Long userSeq, UserChangePasswordDto dto) {
+        User user = findByUserSeq(userSeq);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        user.changePassword(encoder.encode(dto.password()));
+    }
 
-		ConnectHistory connectHistory = ConnectHistory.builder()
-			.user(user)
-			.connectDateTime(LocalDateTime.now())
-			.build();
+    public void changePassword(String userEmail, UserChangePasswordDto dto) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        user.changePassword(encoder.encode(dto.password()));
+    }
+
+    public boolean connect(Long userSeq) {
+        boolean alreadyConnect = connectHistoryRepository.existsByConnectDateTimeIsAfterAndUserSeq(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT), userSeq);
+        if (alreadyConnect) return false;
+
+        User user = findByUserSeq(userSeq);
+        if (user.isDeleted()) throw new CustomException(DELETED_USER);
+        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+
+        user.plusPoint(USER_CONNECT_POINT);
+
+        ConnectHistory connectHistory = ConnectHistory.builder()
+                .user(user)
+                .connectDateTime(LocalDateTime.now())
+                .build();
 
 		connectHistoryRepository.save(connectHistory);
 		return true;
