@@ -19,8 +19,10 @@ import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RecordWeeklyCountDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
+import com.runwithme.runwithme.domain.record.entity.RecordCoordinate;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
 import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
+import com.runwithme.runwithme.domain.record.repository.RecordCoordinateRepository;
 import com.runwithme.runwithme.domain.record.repository.RunRecordRepository;
 import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.error.CustomException;
@@ -35,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class RecordService {
 	private final RunRecordRepository runRecordRepository;
+	private final RecordCoordinateRepository recordCoordinateRepository;
 	private final ChallengeRepository challengeRepository;
 	private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
 	private final AuthUtils authUtils;
@@ -44,24 +47,37 @@ public class RecordService {
 	public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, MultipartFile image) {
 		final Long userSeq = authUtils.getLoginUserSeq();
 
-		final Image savedImage = imageIsEmpty(image);
-
 		if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
 			throw new CustomException(RECORD_ALREADY_EXIST);
 		}
 
+		final Image savedImage = imageIsEmpty(image);
+
 		final RunRecord runRecord = RunRecord.builder()
 			.userSeq(userSeq)
 			.challengeSeq(challengeSeq)
+			.runningDay(runRecordPostDto.getRunningDay())
 			.startTime(runRecordPostDto.getStartTime())
 			.endTime(runRecordPostDto.getEndTime())
 			.runningTime(runRecordPostDto.getRunningTime())
 			.runningDistance(runRecordPostDto.getRunningDistance())
+			.calorie(runRecordPostDto.getCalorie())
+			.avgSpeed(runRecordPostDto.getAvgSpeed())
 			.image(savedImage)
 			.successYn(runRecordPostDto.getSuccessYn())
 			.weekly(getWeekly(challengeSeq))
 			.build();
 		runRecordRepository.save(runRecord);
+
+		final List<CoordinateDto> coordinates = runRecordPostDto.getCoordinates();
+		for (CoordinateDto coordinate : coordinates) {
+			final RecordCoordinate recordCoordinate = RecordCoordinate.builder()
+				.runRecord(runRecord)
+				.latitude(coordinate.getLatitude())
+				.longitude(coordinate.getLongitude())
+				.build();
+			recordCoordinateRepository.save(recordCoordinate);
+		}
 
 		final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
 
