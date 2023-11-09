@@ -11,8 +11,11 @@ import lombok.NoArgsConstructor;
 public class RunRecordPostDto {
     private String startTime;
     private String endTime;
+    private String runningDay;
     private Long runningTime;
     private Long runningDistance;
-    private List coordinates;
+    private Long calorie;
+    private Long avgSpeed;
+    private List<CoordinateDto> coordinates;
     private char successYn;
 }

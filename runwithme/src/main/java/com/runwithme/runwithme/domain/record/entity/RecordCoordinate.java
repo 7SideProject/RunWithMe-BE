@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Setter;
 
 @Setter
@@ -29,4 +30,11 @@ public class RecordCoordinate {
 
     @Column
     private double longitude;
+
+    @Builder
+    public RecordCoordinate(RunRecord runRecord, double latitude, double longitude) {
+        this.runRecord = runRecord;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

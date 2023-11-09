@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.runwithme.runwithme.domain.challenge.dto.*;
+import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
+import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
 import com.runwithme.runwithme.global.utils.ImageCache;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +43,7 @@ public class ChallengeService {
 	private final ChallengeBoardRepository challengeBoardRepository;
 	private final ChallengeUserRepository challengeUserRepository;
 	private final ChallengeBoardWarnRepository challengeBoardWarnRepository;
+	private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
 	private final ImageService imageService;
 	private final AuthUtils authUtils;
 
@@ -105,7 +108,7 @@ public class ChallengeService {
 			.build();
 
 		challengeRepository.save(challenge);
-
+		createTotalRecord(user.getSeq(), challenge.getSeq());
 		challengeUserRepository.save(new ChallengeUser(user, challenge));
 	}
 
@@ -151,6 +154,9 @@ public class ChallengeService {
 
 		challengeUserRepository.save(new ChallengeUser(user, challenge));
 		challenge.plusNowMember();
+
+		createTotalRecord(user.getSeq(), challengeSeq);
+
 //		user.minusPoint(challenge.getCost().intValue());
 		return true;
 	}
@@ -240,12 +246,20 @@ public class ChallengeService {
 		boolean flag = false;
 		if (challenge.getManager().getSeq().equals(userSeq)){
 			challenge.deleteChallenge();
-			challenge.minusNowMember();
+//			challenge.minusNowMember();
 			flag = true;
 		}
 
 		challengeUserRepository.deleteByUserSeqAndChallengeSeq(userSeq, challengeSeq);
 		challenge.minusNowMember();
 		return flag;
+	}
+
+	public void createTotalRecord(Long userSeq, Long challengeSeq) {
+		final ChallengeTotalRecord challengeTotalRecord = ChallengeTotalRecord.builder()
+			.userSeq(userSeq)
+			.challengeSeq(challengeSeq)
+			.build();
+		challengeTotalRecordRepository.save(challengeTotalRecord);
 	}
 }

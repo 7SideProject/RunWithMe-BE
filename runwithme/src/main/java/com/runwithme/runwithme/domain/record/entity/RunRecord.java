@@ -40,6 +40,9 @@ public class RunRecord {
     @JoinColumn(name = "image_seq")
     private Image image;
 
+    @Column(name = "running_day")
+    private String runningDay;
+
     @Column(name = "start_time")
     private String startTime;
 
@@ -73,13 +76,16 @@ public class RunRecord {
     private LocalDate regTime;
 
     @Builder
-    public RunRecord(Long userSeq, Long challengeSeq, String startTime, String endTime, Long runningTime, Long runningDistance, Image image, int weekly, char successYn){
+    public RunRecord(Long userSeq, Long challengeSeq, String runningDay, String startTime, String endTime, Long runningTime, Long runningDistance, Long calorie, Long avgSpeed, Image image, int weekly, char successYn){
         this.userSeq = userSeq;
         this.challengeSeq = challengeSeq;
+        this.runningDay = runningDay;
         this.startTime = startTime;
         this.endTime = endTime;
         this.runningTime = runningTime;
         this.runningDistance = runningDistance;
+        this.calorie = calorie;
+        this.avgSpeed = avgSpeed;
         this.image = image;
         this.weekly = weekly;
         this.successYn = successYn;
