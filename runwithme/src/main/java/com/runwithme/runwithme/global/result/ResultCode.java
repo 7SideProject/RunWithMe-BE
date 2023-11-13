@@ -60,6 +60,8 @@ public enum ResultCode {
     CHALLENGE_NOT_JOIN              (400, -307, "챌린지에 가입되어 있지 않습니다."),
     CHALLENGE_JOIN_NOT_ENOUGH_POINT (400, -308, "챌린지 가입에 필요한 포인트가 부족합니다."),
     CHALLENGE_JOIN_MAX_MEMBER       (400, -309, "챌린지 원이 가득 찼습니다."),
+    CHALLENGE_NOT_START             (400, -310, "아직 시작하지 않은 챌린지 입니다."),
+    CHALLENGE_AFTER_END             (400, -311, "이미 끝난 챌린지 입니다."),
 
     // Board
     CREATE_BOARD_SUCCESS            (200, 400, "게시글 등록에 성공하였습니다."),

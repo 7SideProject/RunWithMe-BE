@@ -181,6 +181,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				.where(
 						challengeUser.user.seq.eq(userSeq)
 								.and(challengeUser.challenge.deleteYn.eq('N'))
+								.and(challenge.dateStart.before(nowTime))
+								.and(challenge.dateEnd.after(nowTime))
 								.and(runRecord.seq.isNull())
 						, eqCursorSeq(cursorSeq)
 				)
