@@ -57,7 +57,7 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
         if (user.isDeleted()) throw new CustomException(DELETED_USER);
         return user;
     }
@@ -129,8 +129,8 @@ public class UserService {
     }
 
     public void changePassword(String userEmail, UserChangePasswordDto dto) {
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
+        User user = findByEmail(userEmail);
+//        if (!isCreatedUser(user)) throw new CustomException(NOT_RESOURCE_OWNER);
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         user.changePassword(encoder.encode(dto.password()));
     }

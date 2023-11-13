@@ -28,6 +28,7 @@ public enum ResultCode {
     UNAUTHORIZED_USER               (403, -108, "권한 없는 사용자입니다."),
     REDIRECT_NOT_FOUND              (400, -109, "리디렉션 URI를 포함해야 합니다"),
     NOT_RESOURCE_OWNER              (403, -110, "리소스를 생성한 유저가 아닙니다."),
+    EMAIL_NOT_FOUND                 (404, -111, "해당 이메일을 가진 유저가 존재하지 않습니다."),
 
     // Record
     CREATE_RECORD_SUCCESS           (200, 200, "기록 등록에 성공하였습니다."),
