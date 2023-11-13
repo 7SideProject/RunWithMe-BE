@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
+import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserRepository;
 import com.runwithme.runwithme.domain.record.dto.ChallengeTotalRecordResponseDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
@@ -36,9 +37,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RecordService {
+	private final ChallengeRepository challengeRepository;
+	private final ChallengeUserRepository challengeUserRepository;
 	private final RunRecordRepository runRecordRepository;
 	private final RecordCoordinateRepository recordCoordinateRepository;
-	private final ChallengeRepository challengeRepository;
 	private final ChallengeTotalRecordRepository challengeTotalRecordRepository;
 	private final AuthUtils authUtils;
 	private final ImageService imageService;
@@ -46,6 +48,23 @@ public class RecordService {
 	@Transactional
 	public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, MultipartFile image) {
 		final Long userSeq = authUtils.getLoginUserSeq();
+
+		if (!challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)) {
+			throw new CustomException(CHALLENGE_NOT_JOIN);
+		}
+
+		final Challenge challenge = challengeRepository.findById(challengeSeq)
+			.orElseThrow(() -> new CustomException(CHALLENGE_NOT_FOUND));
+
+		final LocalDate nowTime = LocalDate.now();
+
+		if (challenge.getDateStart().isBefore(nowTime)) {
+			throw new CustomException(CHALLENGE_NOT_START);
+		}
+
+		if (challenge.getDateEnd().isAfter(nowTime)) {
+			throw new CustomException(CHALLENGE_AFTER_END);
+		}
 
 		if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
 			throw new CustomException(RECORD_ALREADY_EXIST);

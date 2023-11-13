@@ -234,9 +234,9 @@ public class ChallengeService {
 
 	@Transactional
 	public boolean deleteMyChallenge(Long challengeSeq) {
-		final Long userSeq = authUtils.getLoginUserSeq();
+		final User user = authUtils.getLoginUser();
 
-		if (!challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)) {
+		if (!challengeUserRepository.existsByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq)) {
 			throw new CustomException(CHALLENGE_NOT_JOIN);
 		}
 
@@ -244,14 +244,16 @@ public class ChallengeService {
 			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
 		boolean flag = false;
-		if (challenge.getManager().getSeq().equals(userSeq)){
+		if (challenge.getManager().getSeq().equals(user.getSeq())){
 			challenge.deleteChallenge();
 //			challenge.minusNowMember();
 			flag = true;
 		}
 
-		challengeUserRepository.deleteByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+		challengeUserRepository.deleteByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq);
 		challenge.minusNowMember();
+		user.addPoint(challenge.getCost().intValue());
+		
 		return flag;
 	}
 
