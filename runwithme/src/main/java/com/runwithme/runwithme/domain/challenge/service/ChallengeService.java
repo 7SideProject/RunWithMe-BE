@@ -210,7 +210,9 @@ public class ChallengeService {
 	}
 
 	public Image imageIsEmpty(MultipartFile image) {
-		if (image.isEmpty()) {
+		if (image == null) {
+			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);
+		} else if (image.isEmpty()) {
 			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);
 		}
 		return imageService.save(image);
