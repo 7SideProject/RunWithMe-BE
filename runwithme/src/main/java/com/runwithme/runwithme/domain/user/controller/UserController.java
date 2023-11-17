@@ -1,10 +1,13 @@
 package com.runwithme.runwithme.domain.user.controller;
 
+import org.springframework.core.MethodParameter;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -104,7 +107,16 @@ public class UserController {
     }
 
     @PutMapping(value = "/{userSeq}/profile-image")
-    public ResponseEntity<Void> changeImage(@PathVariable Long userSeq, @ModelAttribute UserProfileImageDto dto) {
+    public ResponseEntity<Void> changeImage(@PathVariable Long userSeq, @Validated @ModelAttribute UserProfileImageDto dto, BindingResult bindingResult) throws NoSuchMethodException, MethodArgumentNotValidException {
+        if (bindingResult.hasFieldErrors()) {
+            throw new MethodArgumentNotValidException(
+                new MethodParameter(
+                    this.getClass()
+                        .getDeclaredMethod("changeImage", Long.class, UserProfileImageDto.class, BindingResult.class),
+                    0),
+                bindingResult);
+        }
+
         userService.changeImage(userSeq, dto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
