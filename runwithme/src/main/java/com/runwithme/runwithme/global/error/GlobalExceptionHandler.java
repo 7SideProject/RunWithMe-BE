@@ -61,6 +61,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.body(ResultResponseDto.of(ResultCode.INVALID_PARAMETER_FAIL, errors));
 	}
 
+	@ExceptionHandler({Exception.class})
+	protected ResponseEntity<ResultResponseDto> exceptionHandler(Exception e, HttpServletRequest request) {
+		notificationManager.sendNotification(e, request.getRequestURI(), getParams(request));
+		return ResponseEntity
+			.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(ResultResponseDto.of(ResultCode.INTERNAL_SERVER_ERROR));
+	}
+
 	private static List<FieldError> getFieldErrors(MethodArgumentNotValidException e) {
 		return e.getBindingResult().getFieldErrors();
 	}
