@@ -23,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.runwithme.runwithme.domain.user.service.RefreshTokenService;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
+import com.runwithme.runwithme.global.security.filter.JwtExceptionFilter;
 import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
 import com.runwithme.runwithme.global.security.handler.CustomAuthenticationFailureHandler;
 import com.runwithme.runwithme.global.security.handler.CustomAuthenticationSuccessHandler;
@@ -97,9 +98,10 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, PERMIT_GET_URL_PATHS).permitAll()
 			.anyRequest().authenticated()
 			.and()
-			.exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
+//			.exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
 			.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtExceptionFilter(), TokenAuthorizationFilter.class)
 			.build();
 	}
 
@@ -133,6 +135,11 @@ public class SecurityConfig {
 	@Bean
 	public CustomAuthenticationProvider customAuthenticationProvider() {
 		return new CustomAuthenticationProvider(passwordEncoder());
+	}
+
+	@Bean
+	public JwtExceptionFilter jwtExceptionFilter() {
+		return new JwtExceptionFilter();
 	}
 
 	@Bean
