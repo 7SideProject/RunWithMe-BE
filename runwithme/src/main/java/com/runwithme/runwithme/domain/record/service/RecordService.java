@@ -58,11 +58,11 @@ public class RecordService {
 
 		final LocalDate nowTime = LocalDate.now();
 
-		if (challenge.getDateStart().isBefore(nowTime)) {
+		if (challenge.getDateStart().isAfter(nowTime)) {
 			throw new CustomException(CHALLENGE_NOT_START);
 		}
 
-		if (challenge.getDateEnd().isAfter(nowTime)) {
+		if (challenge.getDateEnd().isBefore(nowTime)) {
 			throw new CustomException(CHALLENGE_AFTER_END);
 		}
 
@@ -100,8 +100,19 @@ public class RecordService {
 
 		final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
 
-		myTotals.setTotalTime(myTotals.getTotalTime() + runRecordPostDto.getRunningTime());
-		myTotals.setTotalDistance(myTotals.getTotalDistance() + runRecordPostDto.getRunningDistance());
+		myTotals.plusTotalTime(runRecordPostDto.getRunningTime());
+		myTotals.plusTotalDistance(runRecordPostDto.getRunningDistance());
+		myTotals.plusTotalCalorie(runRecordPostDto.getCalorie());
+
+		myTotals.setTotalAvgSpeed((myTotals.getTotalDistance().doubleValue() / 1000) / (myTotals.getTotalTime().doubleValue() / 3600));
+
+		if (myTotals.getTotalLongestTime() < runRecordPostDto.getRunningTime()) {
+			myTotals.setTotalLongestTime(runRecordPostDto.getRunningTime());
+		}
+
+		if (myTotals.getTotalLongestDistance() < runRecordPostDto.getRunningDistance()) {
+			myTotals.setTotalLongestDistance(runRecordPostDto.getRunningDistance());
+		}
 	}
 
 	@Transactional
