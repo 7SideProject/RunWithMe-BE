@@ -5,13 +5,14 @@ import static com.runwithme.runwithme.global.result.ResultCode.*;
 import java.security.Key;
 import java.util.Date;
 
-import com.runwithme.runwithme.global.error.CustomException;
+import com.runwithme.runwithme.global.error.jwt.JwtException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,13 +65,13 @@ public class AuthToken {
 				.parseClaimsJws(token)
 				.getBody();
 		} catch (SecurityException e) {
-			throw new CustomException(INVALID_JWT_SIGNATURE);
+			throw new JwtException(INVALID_JWT_SIGNATURE);
 		} catch (MalformedJwtException e) {
-			throw new CustomException(INVALID_JWT_TOKEN);
+			throw new JwtException(INVALID_JWT_TOKEN);
 		} catch (ExpiredJwtException e) {
-			throw new CustomException(EXPIRED_JWT_TOKEN);
-		} catch (Exception e) {
-			throw new CustomException(UNSUPPORTED_JWT_TOKEN);
+			throw new JwtException(EXPIRED_JWT_TOKEN);
+		} catch (UnsupportedJwtException e) {
+			throw new JwtException(UNSUPPORTED_JWT_TOKEN);
 		}
 	}
 
