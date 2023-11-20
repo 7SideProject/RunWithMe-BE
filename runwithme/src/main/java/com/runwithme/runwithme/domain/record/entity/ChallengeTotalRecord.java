@@ -51,7 +51,7 @@ public class ChallengeTotalRecord {
 
     @Column(name = "total_avg_speed")
     @ColumnDefault("0")
-    private Long totalAvgSpeed;
+    private double totalAvgSpeed;
 
     @Builder
     public ChallengeTotalRecord(Long userSeq, Long challengeSeq) {
@@ -59,11 +59,14 @@ public class ChallengeTotalRecord {
         this.challengeSeq = challengeSeq;
     }
 
-    public void setTotalTime(Long totalTime) {
-        this.totalTime = totalTime;
+    public void plusTotalTime(Long totalTime) {
+        this.totalTime += totalTime;
     }
-
-    public void setTotalDistance(Long totalDistance) {
-        this.totalDistance = totalDistance;
+    public void plusTotalDistance(Long totalDistance) {
+        this.totalDistance += totalDistance;
     }
+    public void plusTotalCalorie(Long totalCalorie) { this.totalCalorie += totalCalorie; }
+    public void setTotalAvgSpeed(double totalAvgSpeed) { this.totalAvgSpeed = totalAvgSpeed; }
+    public void setTotalLongestTime(Long totalLongestTime) { this.totalLongestTime = totalLongestTime; }
+    public void setTotalLongestDistance(Long totalLongestDistance) { this.totalLongestDistance = totalLongestDistance; }
 }

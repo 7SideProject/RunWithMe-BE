@@ -56,7 +56,7 @@ public class RunRecord {
     private Long runningDistance;
 
     @Column(name = "avgSpeed")
-    private Long avgSpeed;
+    private double avgSpeed;
 
     @Column(name = "calorie")
     private Long calorie;
@@ -76,7 +76,7 @@ public class RunRecord {
     private LocalDate regTime;
 
     @Builder
-    public RunRecord(Long userSeq, Long challengeSeq, String runningDay, String startTime, String endTime, Long runningTime, Long runningDistance, Long calorie, Long avgSpeed, Image image, int weekly, char successYn){
+    public RunRecord(Long userSeq, Long challengeSeq, String runningDay, String startTime, String endTime, Long runningTime, Long runningDistance, Long calorie, double avgSpeed, Image image, int weekly, char successYn){
         this.userSeq = userSeq;
         this.challengeSeq = challengeSeq;
         this.runningDay = runningDay;

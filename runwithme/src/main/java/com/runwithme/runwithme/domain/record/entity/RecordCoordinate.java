@@ -26,13 +26,13 @@ public class RecordCoordinate {
     private RunRecord runRecord;
 
     @Column
-    private double latitude;
+    private int latitude;
 
     @Column
-    private double longitude;
+    private int longitude;
 
     @Builder
-    public RecordCoordinate(RunRecord runRecord, double latitude, double longitude) {
+    public RecordCoordinate(RunRecord runRecord, int latitude, int longitude) {
         this.runRecord = runRecord;
         this.latitude = latitude;
         this.longitude = longitude;
