@@ -211,7 +211,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 	private BooleanExpression customCursor(Long cursorSeq, String customCursor) {
 		if (cursorSeq == null) return null;
 		return cursorSeq == 0 ? challenge.seq.gt(cursorSeq) :
-			challenge.dateStart.stringValue().concat(StringExpressions.lpad(challenge.seq.stringValue(), 10, '0')).lt(customCursor);
+			challenge.dateStart.stringValue().concat(StringExpressions.lpad(challenge.seq.stringValue(), 10, '0')).gt(customCursor);
 	}
 
 	@Override
