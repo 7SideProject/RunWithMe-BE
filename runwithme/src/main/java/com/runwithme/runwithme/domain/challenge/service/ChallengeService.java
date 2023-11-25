@@ -157,7 +157,7 @@ public class ChallengeService {
 
 		createTotalRecord(user.getSeq(), challengeSeq);
 
-//		user.minusPoint(challenge.getCost().intValue());
+		user.minusPoint(challenge.getCost().intValue());
 		return true;
 	}
 
@@ -174,10 +174,10 @@ public class ChallengeService {
 	}
 
 	@Transactional
-	public List<ChallengeResponseDto> getRecruitChallengeList(Long cursorSeq, Pageable pageable) {
+	public List<ChallengeResponseDto> getRecruitChallengeList(Long cursorSeq, LocalDate dateStart, Pageable pageable) {
 		final Long userSeq = authUtils.getLoginUserSeq();
 		final LocalDate localDate = LocalDate.now();
-		return challengeRepository.findRecruitChallengePage(cursorSeq, userSeq, localDate, pageable).getContent();
+		return challengeRepository.findRecruitChallengePage(cursorSeq, customCursor(dateStart, cursorSeq), userSeq, localDate, pageable).getContent();
 	}
 
 	@Transactional
@@ -265,5 +265,9 @@ public class ChallengeService {
 			.challengeSeq(challengeSeq)
 			.build();
 		challengeTotalRecordRepository.save(challengeTotalRecord);
+	}
+
+	public String customCursor(LocalDate dateStart, Long cursorSeq) {
+		return dateStart.toString() + String.format("%010d", cursorSeq);
 	}
 }

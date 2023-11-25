@@ -2,6 +2,7 @@ package com.runwithme.runwithme.domain.challenge.controller;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,8 +106,8 @@ public class ChallengeController {
 	@Operation(operationId = "getRecruitChallengeList", summary = "모집중인 전체 챌린지 리스트 조회")
 	@GetMapping("/all/recruit")
 	@PageableAsQueryParam
-	public ResponseEntity<ResultResponseDto> getRecruitChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(hidden = true) @PageableDefault Pageable pageable) {
-		final List<ChallengeResponseDto> challenges = challengeService.getRecruitChallengeList(cursorSeq, pageable);
+	public ResponseEntity<ResultResponseDto> getRecruitChallengeList(@Parameter(description = "cursorSeq", name = "cursorSeq") Long cursorSeq, @Parameter(description = "dateStart", name = "dateStart") LocalDate dateStart, @Parameter(hidden = true) @PageableDefault Pageable pageable) {
+		final List<ChallengeResponseDto> challenges = challengeService.getRecruitChallengeList(cursorSeq, dateStart, pageable);
 		return ResponseEntity.ok().body(ResultResponseDto.of(GET_ALL_CHALLENGE_SUCCESS, challenges));
 	}
 
