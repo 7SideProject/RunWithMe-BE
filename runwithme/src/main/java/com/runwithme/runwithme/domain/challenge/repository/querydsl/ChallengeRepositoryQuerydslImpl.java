@@ -117,7 +117,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
 			.where(challenge.deleteYn.eq('N').and(challenge.dateStart.after(nowTime)),
 				customCursor(cursorSeq, customCursor))
-			.orderBy(challenge.dateStart.asc(), challenge.seq.desc())
+			.orderBy(challenge.dateStart.asc(), challenge.seq.asc())
 			.limit(pageable.getPageSize())
 			.fetchResults();
 		return new PageImpl<>(result.getResults(), pageable, result.getTotal());
