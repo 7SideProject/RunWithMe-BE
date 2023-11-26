@@ -5,6 +5,7 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 import org.apache.commons.codec.CharEncoding;
@@ -46,18 +47,37 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		PrincipalDetails details = (PrincipalDetails) authentication.getPrincipal();
 		User user = details.getUser();
 
-		AuthToken accessToken = tokenFactory.createAuthToken(user.getEmail(), user.getRole().toString(), new Date(System.currentTimeMillis() + properties.accessTokenExpiry));
+		setAccessToken(response, user);
+		setRefreshToken(request, response, user);
+	}
+
+	private void setRefreshToken(HttpServletRequest request, HttpServletResponse response, User user) {
+		Date expiry = new Date(System.currentTimeMillis() + properties.refreshTokenExpiry);
+		AuthToken token = tokenFactory.createAuthToken(null, expiry);
+		refreshTokenService.save(
+			new RefreshTokenDto(token.getToken(), user.getEmail(), convertBy(expiry))
+		);
+
+		log.debug("Successful Authentication :: RefreshToken : {}", token.getToken());
+		CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
+		CookieUtils.addCookie(response, REFRESH_TOKEN, token.getToken(), properties.refreshTokenExpiry);
+	}
+
+	private void setAccessToken(HttpServletResponse response, User user) throws IOException {
+		Date expiry = new Date(System.currentTimeMillis() + properties.accessTokenExpiry);
+		AuthToken accessToken = tokenFactory.createAuthToken(user.getEmail(), user.getRole().toString(), expiry);
+
 		log.debug("Successful Authentication :: AccessToken : {}", accessToken.getToken());
 		HeaderUtils.setAccessToken(response, accessToken.getToken());
 		response.setCharacterEncoding(CharEncoding.UTF_8);
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		setResponseBody(user, response);
+	}
 
-		AuthToken refreshToken = tokenFactory.createAuthToken(null, new Date(System.currentTimeMillis() + properties.refreshTokenExpiry));
-		refreshTokenService.save(new RefreshTokenDto(refreshToken.getToken(), user.getEmail(), LocalDateTime.now().plusSeconds(properties.refreshTokenExpiry / 1000)));
-		log.debug("Successful Authentication :: RefreshToken : {}", refreshToken.getToken());
-		CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-		CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), properties.refreshTokenExpiry);
+	private static LocalDateTime convertBy(Date date) {
+		return date.toInstant()
+			.atZone(ZoneId.systemDefault())
+			.toLocalDateTime();
 	}
 
 	private void setResponseBody(User loginUser, HttpServletResponse response) throws IOException {

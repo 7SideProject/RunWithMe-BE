@@ -1,7 +1,9 @@
 package com.runwithme.runwithme.domain.user.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -31,29 +33,62 @@ public class RefreshTokenService {
 	private final AuthTokenFactory tokenFactory;
 	private final JwtProperties properties;
 
-	public void save(RefreshTokenDto dto) {
-		RefreshToken entity = RefreshToken.builder()
-			.name(dto.tokenName())
-			.userEmail(dto.userEmail())
-			.expiredDateTime(dto.expiredDatetime())
-			.build();
+	public void save(String token, User user, LocalDateTime expiredDateTime) {
+		Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByUser(user);
 
+		RefreshToken entity;
+		if (optionalRefreshToken.isEmpty()) {
+			entity = RefreshToken.builder()
+				.name(token)
+				.user(user)
+				.expiredDateTime(expiredDateTime)
+				.build();
+		} else {
+			entity = optionalRefreshToken.get();
+			entity.update(token, expiredDateTime);
+		}
 		refreshTokenRepository.save(entity);
 	}
 
-	public AuthToken reIssue(RefreshTokenIssueDto dto) {
-		RefreshToken token = refreshTokenRepository.findById(dto.refreshToken()).orElseThrow(() -> new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN));
-		AuthToken authToken = tokenFactory.convertAuthToken(token.getName());
-		if (authToken.validate()) {
-			User user = userRepository.findByEmail(token.getUserEmail()).orElseThrow(() -> new CustomException(ResultCode.USER_NOT_FOUND));
-			return tokenFactory.createAuthToken(user.getEmail(), user.getRole().toString(), new Date(System.currentTimeMillis() + properties.accessTokenExpiry));
+	public void save(RefreshTokenDto dto) {
+		User user = userRepository.findByEmail(dto.userEmail())
+			.orElseThrow(() -> new CustomException(ResultCode.EMAIL_NOT_FOUND));
+
+		save(dto.tokenName(), user, dto.expiredDatetime());
+	}
+
+	public AuthToken reIssueAccessToken(RefreshTokenIssueDto dto) {
+		RefreshToken entity = refreshTokenRepository.findByName(dto.refreshToken())
+			.orElseThrow(() -> new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN));
+
+		AuthToken refreshToken = tokenFactory.convertAuthToken(entity.getName());
+		if (refreshToken.validate()) {
+			User user = entity.getUser();
+			Date expiry = new Date(System.currentTimeMillis() + properties.accessTokenExpiry);
+			return tokenFactory.createAuthToken(user.getEmail(), user.getRole().toString(), expiry);
 		} else {
 			throw new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN);
 		}
 	}
 
-	private boolean isExpired(LocalDateTime expiredDatetime) {
-		LocalDateTime now = LocalDateTime.now();
-		return now.isAfter(expiredDatetime);
+	public Optional<AuthToken> reIssueRefreshToken(RefreshTokenIssueDto dto, LocalDateTime compared) {
+		RefreshToken entity = refreshTokenRepository.findByName(dto.refreshToken())
+			.orElseThrow(() -> new CustomException(ResultCode.UNSUPPORTED_JWT_TOKEN));
+
+		LocalDateTime expiry = entity.getExpiredDateTime();
+
+		if (expiry.isAfter(compared))
+			return Optional.empty();
+
+		Date date = new Date(System.currentTimeMillis() + properties.refreshTokenExpiry);
+		AuthToken token = tokenFactory.createAuthToken(null, date);
+		save(token.getToken(), entity.getUser(), convertBy(date));
+		return Optional.of(token);
+	}
+
+	private static LocalDateTime convertBy(Date date) {
+		return date.toInstant()
+			.atZone(ZoneId.systemDefault())
+			.toLocalDateTime();
 	}
 }

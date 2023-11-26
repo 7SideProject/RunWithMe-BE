@@ -1,9 +1,14 @@
 package com.runwithme.runwithme.domain.user.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.runwithme.runwithme.domain.user.entity.RefreshToken;
+import com.runwithme.runwithme.domain.user.entity.User;
 
-public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {
+public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
+	Optional<RefreshToken> findByUser(User user);
 
+	Optional<RefreshToken> findByName(String name);
 }
