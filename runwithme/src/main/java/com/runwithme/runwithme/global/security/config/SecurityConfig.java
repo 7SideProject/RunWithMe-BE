@@ -30,7 +30,6 @@ import com.runwithme.runwithme.global.security.handler.CustomAuthenticationSucce
 import com.runwithme.runwithme.global.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import com.runwithme.runwithme.global.security.point.DelegatedAuthenticationEntryPoint;
-import com.runwithme.runwithme.global.security.properties.JwtProperties;
 import com.runwithme.runwithme.global.security.provider.CustomAuthenticationProvider;
 import com.runwithme.runwithme.global.security.repository.CustomAuthorizationRequestRepository;
 import com.runwithme.runwithme.global.security.service.CustomOAuth2UserService;
@@ -65,8 +64,6 @@ public class SecurityConfig {
 	};
 
 	private final AuthTokenFactory authTokenFactory;
-
-	private final JwtProperties properties;
 
 	private final CustomOAuth2UserService customOAuth2UserService;
 
@@ -117,7 +114,7 @@ public class SecurityConfig {
 
 	@Bean
 	public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-		return new OAuth2AuthenticationSuccessHandler(authTokenFactory, properties);
+		return new OAuth2AuthenticationSuccessHandler(authTokenFactory);
 	}
 
 	@Bean
@@ -126,7 +123,7 @@ public class SecurityConfig {
 
 		customAuthenticationFilter.setFilterProcessesUrl("/users/login");
 		customAuthenticationFilter.setAuthenticationManager(authenticationManager());
-		customAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(authTokenFactory, properties, refreshTokenService));
+		customAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(authTokenFactory, refreshTokenService));
 		customAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 
 		return customAuthenticationFilter;

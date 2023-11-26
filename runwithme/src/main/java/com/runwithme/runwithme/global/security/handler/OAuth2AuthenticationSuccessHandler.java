@@ -16,7 +16,6 @@ import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.security.jwt.AuthToken;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
 import com.runwithme.runwithme.global.security.model.PrincipalDetails;
-import com.runwithme.runwithme.global.security.properties.JwtProperties;
 import com.runwithme.runwithme.global.utils.CookieUtils;
 
 import jakarta.servlet.http.Cookie;
@@ -30,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private final AuthTokenFactory authTokenFactory;
-	private final JwtProperties properties;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -64,7 +62,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private String createToken(Authentication authentication) {
 		User user = getUser(authentication);
 
-		AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRoleValue(), new Date(System.currentTimeMillis() + properties.accessTokenExpiry));
+		Long expiry = authTokenFactory.getExpiryOfAccessToken(System.currentTimeMillis());
+		AuthToken accessToken = authTokenFactory.createAuthToken(user.getEmail(), user.getRoleValue(), new Date(expiry));
 
 		return accessToken.getToken();
 	}

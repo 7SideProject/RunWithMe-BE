@@ -10,5 +10,5 @@ import com.runwithme.runwithme.domain.user.entity.User;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 	Optional<RefreshToken> findByUser(User user);
 
-	Optional<RefreshToken> findByName(String name);
+	Optional<RefreshToken> findByToken(String token);
 }

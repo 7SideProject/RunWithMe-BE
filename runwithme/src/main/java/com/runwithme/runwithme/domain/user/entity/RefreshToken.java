@@ -27,21 +27,21 @@ public class RefreshToken {
 	@JoinColumn(name = "user_seq", nullable = false, unique = true)
 	private User user;
 
-	@Column(name = "rt_name", nullable = false)
-	private String name;
+	@Column(name = "rt_token", nullable = false, unique = true)
+	private String token;
 
-	@Column(name = "rt_expired_datetime")
+	@Column(name = "rt_expired_datetime", nullable = false)
 	private LocalDateTime expiredDateTime;
 
 	@Builder
-	public RefreshToken(User user, String name, LocalDateTime expiredDateTime) {
+	public RefreshToken(User user, String token, LocalDateTime expiredDateTime) {
 		this.user = user;
-		this.name = name;
+		this.token = token;
 		this.expiredDateTime = expiredDateTime;
 	}
 
-	public void update(String name, LocalDateTime expiredDateTime) {
-		this.name = name;
+	public void update(String token, LocalDateTime expiredDateTime) {
+		this.token = token;
 		this.expiredDateTime = expiredDateTime;
 	}
 }
