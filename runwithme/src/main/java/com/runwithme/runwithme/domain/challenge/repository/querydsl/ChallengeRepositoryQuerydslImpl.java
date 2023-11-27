@@ -80,7 +80,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				challenge.nowMember,
 				challenge.maxMember,
 				challenge.cost,
-				isExistChallengeUser(userSeq)
+				isExistChallengeUser(userSeq),
+				passwordIsNull()
 			))
 			.from(challenge)
 			.leftJoin(challengeUser)
@@ -110,7 +111,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				challenge.nowMember,
 				challenge.maxMember,
 				challenge.cost,
-				isExistChallengeUser(userSeq)
+				isExistChallengeUser(userSeq),
+				passwordIsNull()
 			))
 			.from(challenge)
 			.leftJoin(challengeUser)
@@ -141,7 +143,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				challengeUser.challenge.nowMember,
 				challengeUser.challenge.maxMember,
 				challengeUser.challenge.cost,
-				isExistChallengeUser(userSeq)
+				isExistChallengeUser(userSeq),
+				passwordIsNull()
 			))
 			.from(challengeUser)
 			.where(challengeUser.user.seq.eq(userSeq).and(challengeUser.challenge.deleteYn.eq('N')))
@@ -155,47 +158,52 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 	@Override
 	public Page<ChallengeResponseDto> findMyRunningChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable){
 		QueryResults<ChallengeResponseDto> result = jpaQueryFactory
-				.select(new QChallengeResponseDto(
-						challengeUser.challenge.seq,
-						challengeUser.challenge.manager.seq,
-						challengeUser.challenge.image.seq,
-						challengeUser.challenge.manager.nickname,
-						challengeUser.challenge.description,
-						challengeUser.challenge.name,
-						challengeUser.challenge.goalDays,
-						challengeUser.challenge.goalType,
-						challengeUser.challenge.goalAmount,
-						challengeUser.challenge.dateStart,
-						challengeUser.challenge.dateEnd,
-						challengeUser.challenge.nowMember,
-						challengeUser.challenge.maxMember,
-						challengeUser.challenge.cost,
-						isExistChallengeUser(userSeq)
-				))
-				.from(challengeUser)
-				.leftJoin(runRecord)
-				.on(
-						runRecord.challengeSeq.eq(challengeUser.challenge.seq)
-								.and(runRecord.userSeq.eq(userSeq))
-								.and(runRecord.regTime.eq(nowTime))
-				)
-				.where(
-						challengeUser.user.seq.eq(userSeq)
-								.and(challengeUser.challenge.deleteYn.eq('N'))
-								.and(challenge.dateStart.before(nowTime))
-								.and(challenge.dateEnd.after(nowTime))
-								.and(runRecord.seq.isNull())
-						, eqCursorSeq(cursorSeq)
-				)
-				.orderBy(challengeUser.challenge.seq.desc())
-				.limit(pageable.getPageSize())
-				.fetchResults();
+			.select(new QChallengeResponseDto(
+				challengeUser.challenge.seq,
+				challengeUser.challenge.manager.seq,
+				challengeUser.challenge.image.seq,
+				challengeUser.challenge.manager.nickname,
+				challengeUser.challenge.description,
+				challengeUser.challenge.name,
+				challengeUser.challenge.goalDays,
+				challengeUser.challenge.goalType,
+				challengeUser.challenge.goalAmount,
+				challengeUser.challenge.dateStart,
+				challengeUser.challenge.dateEnd,
+				challengeUser.challenge.nowMember,
+				challengeUser.challenge.maxMember,
+				challengeUser.challenge.cost,
+				isExistChallengeUser(userSeq),
+				passwordIsNull()
+			))
+			.from(challengeUser)
+			.leftJoin(runRecord)
+			.on(
+					runRecord.challengeSeq.eq(challengeUser.challenge.seq)
+							.and(runRecord.userSeq.eq(userSeq))
+							.and(runRecord.regTime.eq(nowTime))
+			)
+			.where(
+					challengeUser.user.seq.eq(userSeq)
+							.and(challengeUser.challenge.deleteYn.eq('N'))
+							.and(challenge.dateStart.before(nowTime))
+							.and(challenge.dateEnd.after(nowTime))
+							.and(runRecord.seq.isNull())
+					, eqCursorSeq(cursorSeq)
+			)
+			.orderBy(challengeUser.challenge.seq.desc())
+			.limit(pageable.getPageSize())
+			.fetchResults();
 		return new PageImpl<>(result.getResults(), pageable, result.getTotal());
 	}
 
 	public BooleanExpression isExistChallengeUser(Long userSeq) {
 		if (userSeq == null) return null;
 		return challengeUser.user.seq.isNotNull();
+	}
+
+	public BooleanExpression passwordIsNull() {
+		return challenge.password.isNull();
 	}
 
 	public BooleanExpression isExistRunRecord(Long userSeq) {

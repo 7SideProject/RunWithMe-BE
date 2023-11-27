@@ -129,7 +129,6 @@ public class ChallengeService {
 	@Transactional
 	public boolean joinChallengeUser(Long challengeSeq, String password) {
 		final User user = authUtils.getLoginUser();
-
 		if (challengeUserRepository.existsByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq)) {
 			throw new CustomException(CHALLENGE_JOIN_ALREADY_EXIST);
 		}
@@ -140,7 +139,11 @@ public class ChallengeService {
 			throw new CustomException(CHALLENGE_NOT_FOUND);
 		}
 
-		if (!challenge.getPassword().equals(password)) {
+		if (user.getPoint() < challenge.getCost()) {
+			throw new CustomException(NOT_ENOUGH_POINT);
+		}
+
+		if (challenge.getPassword() != null && !challenge.getPassword().equals(password)) {
 			throw new CustomException(CHALLENGE_JOIN_PASSWORD_FAIL);
 		}
 
