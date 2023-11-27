@@ -126,7 +126,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 	}
 
 	@Override
-	public Page<ChallengeResponseDto> findMyChallengePage(Long cursorSeq, Long userSeq, Pageable pageable) {
+	public Page<ChallengeResponseDto> findMyChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable) {
 		QueryResults<ChallengeResponseDto> result = jpaQueryFactory
 			.select(new QChallengeResponseDto(
 				challengeUser.challenge.seq,
@@ -147,7 +147,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				passwordIsNull()
 			))
 			.from(challengeUser)
-			.where(challengeUser.user.seq.eq(userSeq).and(challengeUser.challenge.deleteYn.eq('N')))
+			.where(challengeUser.user.seq.eq(userSeq).and(challengeUser.challenge.deleteYn.eq('N')).and(challenge.dateEnd.after(nowTime)))
 			.orderBy(challengeUser.challenge.seq.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
