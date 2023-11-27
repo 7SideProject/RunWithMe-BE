@@ -186,7 +186,8 @@ public class ChallengeService {
 	@Transactional
 	public List<ChallengeResponseDto> getMyChallengeList(Long cursorSeq, Pageable pageable) {
 		final Long userSeq = authUtils.getLoginUserSeq();
-		return challengeRepository.findMyChallengePage(cursorSeq, userSeq, pageable).getContent();
+		final LocalDate localDate = LocalDate.now();
+		return challengeRepository.findMyChallengePage(cursorSeq, userSeq, localDate, pageable).getContent();
 	}
 
 	@Transactional
