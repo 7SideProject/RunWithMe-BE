@@ -4,7 +4,11 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,20 +18,30 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
-	@Id
-	@Column(name = "rt_name")
-	private String name;
 
-	@Column(name = "rt_user_email")
-	private String userEmail;
+	@Id @GeneratedValue
+	@Column(name = "rt_seq")
+	private Long seq;
 
-	@Column(name = "rt_expired_datetime")
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_seq", nullable = false, unique = true)
+	private User user;
+
+	@Column(name = "rt_token", nullable = false, unique = true)
+	private String token;
+
+	@Column(name = "rt_expired_datetime", nullable = false)
 	private LocalDateTime expiredDateTime;
 
 	@Builder
-	public RefreshToken(String name, String userEmail, LocalDateTime expiredDateTime) {
-		this.name = name;
-		this.userEmail = userEmail;
+	public RefreshToken(User user, String token, LocalDateTime expiredDateTime) {
+		this.user = user;
+		this.token = token;
+		this.expiredDateTime = expiredDateTime;
+	}
+
+	public void update(String token, LocalDateTime expiredDateTime) {
+		this.token = token;
 		this.expiredDateTime = expiredDateTime;
 	}
 }
