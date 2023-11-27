@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class RecordCoordinateDto {
     private Long coordinateSeq;
-    private double latitude;
-    private double longitude;
+    private int latitude;
+    private int longitude;
 }

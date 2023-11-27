@@ -13,5 +13,5 @@ public class ChallengeTotalRecordResponseDto {
     private Long totalCalorie;
     private Long totalLongestTime;
     private Long totalLongestDistance;
-    private Long totalAvgSpeed;
+    private double totalAvgSpeed;
 }

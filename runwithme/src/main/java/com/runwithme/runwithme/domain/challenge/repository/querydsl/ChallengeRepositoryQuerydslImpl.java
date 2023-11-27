@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.querydsl.core.types.dsl.StringExpressions;
 import com.runwithme.runwithme.domain.challenge.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -92,7 +93,7 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 	}
 
 	@Override
-	public Page<ChallengeResponseDto> findRecruitChallengePage(Long cursorSeq, Long userSeq, LocalDate nowTime, Pageable pageable) {
+	public Page<ChallengeResponseDto> findRecruitChallengePage(Long cursorSeq, String customCursor, Long userSeq, LocalDate nowTime, Pageable pageable) {
 		QueryResults<ChallengeResponseDto> result = jpaQueryFactory
 			.select(new QChallengeResponseDto(
 				challenge.seq,
@@ -115,8 +116,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.leftJoin(challengeUser)
 			.on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
 			.where(challenge.deleteYn.eq('N').and(challenge.dateStart.after(nowTime)),
-				eqCursorSeq(cursorSeq))
-			.orderBy(challenge.seq.desc())
+				customCursor(cursorSeq, customCursor))
+			.orderBy(challenge.dateStart.asc(), challenge.seq.asc())
 			.limit(pageable.getPageSize())
 			.fetchResults();
 		return new PageImpl<>(result.getResults(), pageable, result.getTotal());
@@ -205,6 +206,12 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 	private BooleanExpression eqCursorSeq(Long cursorSeq) {
 		if (cursorSeq == null) return null;
 		return cursorSeq == 0 ? challenge.seq.gt(cursorSeq) : challenge.seq.lt(cursorSeq);
+	}
+
+	private BooleanExpression customCursor(Long cursorSeq, String customCursor) {
+		if (cursorSeq == null) return null;
+		return cursorSeq == 0 ? challenge.seq.gt(cursorSeq) :
+			challenge.dateStart.stringValue().concat(StringExpressions.lpad(challenge.seq.stringValue(), 10, '0')).gt(customCursor);
 	}
 
 	@Override

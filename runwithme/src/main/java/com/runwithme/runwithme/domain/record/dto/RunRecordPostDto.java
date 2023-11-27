@@ -15,7 +15,7 @@ public class RunRecordPostDto {
     private Long runningTime;
     private Long runningDistance;
     private Long calorie;
-    private Long avgSpeed;
+    private double avgSpeed;
     private List<CoordinateDto> coordinates;
     private char successYn;
 }
