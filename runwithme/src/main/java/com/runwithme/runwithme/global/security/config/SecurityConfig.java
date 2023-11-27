@@ -23,7 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.runwithme.runwithme.domain.user.service.RefreshTokenService;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.security.filter.CustomAuthenticationFilter;
-import com.runwithme.runwithme.global.security.filter.JwtExceptionFilter;
+import com.runwithme.runwithme.global.security.filter.CustomExceptionFilter;
 import com.runwithme.runwithme.global.security.filter.TokenAuthorizationFilter;
 import com.runwithme.runwithme.global.security.handler.CustomAuthenticationFailureHandler;
 import com.runwithme.runwithme.global.security.handler.CustomAuthenticationSuccessHandler;
@@ -135,8 +135,8 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public JwtExceptionFilter jwtExceptionFilter() {
-		return new JwtExceptionFilter();
+	public CustomExceptionFilter jwtExceptionFilter() {
+		return new CustomExceptionFilter();
 	}
 
 	@Bean
