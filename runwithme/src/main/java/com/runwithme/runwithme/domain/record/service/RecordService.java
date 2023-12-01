@@ -2,7 +2,6 @@ package com.runwithme.runwithme.domain.record.service;
 
 import static com.runwithme.runwithme.global.result.ResultCode.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeUserRepository;
 import com.runwithme.runwithme.domain.record.dto.ChallengeTotalRecordResponseDto;
 import com.runwithme.runwithme.domain.challenge.entity.Challenge;

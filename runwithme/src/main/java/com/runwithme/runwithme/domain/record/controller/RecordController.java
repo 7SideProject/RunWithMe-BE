@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.runwithme.runwithme.domain.challenge.dto.ChallengeImageDto;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
@@ -26,7 +24,6 @@ import com.runwithme.runwithme.domain.record.service.RecordService;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

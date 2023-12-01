@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import com.runwithme.runwithme.domain.challenge.dto.*;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
@@ -88,6 +87,10 @@ public class ChallengeService {
 			throw new CustomException(CHALLENGE_DATE_END_IS_BEFORE_DATE_START);
 		}
 
+		if (user.getPoint() < challengeCreateDto.getCost()) {
+			throw new CustomException(NOT_ENOUGH_POINT);
+		}
+
 		final Image savedImage = imageIsEmpty(image);
 
 		final Challenge challenge = Challenge.builder()
@@ -107,6 +110,7 @@ public class ChallengeService {
 			.deleteYn('N')
 			.build();
 
+		user.minusPoint(challenge.getCost().intValue());
 		challengeRepository.save(challenge);
 		createTotalRecord(user.getSeq(), challenge.getSeq());
 		challengeUserRepository.save(new ChallengeUser(user, challenge));
@@ -221,7 +225,7 @@ public class ChallengeService {
 		}
 		return imageService.save(image);
 	}
-	@Transactional
+
 	public Resource getChallengeImage(Long challengeSeq) {
 		final Challenge challenge = challengeRepository.findById(challengeSeq)
 				.orElseThrow(() -> new CustomException(CHALLENGE_NOT_FOUND));
