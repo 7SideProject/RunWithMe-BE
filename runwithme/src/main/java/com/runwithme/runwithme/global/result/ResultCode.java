@@ -55,7 +55,7 @@ public enum ResultCode {
     CHALLENGE_DATE_START_IS_BEFORE_NOW      (400, -301, "챌린지 시작일은 과거일 수 없습니다."),
     CHALLENGE_DATE_END_IS_BEFORE_DATE_START        (400, -302, "챌린지 종료일은 시작일보다 빠를 수 없습니다."),
     CHALLENGE_JOIN_ALREADY_EXIST    (400, -303, "이미 가입한 챌린지 입니다."),
-    CHALLENGE_JOIN_PASSWORD_FAIL    (400, -304, "패스워드가 틀렸습니다."),
+    CHALLENGE_JOIN_PASSWORD_FAIL    (202, -304, "패스워드가 틀렸습니다."),
     CHALLENGE_PARAMETER_FAIL            (400, -305, "잘못된 파라미터 입니다."),
     CREATE_CHALLENGE_FAIL           (400, -306, "챌린지 등록에 실패하였습니다."),
     CHALLENGE_NOT_JOIN              (400, -307, "챌린지에 가입되어 있지 않습니다."),
