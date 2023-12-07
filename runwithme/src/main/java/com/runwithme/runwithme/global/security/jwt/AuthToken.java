@@ -13,6 +13,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class AuthToken {
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
-		} catch (SecurityException e) {
+		} catch (SignatureException e) {
 			throw new JwtException(INVALID_JWT_SIGNATURE);
 		} catch (MalformedJwtException e) {
 			throw new JwtException(INVALID_JWT_TOKEN);

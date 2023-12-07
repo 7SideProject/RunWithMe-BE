@@ -42,12 +42,18 @@ public class FileValidator implements ConstraintValidator<FileValidated, Multipa
 			return false;
 		}
 
-		final String mimeType = getMimeTypeBy(value).toLowerCase();
 		final AllowedMimeType[] allowedMimeTypes = annotation.types();
+		final String encodedMimeType = getMimeTypeBy(value).toLowerCase();
+		final String requestMimeType = value.getContentType().toLowerCase();
 
 		for (AllowedMimeType allowedMimeType : allowedMimeTypes) {
-			if (!ArrayUtils.contains(allowedMimeType.getTypes(), mimeType)) {
+			if (!ArrayUtils.contains(allowedMimeType.getTypes(), requestMimeType)) {
 				context.buildConstraintViolationWithTemplate("허용되지 않는 타입입니다.")
+					.addConstraintViolation();
+				return false;
+			}
+			if (!ArrayUtils.contains(allowedMimeType.getTypes(), encodedMimeType)) {
+				context.buildConstraintViolationWithTemplate("파일이 변조되었습니다.")
 					.addConstraintViolation();
 				return false;
 			}
