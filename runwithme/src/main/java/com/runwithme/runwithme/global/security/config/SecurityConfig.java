@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -95,10 +96,10 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, PERMIT_GET_URL_PATHS).permitAll()
 			.anyRequest().authenticated()
 			.and()
-//			.exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
+			.exceptionHandling(Customizer.withDefaults())
 			.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(tokenAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(jwtExceptionFilter(), TokenAuthorizationFilter.class)
+			.addFilterBefore(customExceptionFilter(), TokenAuthorizationFilter.class)
 			.build();
 	}
 
@@ -135,7 +136,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public CustomExceptionFilter jwtExceptionFilter() {
+	public CustomExceptionFilter customExceptionFilter() {
 		return new CustomExceptionFilter();
 	}
 
