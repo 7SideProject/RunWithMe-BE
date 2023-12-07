@@ -1,0 +1,47 @@
+name: Deploy to SourcePipeline
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
+  NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
+  NCP_DO_SOURCEDEPLOY_PATH: ${{ vars.NCP_DO_SOURCEDEPLOY_PATH }}
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    # (1) 기본 체크아웃
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # (2) 파이썬 설치
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
+
+    # (3) pip 패키지 업데이트
+    - name: Update pip
+      run: pip install --upgrade pip
+      shell: bash
+
+    # (4) requests 라이브러리 설치
+    - name: Install 'requests' module by pip
+      run: pip install requests
+      shell: bash
+
+    # (5) 배포 파일 실행
+    - name: Deploy to Server
+      working-directory: api
+      run: python sourcedeploy.py
+      shell: bash
