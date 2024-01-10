@@ -257,13 +257,21 @@ public class ChallengeService {
 		if (challenge.getManager().getSeq().equals(user.getSeq())){
 			challenge.deleteChallenge();
 //			challenge.minusNowMember();
+
+			final List<ChallengeUserDto> challengeUserDtos = challengeUserRepository.findChallengeUserListByChallengeSeq(challengeSeq);
+			for (ChallengeUserDto challengeUserDto : challengeUserDtos) {
+				challengeUserDto.getUser().addPoint(challengeUserDto.getChallengeCost().intValue());
+			}
+
 			flag = true;
 		}
 
 		challengeUserRepository.deleteByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq);
 		challenge.minusNowMember();
-		user.addPoint(challenge.getCost().intValue());
-		
+		if (flag == false) {
+			user.addPoint(challenge.getCost().intValue());
+		}
+
 		return flag;
 	}
 
