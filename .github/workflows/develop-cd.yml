@@ -68,7 +68,7 @@ jobs:
           }
           
           commit_id=$(_parse '.id' | cut -c 1-7) # 7자로 제한
-          commit_message=$(_parse '.message')
+          commit_message=$(echo $(_parse '.message' | head -n 1))
           commit_url=$(_parse '.url')
           
           commit_info="[$QUOT$commit_id$QUOT]($commit_url): $commit_message"
