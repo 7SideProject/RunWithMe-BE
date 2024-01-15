@@ -2,46 +2,141 @@ name: Deploy to SourcePipeline - Production Branch
 
 on:
   push:
-    branches:
-      - main
-
-env:
-  NCP_ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
-  NCP_SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
-  NCP_DO_SOURCEDEPLOY_PATH: ${{ vars.NCP_PROD_DO_SOURCEDEPLOY_PATH }}
-
-permissions:
-  contents: read
+    branches: [ main ]
 
 jobs:
-  deploy:
-    name: Deploy
+  call-sourcepipeline:
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
-    # (1) 기본 체크아웃
-    - name: Checkout
-      uses: actions/checkout@v3
+    - name: Trigger SourcePipeline Project
+      id: naver-pipeline
+      env:
+        ACCESS_KEY: ${{ secrets.NCP_ACCESS_KEY }}
+        SECRET_KEY: ${{ secrets.NCP_SECRET_KEY }}
+        METHOD: "POST"
+        URI: "/api/v1/project/${{ vars.NCP_PROD_SOURCEPIPELINE_PROJECT_ID }}/do"
+      run: |
+        nl=$'\\n'
+        TIMESTAMP=$(date +%s%3N)
 
-    # (2) 파이썬 설치
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10' 
+        SIG="$METHOD $URI$nl"
+        SIG+="$TIMESTAMP$nl"
+        SIG+="$ACCESS_KEY"
 
-    # (3) pip 패키지 업데이트
-    - name: Update pip
-      run: pip install --upgrade pip
-      shell: bash
+        SIGNATURE=$(echo -n -e "$SIG" | openssl dgst -sha256 -hmac $SECRET_KEY -binary | openssl enc -base64)
 
-    # (4) requests 라이브러리 설치
-    - name: Install 'requests' module by pip
-      run: pip install requests
-      shell: bash
+        RESPONSE=$(curl -X $METHOD "https://vpcsourcepipeline.apigw.ntruss.com$URI" \
+          -H "Content-Type: application/json" \
+          -H "x-ncp-apigw-timestamp: $TIMESTAMP" \
+          -H "x-ncp-iam-access-key: $ACCESS_KEY" \
+          -H "x-ncp-apigw-signature-v2: $SIGNATURE" \
+          -s -o /dev/null -w "%{http_code}")
 
-    # (5) 배포 파일 실행
-    - name: Deploy to Server
-      working-directory: api
-      run: python sourcedeploy.py
-      shell: bash
+        if [ "$RESPONSE" -eq "200" ]; then
+          echo "SourcePipeline Job Success"
+        else
+          echo "SourcePipeline Job Failed"
+          exit 1
+        fi
+
+    - name: Get User Details
+      if : always()
+      id : user-details
+      run : |
+        USERNAME=$(jq -r ".pusher.name" "$GITHUB_EVENT_PATH")
+        USER_DATA=$(curl -s https://api.github.com/users/$USERNAME)
+        AVATAR_URL=$(echo $USER_DATA | jq -r ".avatar_url")
+
+        echo "PUSHER_USERNAME=$USERNAME" >> $GITHUB_OUTPUT
+        echo "PUSHER_AVATAR_URL=$AVATAR_URL" >> $GITHUB_OUTPUT
+
+    - name: Send Message on Success
+      if: success() && steps.naver-pipeline.outcome == 'success'
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: |
+        COMMIT_DATA=$(jq -r '.commits' $GITHUB_EVENT_PATH)
+        NEW_LINE=$'\n'
+        QUOT=$'`'
+        
+        COMMITS=()
+        
+        for commit in $(echo "$COMMIT_DATA" | jq -r '.[] | @base64' | tac); do
+          _parse() {
+            echo $commit | base64 --decode | jq -r $1
+          }
+          
+          commit_id=$(_parse '.id' | cut -c 1-7) # 7자로 제한
+          commit_message=$(_parse '.message')
+          commit_url=$(_parse '.url')
+          
+          commit_info="[$QUOT$commit_id$QUOT]($commit_url): $commit_message"
+          
+          COMMITS+=("$commit_info")
+          
+          if [ ${#COMMITS[@]} -ge 10 ]; then
+            break
+          fi
+        done
+
+        CONTENT="네이버 클라우드 SourcePipeline 서비스 동작에 성공했습니다.$NEW_LINE$NEW_LINE"
+        for commit in "${COMMITS[@]}"; do
+          CONTENT+="$commit$NEW_LINE"
+        done
+
+        SUCCESS_MESSAGE=$(jq -n \
+          --arg PUSHER_USERNAME "${{ steps.user-details.outputs.PUSHER_USERNAME }}" \
+          --arg PUSHER_AVATAR_URL "${{ steps.user-details.outputs.PUSHER_AVATAR_URL }}" \
+          --arg TITLE "SUCCESS" \
+          --arg DESCRIPTION "$CONTENT" \
+          --arg COLOR "3447003" \
+          --arg FOOTER "Branch: main" \
+          '{
+            embeds: [{
+              author: {
+                name: $PUSHER_USERNAME,
+                icon_url: $PUSHER_AVATAR_URL
+              },
+              title: $TITLE,
+              description: $DESCRIPTION,
+              color: $COLOR,
+              footer: {
+                text: $FOOTER
+              }
+            }]
+          }'
+        )
+
+        curl -H "Content-Type: application/json" \
+          -d "$SUCCESS_MESSAGE" \
+          "$DISCORD_WEBHOOK_URL"
+
+    - name: Send Message on Failure
+      if: failure() || steps.naver-pipeline.outcome != 'success'
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: |
+        WORKFLOW_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+        FAILURE_MESSAGE=$(jq -n \
+          --arg PUSHER_USERNAME "${{ steps.user-details.outputs.PUSHER_USERNAME }}" \
+          --arg PUSHER_AVATAR_URL "${{ steps.user-details.outputs.PUSHER_AVATAR_URL }}" \
+          --arg TITLE "FAILURE" \
+          --arg DESCRIPTION "네이버 클라우드 SourcePipeline 서비스 동작에 실패했습니다. 아래 링크를 들어가 로그를 확인하세요. [#${GITHUB_RUN_ID}](${WORKFLOW_URL})" \
+          --arg COLOR "15548997" \
+          '{ 
+            embeds: [{ 
+              author: { 
+                name: $PUSHER_USERNAME, 
+                icon_url: $PUSHER_AVATAR_URL 
+              }, 
+              title: $TITLE, 
+              description: $DESCRIPTION, 
+              color: $COLOR 
+            }]
+          }'
+        )
+
+        curl -H "Content-Type: application/json" \
+          -d "$FAILURE_MESSAGE" \
+          "$DISCORD_WEBHOOK_URL"
