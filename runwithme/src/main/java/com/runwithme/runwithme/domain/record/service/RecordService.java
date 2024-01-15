@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,12 +18,14 @@ import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RecordWeeklyCountDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
+import com.runwithme.runwithme.domain.record.dto.RunRecordResponseDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
 import com.runwithme.runwithme.domain.record.entity.RecordCoordinate;
 import com.runwithme.runwithme.domain.record.entity.RunRecord;
 import com.runwithme.runwithme.domain.record.repository.ChallengeTotalRecordRepository;
 import com.runwithme.runwithme.domain.record.repository.RecordCoordinateRepository;
 import com.runwithme.runwithme.domain.record.repository.RunRecordRepository;
+import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.global.entity.Image;
 import com.runwithme.runwithme.global.error.CustomException;
 import com.runwithme.runwithme.global.service.ImageService;
@@ -45,9 +48,9 @@ public class RecordService {
 
 	@Transactional
 	public void createRunRecord(Long challengeSeq, RunRecordPostDto runRecordPostDto, MultipartFile image) {
-		final Long userSeq = authUtils.getLoginUserSeq();
+		final User user = authUtils.getLoginUser();
 
-		if (!challengeUserRepository.existsByUserSeqAndChallengeSeq(userSeq, challengeSeq)) {
+		if (!challengeUserRepository.existsByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq)) {
 			throw new CustomException(CHALLENGE_NOT_JOIN);
 		}
 
@@ -64,14 +67,14 @@ public class RecordService {
 			throw new CustomException(CHALLENGE_AFTER_END);
 		}
 
-		if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(userSeq, challengeSeq, LocalDate.now())) {
+		if (runRecordRepository.existsByUserSeqAndChallengeSeqAndRegTime(user.getSeq(), challengeSeq, LocalDate.now())) {
 			throw new CustomException(RECORD_ALREADY_EXIST);
 		}
 
 		final Image savedImage = imageIsEmpty(image);
 
 		final RunRecord runRecord = RunRecord.builder()
-			.userSeq(userSeq)
+			.user(user)
 			.challengeSeq(challengeSeq)
 			.runningDay(runRecordPostDto.getRunningDay())
 			.startTime(runRecordPostDto.getStartTime())
@@ -96,7 +99,7 @@ public class RecordService {
 			recordCoordinateRepository.save(recordCoordinate);
 		}
 
-		final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+		final ChallengeTotalRecord myTotals = challengeTotalRecordRepository.findByUserSeqAndChallengeSeq(user.getSeq(), challengeSeq);
 
 		myTotals.plusTotalTime(runRecordPostDto.getRunningTime());
 		myTotals.plusTotalDistance(runRecordPostDto.getRunningDistance());
@@ -126,8 +129,8 @@ public class RecordService {
 	}
 
 	@Transactional
-	public List<RunRecord> getAllRunRecord(Long challengeSeq) {
-		return runRecordRepository.findAllByChallengeSeq(challengeSeq);
+	public List<RunRecordResponseDto> getAllRunRecord(Long challengeSeq, Long cursorSeq, Pageable pageable) {
+		return runRecordRepository.findAllRecordPage(cursorSeq, challengeSeq, pageable).getContent();
 	}
 
 	@Transactional
