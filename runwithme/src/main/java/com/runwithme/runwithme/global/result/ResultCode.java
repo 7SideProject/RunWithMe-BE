@@ -74,6 +74,7 @@ public enum ResultCode {
     WARN_BOARD_FAIL                 (200, 405, "게시글 신고에 실패하였습니다."),
     BOARD_NOT_FOUND                 (400, -400, "존재하지 않는 게시글 입니다."),
     WARN_BOARD_ALREADY_EXIST        (400, -401, "이미 신고한 게시글 입니다."),
+    BOARD_NOT_CREATE_USER           (400, -402, "게시글 작성자가 아닙니다."),
 
 
     // Image

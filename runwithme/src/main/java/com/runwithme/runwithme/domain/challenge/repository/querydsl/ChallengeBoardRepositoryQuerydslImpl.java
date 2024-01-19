@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.challenge.repository.querydsl;
 
+import static com.runwithme.runwithme.domain.challenge.entity.QChallenge.*;
 import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoard.*;
 import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoardWarn.*;
 
@@ -45,7 +46,8 @@ public class ChallengeBoardRepositoryQuerydslImpl implements ChallengeBoardRepos
 	}
 
 	private BooleanExpression eqCursorSeq(Long cursorSeq) {
-		return cursorSeq == null ? null : challengeBoard.seq.lt(cursorSeq);
+		if (cursorSeq == null) return null;
+		return cursorSeq == 0 ? challengeBoard.seq.gt(cursorSeq) : challengeBoard.seq.lt(cursorSeq);
 	}
 
 	private JPQLQuery<Long> getWarnBoardByUserSeq(Long userSeq) {
