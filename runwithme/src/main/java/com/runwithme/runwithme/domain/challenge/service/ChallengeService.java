@@ -50,7 +50,7 @@ public class ChallengeService {
 	public void createBoard(Long challengeSeq, String challengeBoardContent, MultipartFile image) {
 		final User user = authUtils.getLoginUser();
 
-		final Image savedImage = imageIsEmpty(image);
+		final Image savedImage = boardImageIsEmpty(image);
 
 		final LocalDateTime challengeBoardRegTime = LocalDateTime.now();
 		final ChallengeBoard challengeBoard = ChallengeBoard.builder()
@@ -224,6 +224,14 @@ public class ChallengeService {
 		return true;
 	}
 
+	public Image boardImageIsEmpty(MultipartFile image) {
+		if (image == null) {
+			return null;
+		} else if (image.isEmpty()) {
+			return null;
+		}
+		return imageService.save(image);
+	}
 	public Image imageIsEmpty(MultipartFile image) {
 		if (image == null) {
 			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);

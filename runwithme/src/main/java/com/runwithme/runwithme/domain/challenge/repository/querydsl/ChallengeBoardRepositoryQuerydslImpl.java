@@ -30,8 +30,9 @@ public class ChallengeBoardRepositoryQuerydslImpl implements ChallengeBoardRepos
 					challengeBoard.seq,
 					challengeBoard.user.seq,
 					challengeBoard.user.nickname,
-					challengeBoard.challengeSeq,
-					challengeBoard.challengeBoardContent
+					challengeBoard.image.seq,
+					challengeBoard.challengeBoardContent,
+					isImage()
 				)
 			).from(challengeBoard)
 			.where(challengeBoard.challengeSeq
@@ -43,6 +44,11 @@ public class ChallengeBoardRepositoryQuerydslImpl implements ChallengeBoardRepos
 			.fetchResults();
 
 		return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+	}
+
+	public BooleanExpression isImage() {
+		if (challengeBoard == null) return null;
+		return challengeBoard.image.isNotNull();
 	}
 
 	private BooleanExpression eqCursorSeq(Long cursorSeq) {

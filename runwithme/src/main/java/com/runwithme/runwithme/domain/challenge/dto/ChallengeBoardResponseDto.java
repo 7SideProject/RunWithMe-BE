@@ -14,13 +14,15 @@ public class ChallengeBoardResponseDto {
     private String nickname;
     private Long imgSeq;
     private String content;
+    private boolean isImage;
 
     @QueryProjection
-    public ChallengeBoardResponseDto(Long boardSeq, Long userSeq, String nickname, Long imgSeq, String content) {
+    public ChallengeBoardResponseDto(Long boardSeq, Long userSeq, String nickname, Long imgSeq, String content, boolean isImage) {
         this.boardSeq = boardSeq;
         this.userSeq = userSeq;
         this.nickname = nickname;
         this.imgSeq = imgSeq;
         this.content = content;
+        this.isImage = isImage;
     }
 }
