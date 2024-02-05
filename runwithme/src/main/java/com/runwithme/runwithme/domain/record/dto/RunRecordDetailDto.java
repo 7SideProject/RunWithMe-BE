@@ -36,4 +36,8 @@ public class RunRecordDetailDto {
 		this.calorie = calorie;
 		this.avgSpeed = avgSpeed;
 	}
+
+	public void setCoordinates(List<CoordinateDto> coordinates) {
+		this.coordinates = coordinates;
+	}
 }

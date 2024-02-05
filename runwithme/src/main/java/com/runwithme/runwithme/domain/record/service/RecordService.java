@@ -5,6 +5,7 @@ import static com.runwithme.runwithme.global.result.ResultCode.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.challenge.repository.ChallengeRepository;
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
 import com.runwithme.runwithme.domain.record.dto.RecordWeeklyCountDto;
+import com.runwithme.runwithme.domain.record.dto.RunRecordDetailDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordResponseDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
@@ -75,7 +77,7 @@ public class RecordService {
 
 		final RunRecord runRecord = RunRecord.builder()
 			.user(user)
-			.challengeSeq(challengeSeq)
+			.challenge(challenge)
 			.runningDay(runRecordPostDto.getRunningDay())
 			.startTime(runRecordPostDto.getStartTime())
 			.endTime(runRecordPostDto.getEndTime())
@@ -134,14 +136,17 @@ public class RecordService {
 	}
 
 	@Transactional
-	public RunRecord getRunRecord(Long runRecordSeq) {
-		return runRecordRepository.findById(runRecordSeq)
-			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+	public RunRecordDetailDto getRunRecord(Long runRecordSeq) {
+		final RunRecordDetailDto runRecordDetailDto = runRecordRepository.findRunRecordDetail(runRecordSeq)
+			.orElseThrow(() -> new CustomException(RECORD_NOT_FOUND));
+		runRecordDetailDto.setCoordinates(runRecordRepository.findCoordinate(runRecordSeq));
+		return runRecordDetailDto;
 	}
 
 	@Transactional
 	public boolean addCoordinate(Long recordSeq, List<CoordinateDto> coordinates) {
-		int[] results = runRecordRepository.coordinatesInsertBatch(recordSeq, coordinates);
+		final RunRecord runRecord = runRecordRepository.findById(recordSeq).get();
+		int[] results = runRecordRepository.coordinatesInsertBatch(runRecord, coordinates);
 		int success = 0;
 
 		for (int result : results) {

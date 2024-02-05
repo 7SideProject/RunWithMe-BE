@@ -39,6 +39,7 @@ public enum ResultCode {
     ADD_COORDINATES_SUCCESS         (200, 205, "좌표 등록에 성공하였습니다."),
     ADD_COORDINATES_FAIL            (200, 206, "좌표 등록에 실패하였습니다."),
     RECORD_ALREADY_EXIST            (400, -200, "오늘 이미 기록을 등록 하였습니다."),
+    RECORD_NOT_FOUND                (400, -201, "존재하지 않는 기록 입니다."),
 
     // Challenge
     GET_ONE_CHALLENGE_SUCCESS       (200, 300, "챌린지 상세 조회에 성공하였습니다."),
