@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.runwithme.runwithme.domain.challenge.entity.Challenge;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.global.entity.Image;
 
@@ -36,8 +37,9 @@ public class RunRecord {
     @JoinColumn(name = "user_seq")
     private User user;
 
-    @Column(name = "challenge_seq", nullable = false)
-    private Long challengeSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "challenge_seq")
+    private Challenge challenge;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_seq")
@@ -64,10 +66,6 @@ public class RunRecord {
     @Column(name = "calorie")
     private Long calorie;
 
-    // ERD에 lat, lng으로 나눠져 있는데 어떻게 사용하신다는지 몰라 일단 남겨 둠 - TY
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "runRecord")
-    private List<RecordCoordinate> coordinates;
-
     @Column(name = "weekly")
     private int weekly;
 
@@ -79,9 +77,9 @@ public class RunRecord {
     private LocalDate regTime;
 
     @Builder
-    public RunRecord(User user, Long challengeSeq, String runningDay, String startTime, String endTime, Long runningTime, Long runningDistance, Long calorie, double avgSpeed, Image image, int weekly, char successYn){
+    public RunRecord(User user, Challenge challenge, String runningDay, String startTime, String endTime, Long runningTime, Long runningDistance, Long calorie, double avgSpeed, Image image, int weekly, char successYn){
         this.user = user;
-        this.challengeSeq = challengeSeq;
+        this.challenge = challenge;
         this.runningDay = runningDay;
         this.startTime = startTime;
         this.endTime = endTime;

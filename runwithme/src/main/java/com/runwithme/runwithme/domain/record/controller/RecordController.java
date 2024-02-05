@@ -4,6 +4,7 @@ import static com.runwithme.runwithme.global.result.ResultCode.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.runwithme.runwithme.domain.record.dto.CoordinateDto;
+import com.runwithme.runwithme.domain.record.dto.RunRecordDetailDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordPostDto;
 import com.runwithme.runwithme.domain.record.dto.RunRecordResponseDto;
 import com.runwithme.runwithme.domain.record.entity.ChallengeTotalRecord;
@@ -68,9 +70,9 @@ public class RecordController {
 
     // 기록 seq로 상세조회
     @Operation(operationId = "getRecord", summary = "기록 상세조회")
-    @GetMapping("/{challengeSeq}/record/{runRecordSeq}")
+    @GetMapping("/record/{runRecordSeq}")
     public ResponseEntity<ResultResponseDto> getRunRecord(@PathVariable(value = "runRecordSeq") Long runRecordSeq) {
-        final RunRecord runRecord = recordService.getRunRecord(runRecordSeq);
+        final RunRecordDetailDto runRecord = recordService.getRunRecord(runRecordSeq);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_ONE_RECORD_SUCCESS, runRecord));
     }
 
@@ -78,6 +80,6 @@ public class RecordController {
     @PostMapping("/{recordSeq}/coordinate")
     public ResponseEntity<ResultResponseDto> addCoordinate(@PathVariable(value = "recordSeq") Long recordSeq, @RequestBody List<CoordinateDto> coordinates) {
         final boolean success = recordService.addCoordinate(recordSeq, coordinates);
-        return ResponseEntity.ok().body(ResultResponseDto.of(success ? ADD_COORDINATES_SUCCESS : ADD_COORDINATES_FAIL));
+        return ResponseEntity.ok().body(ResultResponseDto.of(success ? ADD_COORDINATES_FAIL : ADD_COORDINATES_SUCCESS));
     }
 }
