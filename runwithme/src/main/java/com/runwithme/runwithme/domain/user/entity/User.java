@@ -63,8 +63,27 @@ public class User extends BaseEntity {
             nullable = false)
     private int point;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type")
+    private ProviderType providerType;
+
+    @Column(name = "resource_id")
+    private String resourceId;
+
     @Builder
-    public User(Long seq, Image image, Role role, String email, String nickname, String password,  int height, int weight, int point) {
+    public User(
+        Long seq,
+        Image image,
+        Role role,
+        String email,
+        String nickname,
+        String password,
+        int height,
+        int weight,
+        int point,
+        ProviderType providerType,
+        String resourceId
+    ) {
         this.seq = seq;
         this.image = image;
         this.role = role;
@@ -74,6 +93,8 @@ public class User extends BaseEntity {
         this.height = height;
         this.weight = weight;
         this.point = point;
+        this.providerType = providerType;
+        this.resourceId = resourceId;
     }
 
     public String getRoleValue() {
