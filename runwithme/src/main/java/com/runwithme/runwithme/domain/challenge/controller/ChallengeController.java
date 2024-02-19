@@ -61,9 +61,9 @@ public class ChallengeController {
 
 
 	@Operation(operationId = "deleteBoard", summary = "게시글 삭제")
-	@DeleteMapping("/{challengeSeq}/board/{boardSeq}")
-	public ResponseEntity<ResultResponseDto> deleteBoard(@PathVariable(value = "boardSeq") Long boardSeq, @PathVariable Long challengeSeq) {
-		challengeService.deleteBoard(challengeSeq, boardSeq);
+	@DeleteMapping("/board/{boardSeq}")
+	public ResponseEntity<ResultResponseDto> deleteBoard(@PathVariable(value = "boardSeq") Long boardSeq) {
+		challengeService.deleteBoard(boardSeq);
 		return ResponseEntity.ok().body(ResultResponseDto.of(DELETE_BOARD_SUCCESS));
 	}
 
@@ -150,6 +150,12 @@ public class ChallengeController {
 		} else {
 			return ResponseEntity.ok().body(ResultResponseDto.of(WARN_BOARD_FAIL));
 		}
+	}
+
+	@Operation(operationId = "", summary = "게시글 이미지 조회")
+	@GetMapping(value = "/{boardSeq}/board-image", produces = MediaType.IMAGE_PNG_VALUE)
+	public ResponseEntity<Resource> getBoardImage(@PathVariable(value = "boardSeq") Long boardSeq) {
+		return new ResponseEntity<>(challengeService.getBoardImage(boardSeq), HttpStatus.OK);
 	}
 
 	@Operation(operationId = "", summary = "챌린지 이미지 조회")

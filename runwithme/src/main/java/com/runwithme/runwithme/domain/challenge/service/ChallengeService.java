@@ -50,7 +50,7 @@ public class ChallengeService {
 	public void createBoard(Long challengeSeq, String challengeBoardContent, MultipartFile image) {
 		final User user = authUtils.getLoginUser();
 
-		final Image savedImage = imageIsEmpty(image);
+		final Image savedImage = boardImageIsEmpty(image);
 
 		final LocalDateTime challengeBoardRegTime = LocalDateTime.now();
 		final ChallengeBoard challengeBoard = ChallengeBoard.builder()
@@ -69,8 +69,15 @@ public class ChallengeService {
 	}
 
 	@Transactional
-	public void deleteBoard(Long challengeSeq, Long boardSeq) {
-		challengeRepository.findById(challengeSeq).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+	public void deleteBoard(Long boardSeq) {
+		final User user = authUtils.getLoginUser();
+
+		final ChallengeBoard board = challengeBoardRepository.findById(boardSeq).orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+
+		if (board.getUser().getSeq() != user.getSeq()) {
+			throw new CustomException(BOARD_NOT_CREATE_USER);
+		}
+
 		challengeBoardRepository.deleteById(boardSeq);
 	}
 
@@ -217,6 +224,14 @@ public class ChallengeService {
 		return true;
 	}
 
+	public Image boardImageIsEmpty(MultipartFile image) {
+		if (image == null) {
+			return null;
+		} else if (image.isEmpty()) {
+			return null;
+		}
+		return imageService.save(image);
+	}
 	public Image imageIsEmpty(MultipartFile image) {
 		if (image == null) {
 			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);
@@ -224,6 +239,12 @@ public class ChallengeService {
 			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);
 		}
 		return imageService.save(image);
+	}
+
+	public Resource getBoardImage(Long boardSeq) {
+		final ChallengeBoard board = challengeBoardRepository.findById(boardSeq)
+			.orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+		return imageService.getImage(board.getImage().getSeq());
 	}
 
 	public Resource getChallengeImage(Long challengeSeq) {

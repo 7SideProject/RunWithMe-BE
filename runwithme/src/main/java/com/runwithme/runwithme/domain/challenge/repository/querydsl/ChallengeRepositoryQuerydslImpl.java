@@ -54,8 +54,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.on(challenge.seq.eq(challengeUser.challenge.seq).and(challengeUser.user.seq.eq(userSeq)))
 			.leftJoin(runRecord)
 			.on(
-					runRecord.challengeSeq.eq(challenge.seq)
-							.and(runRecord.userSeq.eq(userSeq))
+					runRecord.challenge.seq.eq(challenge.seq)
+							.and(runRecord.user.seq.eq(userSeq))
 							.and(runRecord.regTime.eq(nowTime))
 			)
 			.where(challenge.seq.eq(challengeSeq).and(challenge.deleteYn.eq('N')))
@@ -179,8 +179,8 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 			.from(challengeUser)
 			.leftJoin(runRecord)
 			.on(
-					runRecord.challengeSeq.eq(challengeUser.challenge.seq)
-							.and(runRecord.userSeq.eq(userSeq))
+					runRecord.challenge.seq.eq(challengeUser.challenge.seq)
+							.and(runRecord.user.seq.eq(userSeq))
 							.and(runRecord.regTime.eq(nowTime))
 			)
 			.where(

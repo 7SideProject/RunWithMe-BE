@@ -20,17 +20,14 @@ public class RecordCoordinate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long seq;
-
-    @JoinColumn(name = "run_record_seq")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "run_record_seq")
     private RunRecord runRecord;
 
     @Column
     private int latitude;
-
     @Column
     private int longitude;
-
     @Builder
     public RecordCoordinate(RunRecord runRecord, int latitude, int longitude) {
         this.runRecord = runRecord;

@@ -39,6 +39,7 @@ public enum ResultCode {
     ADD_COORDINATES_SUCCESS         (200, 205, "좌표 등록에 성공하였습니다."),
     ADD_COORDINATES_FAIL            (200, 206, "좌표 등록에 실패하였습니다."),
     RECORD_ALREADY_EXIST            (400, -200, "오늘 이미 기록을 등록 하였습니다."),
+    RECORD_NOT_FOUND                (400, -201, "존재하지 않는 기록 입니다."),
 
     // Challenge
     GET_ONE_CHALLENGE_SUCCESS       (200, 300, "챌린지 상세 조회에 성공하였습니다."),
@@ -74,6 +75,7 @@ public enum ResultCode {
     WARN_BOARD_FAIL                 (200, 405, "게시글 신고에 실패하였습니다."),
     BOARD_NOT_FOUND                 (400, -400, "존재하지 않는 게시글 입니다."),
     WARN_BOARD_ALREADY_EXIST        (400, -401, "이미 신고한 게시글 입니다."),
+    BOARD_NOT_CREATE_USER           (400, -402, "게시글 작성자가 아닙니다."),
 
 
     // Image

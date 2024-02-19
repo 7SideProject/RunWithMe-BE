@@ -1,5 +1,6 @@
 package com.runwithme.runwithme.domain.challenge.repository.querydsl;
 
+import static com.runwithme.runwithme.domain.challenge.entity.QChallenge.*;
 import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoard.*;
 import static com.runwithme.runwithme.domain.challenge.entity.QChallengeBoardWarn.*;
 
@@ -29,8 +30,9 @@ public class ChallengeBoardRepositoryQuerydslImpl implements ChallengeBoardRepos
 					challengeBoard.seq,
 					challengeBoard.user.seq,
 					challengeBoard.user.nickname,
-					challengeBoard.challengeSeq,
-					challengeBoard.challengeBoardContent
+					challengeBoard.image.seq,
+					challengeBoard.challengeBoardContent,
+					isImage()
 				)
 			).from(challengeBoard)
 			.where(challengeBoard.challengeSeq
@@ -44,8 +46,14 @@ public class ChallengeBoardRepositoryQuerydslImpl implements ChallengeBoardRepos
 		return new PageImpl<>(results.getResults(), pageable, results.getTotal());
 	}
 
+	public BooleanExpression isImage() {
+		if (challengeBoard == null) return null;
+		return challengeBoard.image.isNotNull();
+	}
+
 	private BooleanExpression eqCursorSeq(Long cursorSeq) {
-		return cursorSeq == null ? null : challengeBoard.seq.lt(cursorSeq);
+		if (cursorSeq == null) return null;
+		return cursorSeq == 0 ? challengeBoard.seq.gt(cursorSeq) : challengeBoard.seq.lt(cursorSeq);
 	}
 
 	private JPQLQuery<Long> getWarnBoardByUserSeq(Long userSeq) {
