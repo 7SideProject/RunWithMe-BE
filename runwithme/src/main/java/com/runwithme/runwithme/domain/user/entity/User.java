@@ -42,14 +42,10 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @Column(name = "user_email",
-            nullable = false,
-            unique = true)
+    @Column(name = "user_email", unique = true)
     private String email;
 
-    @Column(name = "user_password",
-            nullable = false,
-            unique = true)
+    @Column(name = "user_password", unique = true)
     private String password;
 
     @Column(name = "user_nickname")
