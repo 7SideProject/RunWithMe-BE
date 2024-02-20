@@ -8,11 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.runwithme.runwithme.domain.user.dto.SocialLoginViewDto;
 import com.runwithme.runwithme.domain.user.dto.UserInfoResponse;
 import com.runwithme.runwithme.domain.user.entity.ProviderType;
+import com.runwithme.runwithme.domain.user.entity.RefreshToken;
 import com.runwithme.runwithme.domain.user.entity.User;
 import com.runwithme.runwithme.domain.user.external.OAuthHttpRequestHelper;
+import com.runwithme.runwithme.domain.user.repository.RefreshTokenRepository;
 import com.runwithme.runwithme.domain.user.repository.UserRepository;
 import com.runwithme.runwithme.global.security.jwt.AuthToken;
 import com.runwithme.runwithme.global.security.jwt.AuthTokenFactory;
+import com.runwithme.runwithme.global.utils.LocalDateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OAuthService {
 
 	private final UserRepository userRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
 	private final OAuthHttpRequestHelper oAuthHttpRequestHelper;
 	private final AuthTokenFactory authTokenFactory;
 
@@ -44,6 +48,16 @@ public class OAuthService {
 		AuthToken createdRefreshToken = authTokenFactory.createAuthToken(
 			String.valueOf(user.getSeq()), new Date(expiryOfRefreshToken)
 		);
+
+		RefreshToken rtEntity = refreshTokenRepository.findByUser(user).orElseGet(() ->
+			RefreshToken.builder()
+				.user(user)
+				.build()
+		);
+
+		rtEntity.update(createdRefreshToken.getToken(), LocalDateTimeUtils.convertBy(expiryOfRefreshToken));
+
+		refreshTokenRepository.save(rtEntity);
 
 		return new SocialLoginViewDto(
 			user.getSeq(),
