@@ -57,6 +57,7 @@ public class SecurityConfig {
 		"/users/duplicate-email",
 		"/users/duplicate-nickname",
 		"/users/**/password",
+		"/users/**/login",
 		"/token"
 	};
 
