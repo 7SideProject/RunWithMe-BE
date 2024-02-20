@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import com.runwithme.runwithme.domain.user.dto.UserInfoResponse;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.global.entity.BaseEntity;
 import com.runwithme.runwithme.global.entity.Image;
+import com.runwithme.runwithme.global.utils.ImageCache;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -113,8 +115,8 @@ public class User extends BaseEntity {
         this.role = Role.USER;
     }
 
-    public boolean isTempUser() {
-        return role == Role.TEMP_USER;
+    public boolean isInitialized() {
+        return role != Role.TEMP_USER;
     }
 
     public void changeImage(Image image) {
@@ -129,11 +131,13 @@ public class User extends BaseEntity {
         this.point -= point;
     }
 
-    public static User create(OAuth2User oAuth2User) {
+    public static User create(ProviderType providerType, String resourceId) {
         return User.builder()
                 .role(Role.TEMP_USER)
-                .email(oAuth2User.getName())
-                .point(0)
+                .providerType(providerType)
+                .resourceId(resourceId)
+                .point(1500)
+                .image(ImageCache.get(ImageCache.DEFAULT_PROFILE))
                 .build();
     }
 
