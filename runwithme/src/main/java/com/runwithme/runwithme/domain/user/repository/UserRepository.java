@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.runwithme.runwithme.domain.user.entity.ProviderType;
 import com.runwithme.runwithme.domain.user.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -15,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByNickname(String nickname);
 
 	Optional<User> findBySeq(Long seq);
+
+	Optional<User> findByProviderTypeAndResourceId(ProviderType providerType, String resourceId);
 }

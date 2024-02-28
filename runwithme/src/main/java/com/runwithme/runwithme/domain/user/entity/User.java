@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import com.runwithme.runwithme.domain.user.dto.UserInfoResponse;
 import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.global.entity.BaseEntity;
 import com.runwithme.runwithme.global.entity.Image;
+import com.runwithme.runwithme.global.utils.ImageCache;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,14 +42,10 @@ public class User extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @Column(name = "user_email",
-            nullable = false,
-            unique = true)
+    @Column(name = "user_email", unique = true)
     private String email;
 
-    @Column(name = "user_password",
-            nullable = false,
-            unique = true)
+    @Column(name = "user_password", unique = true)
     private String password;
 
     @Column(name = "user_nickname")
@@ -63,8 +61,27 @@ public class User extends BaseEntity {
             nullable = false)
     private int point;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type")
+    private ProviderType providerType;
+
+    @Column(name = "resource_id")
+    private String resourceId;
+
     @Builder
-    public User(Long seq, Image image, Role role, String email, String nickname, String password,  int height, int weight, int point) {
+    public User(
+        Long seq,
+        Image image,
+        Role role,
+        String email,
+        String nickname,
+        String password,
+        int height,
+        int weight,
+        int point,
+        ProviderType providerType,
+        String resourceId
+    ) {
         this.seq = seq;
         this.image = image;
         this.role = role;
@@ -74,6 +91,8 @@ public class User extends BaseEntity {
         this.height = height;
         this.weight = weight;
         this.point = point;
+        this.providerType = providerType;
+        this.resourceId = resourceId;
     }
 
     public String getRoleValue() {
@@ -92,8 +111,8 @@ public class User extends BaseEntity {
         this.role = Role.USER;
     }
 
-    public boolean isTempUser() {
-        return role == Role.TEMP_USER;
+    public boolean isInitialized() {
+        return role != Role.TEMP_USER;
     }
 
     public void changeImage(Image image) {
@@ -108,11 +127,13 @@ public class User extends BaseEntity {
         this.point -= point;
     }
 
-    public static User create(OAuth2User oAuth2User) {
+    public static User create(ProviderType providerType, String resourceId) {
         return User.builder()
                 .role(Role.TEMP_USER)
-                .email(oAuth2User.getName())
-                .point(0)
+                .providerType(providerType)
+                .resourceId(resourceId)
+                .point(1500)
+                .image(ImageCache.get(ImageCache.DEFAULT_PROFILE))
                 .build();
     }
 

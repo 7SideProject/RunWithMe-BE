@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.runwithme.runwithme.domain.user.dto.DuplicatedViewDto;
+import com.runwithme.runwithme.domain.user.dto.SocialLoginDto;
+import com.runwithme.runwithme.domain.user.dto.SocialLoginViewDto;
 import com.runwithme.runwithme.domain.user.dto.UserChangePasswordDto;
 import com.runwithme.runwithme.domain.user.dto.UserConnectViewDto;
 import com.runwithme.runwithme.domain.user.dto.UserCreateDto;
@@ -29,7 +31,9 @@ import com.runwithme.runwithme.domain.user.dto.UserProfileDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileImageDto;
 import com.runwithme.runwithme.domain.user.dto.UserProfileViewDto;
 import com.runwithme.runwithme.domain.user.dto.UserTotalRecordViewDto;
+import com.runwithme.runwithme.domain.user.entity.ProviderType;
 import com.runwithme.runwithme.domain.user.facade.UserFacade;
+import com.runwithme.runwithme.domain.user.service.OAuthService;
 import com.runwithme.runwithme.domain.user.service.UserService;
 import com.runwithme.runwithme.global.result.ResultCode;
 import com.runwithme.runwithme.global.result.ResultResponseDto;
@@ -49,6 +53,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 	private final UserService userService;
     private final UserFacade userFacade;
+    private final OAuthService oAuthService;
 
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "회원가입", description = "이메일 회원가입 API입니다.")
@@ -149,5 +154,16 @@ public class UserController {
     public ResponseEntity<ResultResponseDto> getUserTotalRecord(@PathVariable Long userSeq) {
         UserTotalRecordViewDto userTotalRecord = userFacade.getUserTotalRecord(userSeq);
         return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, userTotalRecord), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{providerType}/login")
+    public ResponseEntity<ResultResponseDto> socialLogin(
+        @PathVariable String providerType,
+        @RequestBody SocialLoginDto request
+    ) {
+        SocialLoginViewDto response = oAuthService.getByAccessToken(
+            ProviderType.valueOf(providerType.toUpperCase()), request.accessToken()
+        );
+        return new ResponseEntity<>(ResultResponseDto.of(ResultCode.USER_REQUEST_SUCCESS, response), HttpStatus.OK);
     }
 }
