@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.runwithme.runwithme.domain.user.entity.User;
 
 
 import lombok.RequiredArgsConstructor;
@@ -176,20 +177,40 @@ public class ChallengeRepositoryQuerydslImpl implements ChallengeRepositoryQuery
 				isExistChallengeUser(userSeq),
 				passwordIsNull()
 			))
-			.from(challengeUser)
+//			.from(challengeUser)
+//			.leftJoin(runRecord)
+//			.on(
+//					runRecord.challenge.seq.eq(challengeUser.challenge.seq)
+//							.and(runRecord.user.eq(user))
+//							.and(runRecord.regTime.eq(nowTime))
+//			)
+//			.where(
+//					challengeUser.user.eq(user)
+//							.and(challengeUser.challenge.deleteYn.eq('N'))
+//							.and(challengeUser.challenge.dateStart.before(nowTime))
+//							.and(challengeUser.challenge.dateEnd.after(nowTime))
+//							.and(runRecord.seq.isNull())
+//					, eqCursorSeq(cursorSeq)
+//			)
+			.from(challenge)
+			.leftJoin(challengeUser)
+			.on(
+				challengeUser.challenge.seq.eq(challenge.seq)
+					.and(challengeUser.user.seq.eq(userSeq))
+			)
 			.leftJoin(runRecord)
 			.on(
-					runRecord.challenge.seq.eq(challengeUser.challenge.seq)
+					runRecord.challenge.seq.eq(challenge.seq)
 							.and(runRecord.user.seq.eq(userSeq))
 							.and(runRecord.regTime.eq(nowTime))
 			)
 			.where(
-					challengeUser.user.seq.eq(userSeq)
-							.and(challengeUser.challenge.deleteYn.eq('N'))
-							.and(challenge.dateStart.before(nowTime))
-							.and(challenge.dateEnd.after(nowTime))
-							.and(runRecord.seq.isNull())
-					, eqCursorSeq(cursorSeq)
+				challengeUser.user.seq.eq(userSeq)
+					.and(challenge.deleteYn.eq('N'))
+					.and(challenge.dateStart.before(nowTime))
+					.and(challenge.dateEnd.after(nowTime))
+					.and(runRecord.seq.isNull())
+				, eqCursorSeq(cursorSeq)
 			)
 			.orderBy(challengeUser.challenge.seq.desc())
 			.limit(pageable.getPageSize())

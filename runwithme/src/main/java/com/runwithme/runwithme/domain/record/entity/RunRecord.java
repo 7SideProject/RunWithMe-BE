@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,11 +27,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Table(name = "run_record")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RunRecord {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column
+    @Column(name = "run_record_seq")
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeEndDto;
 import com.runwithme.runwithme.domain.challenge.dto.ChallengeResponseDto;
+import com.runwithme.runwithme.domain.user.entity.User;
 
 public interface ChallengeRepositoryQuerydsl {
 
