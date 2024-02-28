@@ -19,14 +19,13 @@ public class AuthUtils {
 	private final UserRepository userRepository;
 
 	public User getLoginUser() {
-		final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
-		return userRepository.findByEmail(userEmail)
+		final String userSeq = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+		return userRepository.findById(Long.valueOf(userSeq))
 			.orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 	}
 
 	public Long getLoginUserSeq() {
-		final String userEmail = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
-		return userRepository.findByEmail(userEmail)
-			.orElseThrow(() -> new CustomException(USER_NOT_FOUND)).getSeq();
+		final String userSeq = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+		return Long.valueOf(userSeq);
 	}
 }

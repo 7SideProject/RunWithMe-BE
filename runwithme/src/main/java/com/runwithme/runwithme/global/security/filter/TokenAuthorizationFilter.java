@@ -41,6 +41,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
 			"/users/duplicate-email",
 			"/users/duplicate-nickname",
 			"/users/**/password",
+			"/users/**/login",
 			"/token"
 		};
 

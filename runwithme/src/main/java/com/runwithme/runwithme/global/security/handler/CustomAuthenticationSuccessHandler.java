@@ -59,7 +59,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	private void setAccessToken(HttpServletResponse response, User user) throws IOException {
 		Long expiry = tokenFactory.getExpiryOfAccessToken(System.currentTimeMillis());
 		AuthToken accessToken = tokenFactory.createAuthToken(
-			user.getEmail(), user.getRole().toString(), new Date(expiry)
+			String.valueOf(user.getSeq()), user.getRole().toString(), new Date(expiry)
 		);
 
 		log.debug("Successful Authentication :: AccessToken : {}", accessToken.getToken());

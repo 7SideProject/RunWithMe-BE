@@ -24,6 +24,7 @@ public class UserConverter {
 			.nickname(dto.nickname())
 			.weight(dto.weight())
 			.height(dto.height())
+
 			.role(Role.USER)
 			.point(DEFAULT_USER_POINT)
 			.build();
