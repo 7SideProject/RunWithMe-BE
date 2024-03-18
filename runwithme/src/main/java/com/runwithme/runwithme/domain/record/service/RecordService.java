@@ -125,9 +125,9 @@ public class RecordService {
 	}
 
 	@Transactional
-	public List<RunRecord> getMyRunRecord(Long challengeSeq) {
+	public List<RunRecordResponseDto> getMyRunRecord(Long challengeSeq) {
 		final Long userSeq = authUtils.getLoginUserSeq();
-		return runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+		return runRecordRepository.findAllMyRecord(userSeq, challengeSeq);
 	}
 
 	@Transactional

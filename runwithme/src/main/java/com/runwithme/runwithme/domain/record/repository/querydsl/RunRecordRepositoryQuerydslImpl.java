@@ -73,6 +73,31 @@ public class RunRecordRepositoryQuerydslImpl implements RunRecordRepositoryQuery
 			.fetchResults();
 		return new PageImpl<>(result.getResults(), pageable, result.getTotal());
 	}
+
+	@Override
+	public List<RunRecordResponseDto> findAllMyRecord(Long userSeq, Long challengeSeq) {
+		return jpaQueryFactory
+			.select(new QRunRecordResponseDto(
+				runRecord.seq,
+				runRecord.challenge.name,
+				runRecord.image.seq,
+				runRecord.user.seq,
+				runRecord.user.nickname,
+				runRecord.runningDay,
+				runRecord.startTime,
+				runRecord.endTime,
+				runRecord.runningDistance,
+				runRecord.runningTime,
+				runRecord.calorie,
+				runRecord.avgSpeed,
+				runRecord.successYn
+			))
+			.from(runRecord)
+			.where(runRecord.user.seq.eq(userSeq).and(runRecord.challenge.seq.eq(challengeSeq)))
+			.orderBy(runRecord.seq.desc())
+			.fetch();
+	}
+
 	@Override
 	public Optional<RunRecordDetailDto> findRunRecordDetail(Long recordSeq) {
 		return Optional.ofNullable(jpaQueryFactory
