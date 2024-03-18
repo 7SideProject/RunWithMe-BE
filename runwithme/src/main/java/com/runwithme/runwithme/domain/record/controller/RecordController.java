@@ -57,7 +57,7 @@ public class RecordController {
     @Operation(operationId = "getMyRunRecord", summary = "챌린지내 내 기록 조회")
     @GetMapping("/{challengeSeq}/record/my")
     public ResponseEntity<ResultResponseDto> getMyRunRecord(@PathVariable(value = "challengeSeq") Long challengeSeq) {
-        final List<RunRecord> myRunRecords = recordService.getMyRunRecord(challengeSeq);
+        final List<RunRecordResponseDto> myRunRecords = recordService.getMyRunRecord(challengeSeq);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_RECORD_SUCCESS, myRunRecords));
     }
 
