@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,7 +59,7 @@ public class RecordController {
     @Operation(operationId = "getMyRunRecord", summary = "챌린지내 내 기록 조회")
     @GetMapping("/{challengeSeq}/record/my")
     public ResponseEntity<ResultResponseDto> getMyRunRecord(@PathVariable(value = "challengeSeq") Long challengeSeq) {
-        final List<RunRecord> myRunRecords = recordService.getMyRunRecord(challengeSeq);
+        final List<RunRecordResponseDto> myRunRecords = recordService.getMyRunRecord(challengeSeq);
         return ResponseEntity.ok().body(ResultResponseDto.of(GET_MY_RECORD_SUCCESS, myRunRecords));
     }
 
@@ -81,5 +83,11 @@ public class RecordController {
     public ResponseEntity<ResultResponseDto> addCoordinate(@PathVariable(value = "recordSeq") Long recordSeq, @RequestBody List<CoordinateDto> coordinates) {
         final boolean success = recordService.addCoordinate(recordSeq, coordinates);
         return ResponseEntity.ok().body(ResultResponseDto.of(success ? ADD_COORDINATES_FAIL : ADD_COORDINATES_SUCCESS));
+    }
+
+    @Operation(operationId = "", summary = "레코드 이미지 조회")
+    @GetMapping(value = "/{recordSeq}/record-image", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<Resource> getRecordImage(@PathVariable(value = "recordSeq") Long recordSeq) {
+        return new ResponseEntity<>(recordService.getRecordImage(recordSeq), HttpStatus.OK);
     }
 }

@@ -18,6 +18,8 @@ public interface RunRecordRepositoryQuerydsl {
 
 	Page<RunRecordResponseDto> findAllRecordPage(Long cursorSeq, Long challengeSeq, Pageable pageable);
 
+	List<RunRecordResponseDto> findAllMyRecord(Long userSeq, Long challengeSeq);
+
 	Optional<RunRecordDetailDto> findRunRecordDetail(Long recordSeq);
 
 	List<RecordWeeklyCountDto> getWeeklySuccessYCount(Long challengeSeq);

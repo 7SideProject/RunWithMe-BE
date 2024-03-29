@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,9 +126,9 @@ public class RecordService {
 	}
 
 	@Transactional
-	public List<RunRecord> getMyRunRecord(Long challengeSeq) {
+	public List<RunRecordResponseDto> getMyRunRecord(Long challengeSeq) {
 		final Long userSeq = authUtils.getLoginUserSeq();
-		return runRecordRepository.findAllByUserSeqAndChallengeSeq(userSeq, challengeSeq);
+		return runRecordRepository.findAllMyRecord(userSeq, challengeSeq);
 	}
 
 	@Transactional
@@ -162,6 +163,12 @@ public class RecordService {
 			return ImageCache.get(ImageCache.DEFAULT_CHALLENGE);
 		}
 		return imageService.save(image);
+	}
+
+	public Resource getRecordImage(Long recordSeq) {
+		final RunRecord record = runRecordRepository.findById(recordSeq)
+			.orElseThrow(() -> new CustomException(RECORD_NOT_FOUND));
+		return imageService.getImage(record.getImage().getSeq());
 	}
 
 	public List<RecordWeeklyCountDto> getWeeklySuccessYCount(Long challengeSeq) {

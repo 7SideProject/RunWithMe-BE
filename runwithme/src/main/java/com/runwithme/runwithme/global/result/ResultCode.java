@@ -59,12 +59,12 @@ public enum ResultCode {
     CHALLENGE_JOIN_PASSWORD_FAIL    (202, -304, "패스워드가 틀렸습니다."),
     CHALLENGE_PARAMETER_FAIL            (400, -305, "잘못된 파라미터 입니다."),
     CREATE_CHALLENGE_FAIL           (400, -306, "챌린지 등록에 실패하였습니다."),
-    CHALLENGE_NOT_JOIN              (400, -307, "챌린지에 가입되어 있지 않습니다."),
-    CHALLENGE_JOIN_NOT_ENOUGH_POINT (400, -308, "챌린지 가입에 필요한 포인트가 부족합니다."),
-    CHALLENGE_JOIN_MAX_MEMBER       (400, -309, "챌린지 원이 가득 찼습니다."),
-    CHALLENGE_NOT_START             (400, -310, "아직 시작하지 않은 챌린지 입니다."),
-    CHALLENGE_AFTER_END             (400, -311, "이미 끝난 챌린지 입니다."),
-    NOT_ENOUGH_POINT                (400, -312, "포인트가 부족합니다."),
+    CHALLENGE_NOT_JOIN              (202, -307, "챌린지에 가입되어 있지 않습니다."),
+    CHALLENGE_JOIN_NOT_ENOUGH_POINT (202, -308, "챌린지 가입에 필요한 포인트가 부족합니다."),
+    CHALLENGE_JOIN_MAX_MEMBER       (202, -309, "챌린지 원이 가득 찼습니다."),
+    CHALLENGE_NOT_START             (202, -310, "아직 시작하지 않은 챌린지 입니다."),
+    CHALLENGE_AFTER_END             (202, -311, "이미 끝난 챌린지 입니다."),
+    NOT_ENOUGH_POINT                (202, -312, "포인트가 부족합니다."),
 
     // Board
     CREATE_BOARD_SUCCESS            (200, 400, "게시글 등록에 성공하였습니다."),
